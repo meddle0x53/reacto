@@ -2,7 +2,7 @@
 module Reacto
   class Stream
 
-    def on(type = :value, listener)
+    def on(listener, type: :value)
       listeners(type) << listener
     end
 
