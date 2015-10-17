@@ -1,6 +1,5 @@
-
 module Reacto
-  class Stream
+  class Stream # Trackable?
 
     def on(listener, type: :value)
       listeners(type) << listener
