@@ -5,7 +5,6 @@ module Reacto
     end
 
     private
-
     def listeners(type = :value)
       @listeners ||= {}
       @listeners[type] ||= []
