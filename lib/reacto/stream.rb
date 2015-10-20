@@ -1,6 +1,9 @@
 module Reacto
   class Stream # Trackable?
-    def on(listener, type: :value)
+
+    TOPICS = [:open, :value, :error, :close]
+
+    def on(trackers)
       listeners(type) << listener
     end
 
@@ -15,6 +18,10 @@ module Reacto
     def notify(type = :value)
       listeners(type).each(&:call)
     end
+  end
+
+  class NotificationTracker
+    attr_reader :on_open, :on_value, :on_error, :on_close
   end
 
   class Subscription
