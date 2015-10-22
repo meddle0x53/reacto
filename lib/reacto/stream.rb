@@ -20,8 +20,24 @@ module Reacto
     end
   end
 
+  NO_ACTION = -> (**args) {}
+
   class NotificationTracker
     attr_reader :on_open, :on_value, :on_error, :on_close
+
+    DEFAULT_ON_ERROR = -> (e) { raise e }
+
+    def initialize(
+      on_open: NO_ACTION,
+      on_value: NO_ACTION,
+      on_error: DEFAULT_ON_ERROR,
+      on_close: NO_ACTION
+    )
+      @on_open = on_open
+      @on_value = on_value
+      @on_error = on_error
+      @on_close = on_close
+    end
   end
 
   class Subscription
