@@ -4,7 +4,11 @@ module Reacto
     TOPICS = [:open, :value, :error, :close]
 
     def on(trackers)
-      listeners(type) << listener
+      track(NotificationTracker.new(trackers))
+    end
+
+    def track(notification_tracker)
+      @trackers << notification_tracker
     end
 
     private
@@ -28,15 +32,15 @@ module Reacto
     DEFAULT_ON_ERROR = -> (e) { raise e }
 
     def initialize(
-      on_open: NO_ACTION,
-      on_value: NO_ACTION,
-      on_error: DEFAULT_ON_ERROR,
-      on_close: NO_ACTION
+      open: NO_ACTION,
+      value: NO_ACTION,
+      error: DEFAULT_ON_ERROR,
+      close: NO_ACTION
     )
-      @on_open = on_open
-      @on_value = on_value
-      @on_error = on_error
-      @on_close = on_close
+      @on_open = open
+      @on_value = value
+      @on_error = error
+      @on_close = close
     end
   end
 
