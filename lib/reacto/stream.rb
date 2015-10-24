@@ -4,6 +4,10 @@ module Reacto
     TOPICS = [:open, :value, :error, :close]
 
     def on(trackers)
+      unless (trackers.keys - TOPICS).empty?
+        raise "This Trackable supports only #{TOPICS}, but #{trackers.keys} were passed."
+      end
+
       track(NotificationTracker.new(trackers))
     end
 
