@@ -14,12 +14,6 @@ module Reacto
     def track(notification_tracker)
       @trackers << notification_tracker
     end
-
-    private
-
-    def notify(type = :value)
-      listeners(type).each(&:call)
-    end
   end
 
   NO_ACTION = -> (**args) {}
