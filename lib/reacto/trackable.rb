@@ -1,5 +1,5 @@
 module Reacto
-  class Stream # Trackable?
+  class Trackable # Trackable?
 
     TOPICS = [:open, :value, :error, :close]
 
