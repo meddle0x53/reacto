@@ -1,5 +1,5 @@
 module Reacto
-  class Trackable # Trackable?
+  class Trackable
 
     TOPICS = [:open, :value, :error, :close]
 
