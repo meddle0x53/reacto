@@ -11,6 +11,10 @@ module Reacto
       track(NotificationTracker.new(trackers))
     end
 
+    def off(notification_tracker)
+      @trackers.delete(notification_tracker)
+    end
+
     def track(notification_tracker)
       @trackers << notification_tracker
     end
