@@ -3,6 +3,10 @@ module Reacto
 
     TOPICS = [:open, :value, :error, :close]
 
+    def initialize(action)
+      @action = action
+    end
+
     def on(trackers)
       unless (trackers.keys - TOPICS).empty?
         raise "This Trackable supports only #{TOPICS}, but #{trackers.keys} were passed."
