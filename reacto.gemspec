@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['n.tzvetinov@gmail.com']
   spec.description   = 'Concurrent Reactive Programming for Ruby'
   spec.summary       = 'Concurrent Reactive Programming for Ruby'
-  spec.homepage      = 'https://github.com/steveklabnik/frappuccino'
+  spec.homepage      = 'https://github.com/meddle0x53/reacto'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)
