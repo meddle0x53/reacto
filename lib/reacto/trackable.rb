@@ -45,16 +45,15 @@ module Reacto
   end
 
   class Subscription
-    attr_reader :notification_tracker, :trackable, :type
+    attr_reader :notification_tracker, :trackable
 
-    def initialize(notification_tracker, trackable, type)
+    def initialize(notification_tracker, trackable)
       @notification_tracker = notification_tracker
       @trackable = trackable
-      @type = type
     end
 
     def subscribed?
-      !trackable.nil? && trackable.subscribed?(notification_tracker, type)
+      !trackable.nil? && trackable.subscribed?(notification_tracker)
     end
 
     def unsubscribe
@@ -62,7 +61,6 @@ module Reacto
 
       @trackable = nil
       @notification_tracker = nil
-      @type = nil
     end
   end
 
