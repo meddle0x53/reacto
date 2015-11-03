@@ -20,6 +20,7 @@ module Reacto
     end
 
     def track(notification_tracker)
+      subscribtion = Subscription.new(notification_tracker, self)
       @trackers << notification_tracker
     end
   end
