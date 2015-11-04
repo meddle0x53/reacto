@@ -20,7 +20,6 @@ module Reacto
     end
 
     def track(notification_tracker)
-      subscribtion = Subscription.new(notification_tracker, self)
       @trackers << notification_tracker
     end
   end
@@ -45,13 +44,8 @@ module Reacto
     end
   end
 
-  class Subscription
+  module Subscription
     attr_reader :notification_tracker, :trackable
-
-    def initialize(notification_tracker, trackable)
-      @notification_tracker = notification_tracker
-      @trackable = trackable
-    end
 
     def subscribed?
       !trackable.nil? && trackable.subscribed?(notification_tracker)
