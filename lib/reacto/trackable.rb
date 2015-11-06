@@ -1,30 +1,6 @@
 module Reacto
-  class Trackable
 
-    TOPICS = [:open, :value, :error, :close]
-
-    def initialize(action)
-      @action = action
-    end
-
-    def on(trackers)
-      unless (trackers.keys - TOPICS).empty?
-        raise "This Trackable supports only #{TOPICS}, but #{trackers.keys} were passed."
-      end
-
-      track(NotificationTracker.new(trackers))
-    end
-
-    def off(notification_tracker)
-      @trackers.delete(notification_tracker)
-    end
-
-    def track(notification_tracker)
-      @trackers << notification_tracker
-    end
-  end
-
-  NO_ACTION = -> (**args) {}
+  NO_ACTION = -> (*args) {}
 
   class NotificationTracker
     attr_reader :on_open, :on_value, :on_error, :on_close
@@ -45,18 +21,68 @@ module Reacto
   end
 
   module Subscription
-    attr_reader :notification_tracker, :trackable
-
     def subscribed?
-      !trackable.nil? && trackable.subscribed?(notification_tracker)
+      !@trackable.nil? && @trackable.subscribed?(@notification_tracker)
     end
 
     def unsubscribe
-      @trackable.off(notification_tracker)
+      @trackable.off(@notification_tracker)
 
       @trackable = nil
       @notification_tracker = nil
     end
   end
 
+  class TrackerSubscription
+    extend Forwardable
+    include Subscription
+
+    delegate [:on_open, :on_value, :on_error, :on_close] => :@notification_tracker
+
+    def initialize(notification_tracker, trackable)
+      @notification_tracker = notification_tracker
+      @trackable = trackable
+    end
+  end
+
+  class SubscriptionWrapper
+    extend Forwardable
+    include Subscription
+
+    delegate ['subscribed?', :unsubscribe] => :@wrapped
+
+    def initialize(wrapped)
+      @wrapped = wrapped
+    end
+  end
+
+  class Trackable
+
+    TOPICS = [:open, :value, :error, :close]
+
+    def initialize(action)
+      @action = action
+    end
+
+    def on(trackers = {})
+      unless (trackers.keys - TOPICS).empty?
+        raise "This Trackable supports only #{TOPICS}, but #{trackers.keys} were passed."
+      end
+
+      track(NotificationTracker.new(trackers))
+    end
+
+    def off(notification_tracker)
+      # Clean-up logic
+    end
+
+    def track(notification_tracker)
+      subscription = TrackerSubscription.new(notification_tracker, self)
+
+      # On a worker!
+      @action.call(subscription)
+
+      SubscriptionWrapper.new(subscription)
+    end
+  end
 end
