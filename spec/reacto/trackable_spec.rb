@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Reacto::Trackable do
 
   context 'subscribtion bahaviour' do
-
   end
 
   describe '#on' do
