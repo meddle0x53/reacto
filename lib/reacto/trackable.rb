@@ -1,10 +1,10 @@
+require 'concurrent/executor/immediate_executor'
+
 module Reacto
 
   NO_ACTION = -> (*args) {}
 
   class NotificationTracker
-    attr_reader :on_open, :on_value, :on_error, :on_close
-
     DEFAULT_ON_ERROR = -> (e) { raise e }
 
     def initialize(
@@ -13,10 +13,26 @@ module Reacto
       error: DEFAULT_ON_ERROR,
       close: NO_ACTION
     )
-      @on_open = open
-      @on_value = value
-      @on_error = error
-      @on_close = close
+      @open = open
+      @value = value
+      @error = error
+      @close = close
+    end
+
+    def on_open
+      @open.call
+    end
+
+    def on_value(value)
+      @value.call(value)
+    end
+
+    def on_error(error)
+      @error.call(error)
+    end
+
+    def on_close
+      @close.call
     end
   end
 
@@ -62,6 +78,7 @@ module Reacto
 
     def initialize(action)
       @action = action
+      @executor = Concurrent::ImmediateExecutor.new
     end
 
     def on(trackers = {})
@@ -79,8 +96,7 @@ module Reacto
     def track(notification_tracker)
       subscription = TrackerSubscription.new(notification_tracker, self)
 
-      # On a worker!
-      @action.call(subscription)
+      @executor.post(subscription, &@action)
 
       SubscriptionWrapper.new(subscription)
     end
