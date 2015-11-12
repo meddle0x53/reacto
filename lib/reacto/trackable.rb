@@ -32,5 +32,27 @@ module Reacto
 
       Subscriptions::SubscriptionWrapper.new(subscription)
     end
+
+    def lift(operation = nil, &block)
+      operation = block_given? ? block : operation
+      Trackable.new do |tracker_subscription|
+        begin
+          lift_behaviour(operation.call(tracker_subscription))
+        rescue Exception => e
+          tracker_subscription.on_error(e)
+        end
+      end
+    end
+
+    private
+
+    def lift_behaviour(lifted_tracker_subscription)
+      begin
+        lifted_tracker_subscription.on_open
+        @action.call(lifted_tracker_subscription)
+      rescue Exception => e
+        lifted_tracker_subscription.on_error(e)
+      end
+    end
   end
 end
