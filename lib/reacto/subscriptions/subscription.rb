@@ -2,14 +2,11 @@ module Reacto
   module Subscriptions
     module Subscription
       def subscribed?
-        !@trackable.nil? && @trackable.subscribed?(@notification_tracker)
+        raise NotImplementedError.new('Abstract method!')
       end
 
       def unsubscribe
-        @trackable.off(@notification_tracker)
-
-        @trackable = nil
-        @notification_tracker = nil
+        raise NotImplementedError.new('Abstract method!')
       end
     end
   end
