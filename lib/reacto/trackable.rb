@@ -2,6 +2,7 @@ require 'concurrent/executor/immediate_executor'
 
 require 'reacto/subscriptions'
 require 'reacto/tracker'
+require 'reacto/operations'
 
 module Reacto
   class Trackable
@@ -42,6 +43,10 @@ module Reacto
           tracker_subscription.on_error(e)
         end
       end
+    end
+
+    def map(mapping = nil, &block)
+      lift(Operations::Map.new(block_given? ? block : mapping))
     end
 
     private
