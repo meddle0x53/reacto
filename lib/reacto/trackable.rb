@@ -10,7 +10,6 @@ module Reacto
 
     def initialize(action = NO_ACTION, &block)
       @action = block_given? ? block : action
-
       @executor = Concurrent::ImmediateExecutor.new
     end
 
