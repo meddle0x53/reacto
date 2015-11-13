@@ -11,10 +11,10 @@ module Reacto
 
       def initialize(
         subscription,
-        open: NO_ACTION,
-        value: NO_ACTION,
-        error: DEFAULT_ON_ERROR,
-        close: NO_ACTION
+        open: subscription.method(:on_open),
+        value: subscription.method(:on_value),
+        error: subscription.method(:on_error),
+        close: subscription.method(:on_close)
       )
         super(open: open, value: value, error: error, close: close)
 
