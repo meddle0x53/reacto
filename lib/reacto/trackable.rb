@@ -1,8 +1,7 @@
-require 'concurrent/executor/immediate_executor'
-
 require 'reacto/subscriptions'
 require 'reacto/tracker'
 require 'reacto/operations'
+require 'reacto/executors'
 
 module Reacto
   class Trackable
@@ -10,7 +9,7 @@ module Reacto
 
     def initialize(action = NO_ACTION, &block)
       @action = block_given? ? block : action
-      @executor = Concurrent::ImmediateExecutor.new
+      @executor = Executors.immediate
     end
 
     def on(trackers = {})
