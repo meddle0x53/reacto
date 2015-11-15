@@ -8,5 +8,9 @@ module Reacto
       Concurrent::ImmediateExecutor.new
     end
 
+    def io
+      Concurrent::CachedThreadPool.new
+    end
+
   end
 end
