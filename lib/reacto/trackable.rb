@@ -14,7 +14,8 @@ module Reacto
 
     def on(trackers = {})
       unless (trackers.keys - TOPICS).empty?
-        raise "This Trackable supports only #{TOPICS}, but #{trackers.keys} were passed."
+        raise "This Trackable supports only #{TOPICS}, " \
+          "but #{trackers.keys} were passed."
       end
 
       track(Tracker.new(trackers))
@@ -25,9 +26,9 @@ module Reacto
     end
 
     def track(notification_tracker)
-      subscription = Subscriptions::TrackerSubscription.new(notification_tracker, self)
+      subscription =
+        Subscriptions::TrackerSubscription.new(notification_tracker, self)
 
-      #@executor.post(subscription, &@action)
       @action.call(subscription)
 
       Subscriptions::SubscriptionWrapper.new(subscription)

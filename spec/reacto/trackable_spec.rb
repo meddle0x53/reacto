@@ -33,7 +33,8 @@ describe Reacto::Trackable do
     end
 
     context('value') do
-      it 'the trackable behavior uses a subscription which `on_value` is the passed value action' do
+      it 'the trackable behavior uses a subscription which `on_value` ' \
+        'is the passed value action' do
         described_class.new(test_behaviour).on(value: test_on_value)
 
         expect(test_data.size).to be(1)
@@ -60,7 +61,8 @@ describe Reacto::Trackable do
   end
 
   describe '#map' do
-    it 'transforms the value of the source Trackable using the passed transformation' do
+    it 'transforms the value of the source Trackable using the passed ' \
+      'transformation' do
       source = described_class.new(test_behaviour)
       trackable = source.map do |v|
         v * v * v

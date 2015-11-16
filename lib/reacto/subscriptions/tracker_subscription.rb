@@ -6,7 +6,9 @@ module Reacto
       extend Forwardable
       include Subscription
 
-      delegate [:on_open, :on_value, :on_error, :on_close] => :@notification_tracker
+      delegate(
+        [:on_open, :on_value, :on_error, :on_close] => :@notification_tracker
+      )
 
       def initialize(notification_tracker, trackable)
         @notification_tracker = notification_tracker
