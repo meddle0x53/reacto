@@ -7,8 +7,8 @@ module Reacto
   class Trackable
     TOPICS = [:open, :value, :error, :close]
 
-    def initialize(action = NO_ACTION, &block)
-      @action = block_given? ? block : action
+    def initialize(behaviour = NO_ACTION, &block)
+      @behaviour = block_given? ? block : behaviour
     end
 
     def on(trackers = {})
@@ -55,7 +55,7 @@ module Reacto
     protected
 
     def do_track(subscription)
-      @action.call(subscription)
+      @behaviour.call(subscription)
     end
 
     private
@@ -63,7 +63,7 @@ module Reacto
     def lift_behaviour(lifted_tracker_subscription)
       begin
         lifted_tracker_subscription.on_open
-        @action.call(lifted_tracker_subscription)
+        @behaviour.call(lifted_tracker_subscription)
       rescue Exception => e
         lifted_tracker_subscription.on_error(e)
       end
