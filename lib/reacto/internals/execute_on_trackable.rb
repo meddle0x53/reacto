@@ -1,8 +1,6 @@
-require 'reacto/trackable'
-
 module Reacto
   module Internals
-    class ExecuteOnTrackable < Trackable
+    class ExecuteOnTrackable < Reacto::Trackable
       def initialize(behavior, executor)
         super(behavior)
 

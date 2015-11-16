@@ -3,7 +3,7 @@ require 'spec_helper'
 context Reacto::Trackable do
 
   let(:test_data) { [] }
-  let(:test_on_value) { -> (v) { p v; test_data << v }}
+  let(:test_on_value) { -> (v) { test_data << v }}
   let(:test_on_close) { -> () { test_data << '|' }}
 
   subject do
@@ -24,9 +24,11 @@ context Reacto::Trackable do
   context '#track_on' do
     it 'executes the trackable login on the passed executor' do
       subject
-      .track_on(Reacto::Executors.io)
+      .execute_on(Reacto::Executors.io)
+      .map(-> (v) { v * 2 })
       .on(value: test_on_value, close: test_on_close)
 
+      sleep 7
       p test_data
     end
   end

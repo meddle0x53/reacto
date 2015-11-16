@@ -7,8 +7,9 @@ module Reacto
   class Trackable
     TOPICS = [:open, :value, :error, :close]
 
-    def initialize(behaviour = NO_ACTION, &block)
+    def initialize(behaviour = NO_ACTION, executor = nil, &block)
       @behaviour = block_given? ? block : behaviour
+      @executor = executor
     end
 
     def on(trackers = {})
@@ -35,7 +36,7 @@ module Reacto
 
     def lift(operation = nil, &block)
       operation = block_given? ? block : operation
-      Trackable.new do |tracker_subscription|
+      Trackable.new(nil, @executor) do |tracker_subscription|
         begin
           lift_behaviour(operation.call(tracker_subscription))
         rescue Exception => e
@@ -52,10 +53,18 @@ module Reacto
       lift(Operations::TrackOn.new(executor))
     end
 
+    def execute_on(executor)
+      Trackable.new(@behaviour, executor)
+    end
+
     protected
 
     def do_track(subscription)
-      @behaviour.call(subscription)
+      if @executor
+        @executor.post(subscription, &@behaviour)
+      else
+        @behaviour.call(subscription)
+      end
     end
 
     private
