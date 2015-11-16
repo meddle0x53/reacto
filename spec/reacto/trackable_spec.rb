@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Reacto::Trackable do
+context Reacto::Trackable do
   let(:test_data) { [] }
   let(:test_on_value) { -> (v) { test_data << v }}
 
@@ -11,7 +11,7 @@ describe Reacto::Trackable do
     end
   end
 
-  describe '.new' do
+  context '.new' do
     it 'supports behavior invoked on tracking, passed as block' do
       trackable = described_class.new do |tracker_subscription|
         tracker_subscription.on_value(4)
@@ -24,7 +24,7 @@ describe Reacto::Trackable do
     end
   end
 
-  describe '#on' do
+  context '#on' do
     it 'returns a Reacto::Subscription' do
       actual = described_class.new(Reacto::NO_ACTION).on
 
@@ -43,7 +43,7 @@ describe Reacto::Trackable do
     end
   end
 
-  describe '#lift' do
+  context '#lift' do
     it 'applies a transformation to the trackable behaviour' do
       trackable = described_class.new(test_behaviour)
       lifted_trackable = trackable.lift do |tracker_subscription|
@@ -60,7 +60,7 @@ describe Reacto::Trackable do
     end
   end
 
-  describe '#map' do
+  context '#map' do
     it 'transforms the value of the source Trackable using the passed ' \
       'transformation' do
       source = described_class.new(test_behaviour)
