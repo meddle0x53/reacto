@@ -1,11 +1,6 @@
 require 'spec_helper'
 
-require 'reacto/operations/post_on'
-require 'reacto/subscriptions/executor_subscription'
-require 'reacto/executors'
-require 'reacto/tracker'
-
-describe Reacto::Operations::PostOn do
+describe Reacto::Operations::TrackOn do
 
   subject do
     described_class.new(Reacto::Executors.immediate)

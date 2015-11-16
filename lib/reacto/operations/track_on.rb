@@ -2,7 +2,7 @@ require 'reacto/subscriptions/executor_subscription'
 
 module Reacto
   module Operations
-    class PostOn
+    class TrackOn
       def initialize(executor)
         @executor = executor
       end

@@ -1,4 +1,5 @@
 require 'concurrent/executor/immediate_executor'
+require 'concurrent/executor/cached_thread_pool'
 
 module Reacto
   module Executors

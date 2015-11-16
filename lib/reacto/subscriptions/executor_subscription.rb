@@ -15,38 +15,39 @@ module Reacto
       def subscribed?
         unsubscribe unless @wrapped.subscribed?
 
-        @executor.shutdown? || @executor.shuttingdown?
+        @executor.running?
       end
 
       def unsubscribe
         @wrapped.unsubscribe
 
-        @executor.post(@executor.method(:shutdown))
+        @executor.post(&@executor.method(:shutdown))
       end
 
       def on_open
-        @executor.post(@wrapped.method(:on_open))
+        @executor.post(&@wrapped.method(:on_open))
       end
 
       def on_value(value)
         return if !subscribed? || @closed
 
-        @executor.post(value, @wrapped.method(:on_value))
+        @executor.post(value, &@wrapped.method(:on_value))
       end
 
       def on_close
         return if !subscribed? || @closed
 
+        @executor.post(&@wrapped.method(:on_close))
+        @executor.post(&method(:unsubscribe))
         @closed = true
-        @executor.post(@wrapped.method(:on_close))
       end
 
       def on_error(error)
         return if !subscribed? || @closed
 
+        @executor.post(error, &@wrapped.method(:on_error))
         unsubscribe
         @closed = true
-        @executor.post(error, @wrapped.method(:on_error))
       end
     end
   end

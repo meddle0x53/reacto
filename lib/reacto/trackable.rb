@@ -9,7 +9,6 @@ module Reacto
 
     def initialize(action = NO_ACTION, &block)
       @action = block_given? ? block : action
-      @executor = Executors.immediate
     end
 
     def on(trackers = {})
@@ -29,7 +28,7 @@ module Reacto
       subscription =
         Subscriptions::TrackerSubscription.new(notification_tracker, self)
 
-      @action.call(subscription)
+      do_track(subscription)
 
       Subscriptions::SubscriptionWrapper.new(subscription)
     end
@@ -49,8 +48,14 @@ module Reacto
       lift(Operations::Map.new(block_given? ? block : mapping))
     end
 
-    def post_on(executor)
-      lift(Operations::PostOn.new(executor))
+    def track_on(executor)
+      lift(Operations::TrackOn.new(executor))
+    end
+
+    protected
+
+    def do_track(subscription)
+      @action.call(subscription)
     end
 
     private

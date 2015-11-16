@@ -13,10 +13,12 @@ module Reacto
       def initialize(notification_tracker, trackable)
         @notification_tracker = notification_tracker
         @trackable = trackable
+
+        @subscribed = true
       end
 
       def subscribed?
-        !@trackable.nil? && @trackable.subscribed?(@notification_tracker)
+        @subscribed
       end
 
       def unsubscribe
@@ -24,6 +26,7 @@ module Reacto
 
         @trackable = nil
         @notification_tracker = nil
+        @subscribed = false
       end
     end
   end
