@@ -131,6 +131,17 @@ context Reacto::Trackable do
       expect(test_data.size).to be(3)
       expect(test_data).to be == [16, 23, 2037]
     end
+
+    it 'sends the initial value if no value is emitted' do
+      source = described_class.new(-> (t) { t.on_close })
+      trackable = source.inject(0) do |prev, v|
+        prev + v
+      end
+      trackable.on(value: test_on_value)
+
+      expect(test_data.size).to be(1)
+      expect(test_data).to be == [0]
+    end
   end
 
   context '#drop' do

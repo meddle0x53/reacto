@@ -9,6 +9,7 @@ module Reacto
       def initialize(injector, initial = NO_INITIAL)
         @injector = injector
         @current = initial
+        @has_values = false
       end
 
       def call(tracker)
@@ -19,12 +20,22 @@ module Reacto
             @current = @injector.call(@current, v)
           end
 
+          @has_values = true
           tracker.on_value(@current)
+        end
+
+        close = lambda do
+          unless @has_values || @current == NO_INITIAL
+            tracker.on_value(@current)
+          end
+
+          tracker.on_close
         end
 
         Subscriptions::OperationSubscription.new(
           tracker,
-          value: inject
+          value: inject,
+          close: close
         )
       end
     end
