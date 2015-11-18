@@ -11,6 +11,8 @@ context Reacto::Trackable do
     end
   end
 
+  let(:source) { described_class.new(test_behaviour) }
+
   context '.new' do
     it 'supports behavior invoked on tracking, passed as block' do
       trackable = described_class.new do |tracker_subscription|
@@ -45,8 +47,7 @@ context Reacto::Trackable do
 
   context '#lift' do
     it 'applies a transformation to the trackable behaviour' do
-      trackable = described_class.new(test_behaviour)
-      lifted_trackable = trackable.lift do |tracker_subscription|
+      lifted_trackable = source.lift do |tracker_subscription|
         Reacto::Subscriptions::OperationSubscription.new(
           tracker_subscription,
           value: -> (v) { tracker_subscription.on_value(v * v) }
@@ -63,7 +64,6 @@ context Reacto::Trackable do
   context '#map' do
     it 'transforms the value of the source Trackable using the passed ' \
       'transformation' do
-      source = described_class.new(test_behaviour)
       trackable = source.map do |v|
         v * v * v
       end
@@ -77,7 +77,6 @@ context Reacto::Trackable do
 
   context '#select' do
     it 'doesn\'t notify with values not passing the filter block' do
-      source = described_class.new(test_behaviour)
       trackable = source.select do |v|
         v % 2 == 0
       end
@@ -88,7 +87,6 @@ context Reacto::Trackable do
     end
 
     it 'notifies with values passing the filter block' do
-      source = described_class.new(test_behaviour)
       trackable = source.select do |v|
         v % 2 == 1
       end
@@ -113,7 +111,6 @@ context Reacto::Trackable do
 
     it 'sends the values created by applying the `inject` operation on the ' \
       'last value and current value, using for first value the initial one' do
-      source = described_class.new(test_behaviour)
       trackable = source.inject(0) do |prev, v|
         prev + v
       end
@@ -126,7 +123,6 @@ context Reacto::Trackable do
     it 'sends the values created by applying the `inject` operation on the ' \
       'last value and current value, using for first value ' \
       'the first emitted by the source if no initial value provided' do
-      source = described_class.new(test_behaviour)
       trackable = source.inject do |prev, v|
         prev + v
       end
@@ -134,6 +130,25 @@ context Reacto::Trackable do
 
       expect(test_data.size).to be(3)
       expect(test_data).to be == [16, 23, 2037]
+    end
+  end
+
+  context '#drop' do
+    let(:test_behaviour) do
+      lambda do |tracker_subscription|
+        (1..15).each do |value|
+          tracker_subscription.on_value(value)
+        end
+
+        tracker_subscription.on_close
+      end
+    end
+
+    it 'drops the first `n` values sent by the source' do
+      source.drop(6).on(value: test_on_value)
+
+      expect(test_data.size).to be(9)
+      expect(test_data).to be == (7..15).to_a
     end
   end
 end
