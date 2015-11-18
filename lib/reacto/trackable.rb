@@ -49,6 +49,10 @@ module Reacto
       lift(Operations::Map.new(block_given? ? block : mapping))
     end
 
+    def select(filter = nil, &block)
+      lift(Operations::Select.new(block_given? ? block : mapping))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
