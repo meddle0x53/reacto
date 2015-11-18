@@ -57,6 +57,10 @@ module Reacto
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
+    def drop(how_many_to_drop)
+      lift(Operations::Drop.new(how_many_to_drop))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
