@@ -28,7 +28,7 @@ context Reacto::Trackable do
       .map(-> (v) { v * 2 })
       .on(value: test_on_value, close: test_on_close)
 
-      sleep 7
+      #sleep 7
       p test_data
     end
   end

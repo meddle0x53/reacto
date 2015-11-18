@@ -99,4 +99,28 @@ context Reacto::Trackable do
       expect(test_data[0]).to be(5)
     end
   end
+
+  context '#inject' do
+    let(:test_behaviour) do
+      lambda do |tracker_subscription|
+        [16, 7, 2014].each do |value|
+          tracker_subscription.on_value(value)
+        end
+
+        tracker_subscription.on_close
+      end
+    end
+
+    it 'sends the values created by applying the `inject` operation on the ' \
+      'last value and current value, using for first value the initial one' do
+      source = described_class.new(test_behaviour)
+      trackable = source.inject(0) do |prev, v|
+        prev + v
+      end
+      trackable.on(value: test_on_value)
+
+      expect(test_data.size).to be(3)
+      expect(test_data).to be == [16, 23, 2037]
+    end
+  end
 end
