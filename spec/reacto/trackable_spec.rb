@@ -122,5 +122,18 @@ context Reacto::Trackable do
       expect(test_data.size).to be(3)
       expect(test_data).to be == [16, 23, 2037]
     end
+
+    it 'sends the values created by applying the `inject` operation on the ' \
+      'last value and current value, using for first value ' \
+      'the first emitted by the source if no initial value provided' do
+      source = described_class.new(test_behaviour)
+      trackable = source.inject do |prev, v|
+        prev + v
+      end
+      trackable.on(value: test_on_value)
+
+      expect(test_data.size).to be(3)
+      expect(test_data).to be == [16, 23, 2037]
+    end
   end
 end
