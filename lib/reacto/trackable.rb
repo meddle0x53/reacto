@@ -50,7 +50,11 @@ module Reacto
     end
 
     def select(filter = nil, &block)
-      lift(Operations::Select.new(block_given? ? block : mapping))
+      lift(Operations::Select.new(block_given? ? block : filter))
+    end
+
+    def inject(initial = Operations::Inject::NO_INITIAL, injector = nil, &block)
+      lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
     def track_on(executor)

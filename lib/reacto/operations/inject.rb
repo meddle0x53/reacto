@@ -6,9 +6,9 @@ module Reacto
 
       NO_INITIAL = Object.new
 
-      def initialize(injector, current = NO_INITIAL)
+      def initialize(injector, initial = NO_INITIAL)
         @injector = injector
-        @current = current
+        @current = initial
       end
 
       def call(tracker)
