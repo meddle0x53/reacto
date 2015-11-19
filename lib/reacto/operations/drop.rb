@@ -16,10 +16,7 @@ module Reacto
       def call(tracker)
         behaviour = lambda do |value|
           @dropped += 1
-
-          if @dropped > @how_many_to_drop
-            tracker.on_value(value)
-          end
+          tracker.on_value(value) if @dropped > @how_many_to_drop
         end
 
         Subscriptions::OperationSubscription.new(
@@ -30,5 +27,3 @@ module Reacto
     end
   end
 end
-
-
