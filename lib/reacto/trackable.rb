@@ -61,6 +61,10 @@ module Reacto
       lift(Operations::Drop.new(how_many_to_drop))
     end
 
+    def drop(how_many_to_take)
+      lift(Operations::Take.new(how_many_to_take))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
