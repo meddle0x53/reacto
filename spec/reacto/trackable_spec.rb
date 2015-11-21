@@ -154,7 +154,7 @@ context Reacto::Trackable do
     end
   end
 
-  context '#drop' do
+  context '#drop & #take' do
     let(:test_behaviour) do
       lambda do |tracker_subscription|
         (1..15).each do |value|
@@ -165,11 +165,13 @@ context Reacto::Trackable do
       end
     end
 
-    it 'drops the first `n` values sent by the source' do
-      source.drop(6).on(value: test_on_value)
+    context('#drop') do
+      it 'drops the first `n` values sent by the source' do
+        source.drop(6).on(value: test_on_value)
 
-      expect(test_data.size).to be(9)
-      expect(test_data).to be == (7..15).to_a
+        expect(test_data.size).to be(9)
+        expect(test_data).to be == (7..15).to_a
+      end
     end
   end
 end
