@@ -20,7 +20,6 @@ module Reacto
             @taken += 1
           else
             tracker.on_close
-            unsubscribe
           end
         end
 

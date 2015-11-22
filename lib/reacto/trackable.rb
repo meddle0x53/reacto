@@ -61,7 +61,7 @@ module Reacto
       lift(Operations::Drop.new(how_many_to_drop))
     end
 
-    def drop(how_many_to_take)
+    def take(how_many_to_take)
       lift(Operations::Take.new(how_many_to_take))
     end
 
