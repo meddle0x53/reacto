@@ -173,5 +173,8 @@ context Reacto::Trackable do
         expect(test_data).to be == (7..15).to_a
       end
     end
+
+    context('#take') do
+    end
   end
 end
