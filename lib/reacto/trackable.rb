@@ -11,6 +11,11 @@ module Reacto
       def never
         Trackable.new
       end
+
+      def make(behaviour = NO_ACTION, &block)
+        behaviour = block_given? ? block : behaviour
+        Trackable.new(behaviour)
+      end
     end
 
     def initialize(behaviour = NO_ACTION, executor = nil, &block)
