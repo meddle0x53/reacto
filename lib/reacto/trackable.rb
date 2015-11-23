@@ -7,6 +7,12 @@ module Reacto
   class Trackable
     TOPICS = [:open, :value, :error, :close]
 
+    class << self
+      def never
+        Trackable.new
+      end
+    end
+
     def initialize(behaviour = NO_ACTION, executor = nil, &block)
       @behaviour = block_given? ? block : behaviour
       @executor = executor
