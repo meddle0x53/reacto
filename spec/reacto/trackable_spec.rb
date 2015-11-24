@@ -175,6 +175,12 @@ context Reacto::Trackable do
     end
 
     context('#take') do
+      it 'sents only the first `n` values sent by the source' do
+        source.take(6).on(value: test_on_value)
+
+        expect(test_data.size).to be(6)
+        expect(test_data).to be == (1..6).to_a
+      end
     end
   end
 end
