@@ -22,4 +22,21 @@ context Reacto::Trackable do
       expect(test_data).to be_empty
     end
   end
+
+  context '.make' do
+    it 'creates a new trackable with custom behaviour passed as lambda' do
+      behaviour = lambda do |tracker|
+        (1..10).each do |v|
+          tracker.on_value(v)
+        end
+
+        tracker.on_close
+      end
+
+      attach_test_trackers described_class.make(behaviour)
+
+      expect(test_data.size).to be(11)
+      expect(test_data).to be == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '|']
+    end
+  end
 end
