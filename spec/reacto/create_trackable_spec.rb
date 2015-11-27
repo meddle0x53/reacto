@@ -52,5 +52,23 @@ context Reacto::Trackable do
       expect(test_data.size).to be(11)
       expect(test_data).to be == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '|']
     end
+
+    it 'does not emit anything once it is completed' do
+      trackable = described_class.make do |tracker|
+        (1..5).each do |v|
+          tracker.on_value(v)
+        end
+
+        tracker.on_close
+
+        (1..5).each do |v|
+          tracker.on_value(v)
+        end
+      end
+      attach_test_trackers trackable
+
+      expect(test_data.size).to be(6)
+      expect(test_data).to be == [1, 2, 3, 4, 5, '|']
+    end
   end
 end
