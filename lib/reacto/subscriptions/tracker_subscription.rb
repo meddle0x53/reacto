@@ -3,12 +3,7 @@ require 'reacto/subscriptions/subscription'
 module Reacto
   module Subscriptions
     class TrackerSubscription
-      extend Forwardable
       include Subscription
-
-      delegate(
-        [:on_open, :on_value, :on_error, :on_close] => :@notification_tracker
-      )
 
       def initialize(notification_tracker, trackable)
         @notification_tracker = notification_tracker
@@ -27,6 +22,32 @@ module Reacto
         @trackable = nil
         @notification_tracker = nil
         @subscribed = false
+      end
+
+      def on_open
+        return unless subscribed?
+
+        @notification_tracker.on_open
+      end
+
+      def on_value(v)
+        return unless subscribed?
+
+        @notification_tracker.on_value(v)
+      end
+
+      def on_error(e)
+        return unless subscribed?
+
+        @notification_tracker.on_error(e)
+        unsubscribe
+      end
+
+      def on_close
+        return unless subscribed?
+
+        @notification_tracker.on_close
+        unsubscribe
       end
     end
   end
