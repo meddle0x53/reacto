@@ -8,6 +8,10 @@ module Reacto
       def unsubscribe
         raise NotImplementedError.new('Abstract method!')
       end
+
+      def add(subscription)
+        raise NotImplementedError.new('Abstract method!')
+      end
     end
   end
 end
