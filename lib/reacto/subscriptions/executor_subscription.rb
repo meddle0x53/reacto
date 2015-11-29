@@ -24,6 +24,10 @@ module Reacto
         @executor.post(&@executor.method(:shutdown))
       end
 
+      def add(subscription)
+        @wrapped.add(subscription)
+      end
+
       def on_open
         @executor.post(&@wrapped.method(:on_open))
       end
