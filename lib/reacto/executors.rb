@@ -15,7 +15,7 @@ module Reacto
     end
 
     def tasks
-      Concurrent::FixedThreadPool.new(2)
+      Concurrent::FixedThreadPool.new(4) # Number of cores here?
     end
   end
 end
