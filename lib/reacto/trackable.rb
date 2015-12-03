@@ -9,12 +9,21 @@ module Reacto
 
     class << self
       def never
-        Trackable.new
+        self.new
       end
 
       def make(behaviour = NO_ACTION, &block)
         behaviour = block_given? ? block : behaviour
-        Trackable.new(behaviour)
+        self.new(behaviour)
+      end
+
+      def timeout(secs_to_wait, value)
+        self.new(nil, Reacto::Executors.tasks) do |tracker|
+          sleep secs_to_wait
+
+          tracker.on_value(value)
+          tracker.on_close
+        end
       end
     end
 
@@ -82,6 +91,11 @@ module Reacto
 
     def execute_on(executor)
       Trackable.new(@behaviour, executor)
+    end
+
+      def await(timeout = nil, subscription)
+      # latch here...
+      #subscription.add()
     end
 
     protected
