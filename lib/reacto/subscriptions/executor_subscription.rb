@@ -32,10 +32,10 @@ module Reacto
         @executor.post(&@wrapped.method(:on_open))
       end
 
-      def on_value(value)
+      def on_value(v)
         return if !subscribed? || @closed
 
-        @executor.post(value, &@wrapped.method(:on_value))
+        @executor.post(v, &@wrapped.method(:on_value))
       end
 
       def on_close

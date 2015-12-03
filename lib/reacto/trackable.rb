@@ -1,3 +1,5 @@
+require 'concurrent'
+
 require 'reacto/subscriptions'
 require 'reacto/tracker'
 require 'reacto/operations'
@@ -17,12 +19,18 @@ module Reacto
         self.new(behaviour)
       end
 
-      def timeout(secs_to_wait, value)
-        self.new(nil, Reacto::Executors.tasks) do |tracker|
-          sleep secs_to_wait
-
-          tracker.on_value(value)
-          tracker.on_close
+      def timeout(secs, value, executor = Reacto::Executors.tasks)
+        if executor.is_a?(Concurrent::ImmediateExecutor)
+          self.new do |tracker|
+            sleep secs
+            SINGLE_VALUE_BEHAVIOUR.call(tracker, value)
+          end
+        else
+          self.new do |tracker|
+            Concurrent::ScheduledTask.execute(secs, executor: executor) do
+              SINGLE_VALUE_BEHAVIOUR.call(tracker, value)
+            end
+          end
         end
       end
     end
@@ -93,9 +101,10 @@ module Reacto
       Trackable.new(@behaviour, executor)
     end
 
-      def await(timeout = nil, subscription)
-      # latch here...
-      #subscription.add()
+    def await(subscription, timeout = nil)
+      latch = Concurrent::CountDownLatch.new(1)
+      subscription.add(Subscriptions.on_close { latch.count_down })
+      latch.wait(timeout)
     end
 
     protected

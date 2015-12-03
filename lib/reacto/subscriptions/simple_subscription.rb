@@ -1,13 +1,21 @@
+require 'reacto/constants'
 require 'reacto/subscriptions/subscription'
 
 module Reacto
   module Subscriptions
-    class TrackerSubscription
+    class SimpleSubscription
       include Subscription
 
-      def initialize(notification_tracker, trackable)
-        @notification_tracker = notification_tracker
-        @trackable = trackable
+      def initialize(
+        open: NO_ACTION,
+        value: NO_ACTION,
+        error: DEFAULT_ON_ERROR,
+        close: NO_ACTION
+      )
+        @open = open
+        @value = value
+        @error = error
+        @close = close
 
         @subscribed = true
         @subscriptions = []
@@ -19,11 +27,6 @@ module Reacto
 
       def unsubscribe
         @subscriptions.each(&:unsubscribe)
-
-        @trackable.off(@notification_tracker)
-
-        @trackable = nil
-        @notification_tracker = nil
         @subscribed = false
       end
 
@@ -36,21 +39,21 @@ module Reacto
       def on_open
         return unless subscribed?
 
-        @notification_tracker.on_open
+        @open.call
         @subscriptions.each(&:on_open)
       end
 
       def on_value(v)
         return unless subscribed?
 
-        @notification_tracker.on_value(v)
+        @value.call(v)
         @subscriptions.each { |s| s.on_value(v) }
       end
 
       def on_error(e)
         return unless subscribed?
 
-        @notification_tracker.on_error(e)
+        @error.call(error)
         @subscriptions.each { |s| s.on_error(e) }
         unsubscribe
       end
@@ -58,10 +61,11 @@ module Reacto
       def on_close
         return unless subscribed?
 
-        @notification_tracker.on_close
+        @close.call
         @subscriptions.each(&:on_close)
         unsubscribe
       end
     end
   end
 end
+

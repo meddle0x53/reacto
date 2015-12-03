@@ -2,8 +2,6 @@ require 'reacto/constants'
 
 module Reacto
   class Tracker
-    DEFAULT_ON_ERROR = -> (e) { raise e }
-
     def initialize(
       open: NO_ACTION,
       value: NO_ACTION,
@@ -20,8 +18,8 @@ module Reacto
       @open.call
     end
 
-    def on_value(value)
-      @value.call(value)
+    def on_value(v)
+      @value.call(v)
     end
 
     def on_error(error)

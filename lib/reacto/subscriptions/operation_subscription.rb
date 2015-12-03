@@ -20,27 +20,6 @@ module Reacto
 
         @wrapped = subscription
       end
-
-      def open(&block)
-        @open = block
-        self
-      end
-
-      def value(&block)
-        @value = block
-        self
-      end
-
-      def error(&block)
-        @error = block
-        self
-      end
-
-      def close(&block)
-        @close = block
-        self
-      end
-
     end
   end
 end

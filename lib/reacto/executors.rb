@@ -4,9 +4,19 @@ require 'concurrent/executor/fixed_thread_pool'
 
 module Reacto
   module Executors
+    class CurrentExecutor
+      def post
+
+      end
+    end
+
     module_function
 
     def immediate
+      Concurrent::ImmediateExecutor.new
+    end
+
+    def current
       Concurrent::ImmediateExecutor.new
     end
 
