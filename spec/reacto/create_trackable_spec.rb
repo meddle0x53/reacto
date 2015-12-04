@@ -104,4 +104,22 @@ context Reacto::Trackable do
       expect(test_data).to be == [1, 2, 3, 4, 5, '|', 1, 2, 3, 4, 5, '|']
     end
   end
+
+  context '.timeout' do
+    it 'emits the passed value after the passed time runs out and then emits ' \
+      'a close notification' do
+      trackable = described_class.timeout(0.2, 5)
+      subscription = attach_test_trackers(trackable)
+
+      expect(test_data).to be_empty
+      trackable.await(subscription)
+      expect(test_data).to be == [5, '|']
+    end
+
+    it 'it can use a specific executor' do
+      trackable = described_class.timeout(0.2, 5, Reacto::Executors.immediate)
+      subscription = attach_test_trackers(trackable)
+      expect(test_data).to be == [5, '|']
+    end
+  end
 end
