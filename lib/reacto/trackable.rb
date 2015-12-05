@@ -14,24 +14,28 @@ module Reacto
         self.new
       end
 
-      def make(behaviour = NO_ACTION, &block)
+      def make(behaviour = NO_ACTION, executor = nil, &block)
         behaviour = block_given? ? block : behaviour
-        self.new(behaviour)
+        self.new(behaviour, executor)
       end
 
-      def timeout(secs, value, executor = Reacto::Executors.tasks)
+      def later(secs, value, executor = Reacto::Executors.tasks)
         if executor.is_a?(Concurrent::ImmediateExecutor)
           self.new do |tracker|
             sleep secs
-            SINGLE_VALUE_BEHAVIOUR.call(tracker, value)
+            SINGLE_TRACKER_VALUE_BEHAVIOUR.call(tracker, value)
           end
         else
           self.new do |tracker|
             Concurrent::ScheduledTask.execute(secs, executor: executor) do
-              SINGLE_VALUE_BEHAVIOUR.call(tracker, value)
+              SINGLE_TRACKER_VALUE_BEHAVIOUR.call(tracker, value)
             end
           end
         end
+      end
+
+      def value(value, executor = nil)
+        make(SINGLE_VALUE_BEHAVIOUR.call(value), executor)
       end
     end
 
