@@ -1,5 +1,6 @@
 require 'concurrent'
 
+require 'reacto/behaviours'
 require 'reacto/subscriptions'
 require 'reacto/tracker'
 require 'reacto/operations'
@@ -21,21 +22,36 @@ module Reacto
 
       def later(secs, value, executor = Reacto::Executors.tasks)
         if executor.is_a?(Concurrent::ImmediateExecutor)
-          self.new do |tracker|
+          make do |tracker|
             sleep secs
-            SINGLE_TRACKER_VALUE_BEHAVIOUR.call(tracker, value)
+            Behaviours.single_tracker_value(tracker, value)
           end
         else
-          self.new do |tracker|
+          make do |tracker|
             Concurrent::ScheduledTask.execute(secs, executor: executor) do
-              SINGLE_TRACKER_VALUE_BEHAVIOUR.call(tracker, value)
+              Behaviours.single_tracker_value(tracker, value)
             end
           end
         end
       end
 
       def value(value, executor = nil)
-        make(SINGLE_VALUE_BEHAVIOUR.call(value), executor)
+        make(Behaviours.single_value(value), executor)
+      end
+
+      def enumerable(enumerable, executor = nil)
+        make(nil, executor) do |tracker|
+          begin
+            enumerable.each do |val|
+              break unless tracker.subscribed?
+              tracker.on_value(val)
+            end
+
+            tracker.on_close if tracker.subscribed?
+          rescue => error
+            tracker.on_error(error) if tracker.subscribed?
+          end
+        end
       end
     end
 
