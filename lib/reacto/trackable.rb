@@ -35,6 +35,56 @@ module Reacto
         end
       end
 
+      def interval(
+        interval,
+        enumerator = Behaviours.integers_enumerator,
+        executor = nil
+      )
+        if executor.is_a?(Concurrent::ImmediateExecutor)
+          make do |tracker|
+            Behaviours.with_close_and_error(tracker) do |subscriber|
+              while subscriber.subscribed?
+                sleep interval if subscriber.subscribed?
+                if subscriber.subscribed?
+                  subscriber.on_value(enumerator.next)
+                else
+                  break
+                end
+              end
+            end
+          end
+        else
+          make do |tracker|
+            queue = Queue.new
+            task = Concurrent::TimerTask.new(execution_interval: interval) do
+              queue.push('ready')
+            end
+            Thread.new do
+              begin
+                loop do
+                  queue.pop
+                  break unless tracker.subscribed?
+
+                  begin
+                    value = enumerator.next
+                    tracker.on_value(value)
+                  rescue StopIteration
+                    tracker.on_close if tracker.subscribed?
+                    break
+                  rescue StandardError => error
+                    tracker.on_error(error) if tracker.subscribed?
+                    break
+                  end
+                end
+              ensure
+                task.shutdown
+              end
+            end
+            task.execute
+          end
+        end
+      end
+
       def value(value, executor = nil)
         make(Behaviours.single_value(value), executor)
       end
