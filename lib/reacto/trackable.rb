@@ -173,6 +173,10 @@ module Reacto
       lift(Operations::Prepend.new(enumerable))
     end
 
+    def concat(trackable)
+      lift(Operations::Concat.new(trackable))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end

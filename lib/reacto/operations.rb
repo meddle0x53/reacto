@@ -5,6 +5,7 @@ require 'reacto/operations/drop'
 require 'reacto/operations/take'
 require 'reacto/operations/track_on'
 require 'reacto/operations/prepend'
+require 'reacto/operations/concat'
 
 module Reacto
   module Operations
