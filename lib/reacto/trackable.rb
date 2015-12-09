@@ -147,8 +147,10 @@ module Reacto
       end
     end
 
-    def map(mapping = nil, &block)
-      lift(Operations::Map.new(block_given? ? block : mapping))
+    def map(mapping = nil, error: nil, &block)
+      lift(Operations::Map.new(
+        block_given? ? block : mapping, error: error
+      ))
     end
 
     def select(filter = nil, &block)
