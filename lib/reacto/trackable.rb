@@ -20,7 +20,7 @@ module Reacto
         self.new(behaviour, executor)
       end
 
-      def later(secs, value, executor = Reacto::Executors.tasks)
+      def later(secs, value, executor: Reacto::Executors.tasks)
         if executor.is_a?(Concurrent::ImmediateExecutor)
           make do |tracker|
             sleep secs
@@ -38,7 +38,7 @@ module Reacto
       def interval(
         interval,
         enumerator = Behaviours.integers_enumerator,
-        executor = nil
+        executor: nil
       )
         if executor.is_a?(Concurrent::ImmediateExecutor)
           make do |tracker|
@@ -46,7 +46,11 @@ module Reacto
               while subscriber.subscribed?
                 sleep interval if subscriber.subscribed?
                 if subscriber.subscribed?
-                  subscriber.on_value(enumerator.next)
+                  begin
+                    subscriber.on_value(enumerator.next)
+                  rescue StopIteration
+                    break
+                  end
                 else
                   break
                 end
@@ -161,6 +165,10 @@ module Reacto
 
     def take(how_many_to_take)
       lift(Operations::Take.new(how_many_to_take))
+    end
+
+    def prepend(enumerable)
+      lift(Operations::Prepend.new(enumerable))
     end
 
     def track_on(executor)
