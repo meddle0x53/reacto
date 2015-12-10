@@ -5,6 +5,7 @@ require 'reacto/subscriptions'
 require 'reacto/tracker'
 require 'reacto/operations'
 require 'reacto/executors'
+require 'reacto/resources'
 
 module Reacto
   class Trackable
@@ -75,6 +76,7 @@ module Reacto
             task = Concurrent::TimerTask.new(execution_interval: interval) do
               queue.push('ready')
             end
+            tracker.add_resource(Reacto::Resources::ExecutorResource.new(task))
             Thread.new do
               begin
                 loop do
@@ -191,6 +193,10 @@ module Reacto
 
     def concat(trackable)
       lift(Operations::Concat.new(trackable))
+    end
+
+    def merge(trackable)
+      lift(Operations::Merge.new(trackable))
     end
 
     def track_on(executor)
