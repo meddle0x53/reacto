@@ -175,6 +175,10 @@ module Reacto
       lift(Operations::Take.new(how_many_to_take))
     end
 
+    def last
+      lift(Operations::Last.new)
+    end
+
     def prepend(enumerable)
       lift(Operations::Prepend.new(enumerable))
     end
