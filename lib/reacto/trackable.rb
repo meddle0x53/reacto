@@ -15,6 +15,12 @@ module Reacto
         self.new
       end
 
+      def error(err, executor = nil)
+        make(nil, executor) do |subscriber|
+          subscriber.on_error(err)
+        end
+      end
+
       def make(behaviour = NO_ACTION, executor = nil, &block)
         behaviour = block_given? ? block : behaviour
         self.new(behaviour, executor)
