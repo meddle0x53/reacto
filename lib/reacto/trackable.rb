@@ -15,6 +15,12 @@ module Reacto
         self.new
       end
 
+      def close(executor = nil)
+        make(nil, executor) do |subscriber|
+          subscriber.on_close
+        end
+      end
+
       def error(err, executor = nil)
         make(nil, executor) do |subscriber|
           subscriber.on_error(err)
