@@ -11,6 +11,7 @@ module Reacto
 
         @subscribed = true
         @subscriptions = []
+        @resources = []
       end
 
       def subscribed?
@@ -25,6 +26,14 @@ module Reacto
         @trackable = nil
         @notification_tracker = nil
         @subscribed = false
+        @resources.each(&:cleanup)
+        @resources = []
+      end
+
+      def add_resource(resource)
+        return unless subscribed?
+
+        @resources << resource
       end
 
       def add(subscription)

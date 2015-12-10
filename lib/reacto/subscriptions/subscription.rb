@@ -12,6 +12,10 @@ module Reacto
       def add(subscription)
         raise NotImplementedError.new('Abstract method!')
       end
+
+      def add_resource(resource)
+        raise NotImplementedError.new('Abstract method!')
+      end
     end
   end
 end

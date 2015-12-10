@@ -19,6 +19,7 @@ module Reacto
 
         @subscribed = true
         @subscriptions = []
+        @resources = []
       end
 
       def subscribed?
@@ -28,12 +29,20 @@ module Reacto
       def unsubscribe
         @subscriptions.each(&:unsubscribe)
         @subscribed = false
+        @resources.each(&:cleanup)
+        @resources = []
       end
 
       def add(subscription)
         return unless subscribed?
 
         @subscriptions << subscription
+      end
+
+      def add_resource(resource)
+        return unless subscribed?
+
+        @resources << resource
       end
 
       def on_open

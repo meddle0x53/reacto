@@ -28,6 +28,10 @@ module Reacto
         @wrapped.add(subscription)
       end
 
+      def add_resource(resource)
+        @wrapped.add_resource(resource)
+      end
+
       def on_open
         @executor.post(&@wrapped.method(:on_open))
       end

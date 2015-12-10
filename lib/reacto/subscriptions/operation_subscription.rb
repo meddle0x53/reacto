@@ -7,7 +7,7 @@ module Reacto
       extend Forwardable
       include Subscription
 
-      delegate ['subscribed?', :unsubscribe, :add] => :@wrapped
+      delegate ['subscribed?', :unsubscribe, :add, :add_resource] => :@wrapped
 
       def initialize(
         subscription,
