@@ -6,18 +6,22 @@ module Reacto
       def initialize(trackable)
         @trackable = trackable
         @close_notifications = 2
+        @lock = Mutex.new
       end
 
       def call(tracker)
-        @trackable.send(:do_track, tracker)
         close = lambda do
-          @close_notifications -= 1
-          tracker.on_close if @close_notifications == 0
+          @lock.synchronize do
+            @close_notifications -= 1
+            tracker.on_close if @close_notifications == 0
+          end
         end
-        Subscriptions::OperationSubscription.new(
+        sub = Subscriptions::OperationSubscription.new(
           tracker,
           close: close
         )
+        @trackable.send(:do_track, sub)
+        sub
       end
     end
   end
