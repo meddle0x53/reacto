@@ -1,12 +1,18 @@
 module Reacto
   module Resources
     class ExecutorResource
-      def initialize(executor)
+      def initialize(executor, threads: [])
         @executor = executor
+        @threads = threads
       end
       def cleanup
         @executor.shutdown
         @executor = nil
+
+        @threads.each do |thread|
+          Thread.kill(thread)
+        end
+        @threads = []
       end
     end
   end
