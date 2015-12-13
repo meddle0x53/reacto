@@ -76,8 +76,7 @@ module Reacto
             task = Concurrent::TimerTask.new(execution_interval: interval) do
               queue.push('ready')
             end
-            tracker.add_resource(Reacto::Resources::ExecutorResource.new(task))
-            Thread.new do
+            thread = Thread.new do
               begin
                 loop do
                   queue.pop
@@ -99,6 +98,10 @@ module Reacto
               end
             end
             task.execute
+
+            tracker.add_resource(Reacto::Resources::ExecutorResource.new(
+              task, threads: [thread]
+            ))
           end
         end
       end
