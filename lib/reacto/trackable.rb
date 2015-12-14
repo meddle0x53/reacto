@@ -216,6 +216,8 @@ module Reacto
       latch.wait(timeout)
     end
 
+    alias_method :skip, :drop
+
     protected
 
     def do_track(subscription)
