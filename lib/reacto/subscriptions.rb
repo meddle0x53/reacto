@@ -11,6 +11,13 @@ module Reacto
       def on_close(&block)
         SimpleSubscription.new(close: block)
       end
+
+      def on_close_and_error(&block)
+        SimpleSubscription.new(
+          close: -> () { block.call },
+          error: -> (_e) { block.call }
+        )
+      end
     end
   end
 end
