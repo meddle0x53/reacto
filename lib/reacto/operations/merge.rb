@@ -19,11 +19,11 @@ module Reacto
             end
           end
         end
-        error =
+        err =
           if @delay_error
-            lambda do |e|
+            lambda do |er|
               @lock.synchronize do
-                @error = e
+                @error = er
                 @close_notifications -= 1
                 tracker.on_error(@error) if @close_notifications == 0
               end
@@ -35,7 +35,7 @@ module Reacto
         sub = Subscriptions::OperationSubscription.new(
           tracker,
           close: close,
-          error: error
+          error: err
         )
 
         @trackable.send(:do_track, sub)
