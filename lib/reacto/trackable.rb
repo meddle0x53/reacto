@@ -198,8 +198,8 @@ module Reacto
       lift(Operations::Concat.new(trackable))
     end
 
-    def merge(trackable)
-      lift(Operations::Merge.new(trackable))
+    def merge(trackable, delay_error: false)
+      lift(Operations::Merge.new(trackable, delay_error: delay_error))
     end
 
     def track_on(executor)
@@ -212,7 +212,7 @@ module Reacto
 
     def await(subscription, timeout = nil)
       latch = Concurrent::CountDownLatch.new(1)
-      subscription.add(Subscriptions.on_close { latch.count_down })
+      subscription.add(Subscriptions.on_close_and_error { latch.count_down })
       latch.wait(timeout)
     end
 
