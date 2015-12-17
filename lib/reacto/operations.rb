@@ -8,6 +8,7 @@ require 'reacto/operations/track_on'
 require 'reacto/operations/prepend'
 require 'reacto/operations/concat'
 require 'reacto/operations/merge'
+require 'reacto/operations/buffer'
 
 module Reacto
   module Operations
