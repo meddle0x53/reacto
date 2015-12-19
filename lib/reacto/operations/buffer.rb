@@ -14,7 +14,11 @@ module Reacto
           tracker.on_value(@buffer) unless @buffer.empty?
           tracker.on_close
         end
-        value = if !count.nil? && delay.nil?
+        error = lambda do |e|
+          tracker.on_value(@buffer) unless @buffer.empty?
+          tracker.on_error(e)
+        end
+        value = if !@count.nil? && @delay.nil?
                   count_buffer_behaviour(tracker)
                 else
                   tracker.method(:on_value)
@@ -23,7 +27,8 @@ module Reacto
         Subscriptions::OperationSubscription.new(
           tracker,
           value: value,
-          close: close
+          close: close,
+          error: error
         )
       end
 
@@ -33,7 +38,7 @@ module Reacto
         lambda do |value|
           @buffer << value
 
-          if @buffer.size >= count
+          if @buffer.size >= @count
             tracker.on_value(@buffer)
             @buffer = []
           end
