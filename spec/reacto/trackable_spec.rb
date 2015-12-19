@@ -282,6 +282,41 @@ context Reacto::Trackable do
         expect(test_data).to be ==
           ["0a", "0b", "1a", "2a", "1b", "3a", "4a", "2b", "3b", "|"]
       end
+
+      it 'finishes with the error if `delay_error` is true' do
+        err = StandardError.new('Hey')
+        trackable = described_class.interval(0.2).map do |v|
+          raise err if v == 3
+          v.to_s + 'a'
+        end.take(5)
+
+        to_be_merged =
+          described_class.interval(0.35).map { |v| v.to_s + 'b'}.take(4)
+
+        trackable = trackable.merge(to_be_merged, delay_error: true)
+        subscription = trackable.on(
+          value: test_on_value, close: test_on_close, error: test_on_error
+        )
+        trackable.await(subscription, 2)
+
+        expect(test_data).to be ==
+          ["0a", "0b", "1a", "2a", "1b", "2b", "3b", err]
+
+      end
+    end
+
+    context '#buffer' do
+      context 'count' do
+        it 'sends value on batches with the size of the passed count' do
+          trackable = described_class.enumerable((1..20)).buffer(count: 5)
+          trackable.on(
+            value: test_on_value, close: test_on_close, error: test_on_error
+          )
+
+          expect(test_data).to be ==
+            [(1..5).to_a, (6..10).to_a, (11..15).to_a, (16..20).to_a, '|']
+        end
+      end
     end
   end
 end
