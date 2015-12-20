@@ -1,3 +1,4 @@
+require 'concurrent'
 require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
@@ -11,15 +12,21 @@ module Reacto
 
       def call(tracker)
         close = lambda do
+          @task.shutdown if @task
+
           tracker.on_value(@buffer) unless @buffer.empty?
           tracker.on_close
         end
         error = lambda do |e|
+          @task.shutdown if @task
+
           tracker.on_value(@buffer) unless @buffer.empty?
           tracker.on_error(e)
         end
         value = if !@count.nil? && @delay.nil?
                   count_buffer_behaviour(tracker)
+                elsif @count.nil? && !@delay.nil?
+                  delay_buffer_behaviour(tracker)
                 else
                   tracker.method(:on_value)
                 end
@@ -44,7 +51,16 @@ module Reacto
           end
         end
       end
+
+      def delay_buffer_behaviour(tracker)
+        @task = Concurrent::TimerTask.new(execution_interval: @delay) do
+          unless @buffer.empty?
+            tracker.on_value(@buffer)
+            @buffer = []
+          end
+        end
+        -> (value) { @buffer << value }
+      end
     end
   end
 end
-
