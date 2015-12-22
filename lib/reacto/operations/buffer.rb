@@ -59,6 +59,7 @@ module Reacto
             @buffer = []
           end
         end
+        @task.execute
         -> (value) { @buffer << value }
       end
     end

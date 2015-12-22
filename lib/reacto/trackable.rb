@@ -202,8 +202,8 @@ module Reacto
       lift(Operations::Merge.new(trackable, delay_error: delay_error))
     end
 
-    def buffer(count: nil)
-      lift(Operations::Buffer.new(count: count))
+    def buffer(count: nil, delay: nil)
+      lift(Operations::Buffer.new(count: count, delay: delay))
     end
 
     def track_on(executor)
