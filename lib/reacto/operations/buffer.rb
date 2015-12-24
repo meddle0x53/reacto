@@ -27,6 +27,8 @@ module Reacto
                   count_buffer_behaviour(tracker)
                 elsif @count.nil? && !@delay.nil?
                   delay_buffer_behaviour(tracker)
+                elsif @count && @delay
+                  count_and_delay_buffer_behaviour(tracker)
                 else
                   tracker.method(:on_value)
                 end
@@ -52,7 +54,7 @@ module Reacto
         end
       end
 
-      def delay_buffer_behaviour(tracker)
+      def delay_task(tracker)
         @task = Concurrent::TimerTask.new(execution_interval: @delay) do
           unless @buffer.empty?
             tracker.on_value(@buffer)
@@ -60,7 +62,16 @@ module Reacto
           end
         end
         @task.execute
+      end
+
+      def delay_buffer_behaviour(tracker)
+        delay_task(tracker)
         -> (value) { @buffer << value }
+      end
+
+      def count_and_delay_buffer_behaviour(tracker)
+        delay_task(tracker)
+        count_buffer_behaviour(tracker)
       end
     end
   end
