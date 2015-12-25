@@ -12,15 +12,11 @@ module Reacto
 
       def call(tracker)
         close = lambda do
-          @task.shutdown if @task
-
-          tracker.on_value(@buffer) unless @buffer.empty?
+          finish(tracker)
           tracker.on_close
         end
         error = lambda do |e|
-          @task.shutdown if @task
-
-          tracker.on_value(@buffer) unless @buffer.empty?
+          finish(tracker)
           tracker.on_error(e)
         end
         value = if !@count.nil? && @delay.nil?
@@ -42,6 +38,12 @@ module Reacto
       end
 
       private
+
+      def finish(tracker)
+        @task.shutdown if @task
+
+        tracker.on_value(@buffer) unless @buffer.empty?
+      end
 
       def count_buffer_behaviour(tracker)
         lambda do |value|
