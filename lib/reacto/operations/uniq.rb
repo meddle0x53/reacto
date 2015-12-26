@@ -4,13 +4,13 @@ module Reacto
   module Operations
     class Uniq
       def passed
-        @passed ||= []
+        @passed ||= {}
       end
 
       def call(tracker)
         value = lambda do |v|
-          unless passed.include?(v)
-            passed << v
+          unless passed[v]
+            passed[v] = true
             tracker.on_value(v)
           end
         end
