@@ -9,6 +9,7 @@ require 'reacto/operations/prepend'
 require 'reacto/operations/concat'
 require 'reacto/operations/merge'
 require 'reacto/operations/buffer'
+require 'reacto/operations/uniq'
 
 module Reacto
   module Operations
