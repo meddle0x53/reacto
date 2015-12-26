@@ -124,6 +124,9 @@ module Reacto
           end
         end
       end
+
+      def combine_with(function, *trackables)
+      end
     end
 
     def initialize(behaviour = NO_ACTION, executor = nil, &block)
