@@ -336,6 +336,27 @@ context Reacto::Trackable do
           ]
         end
       end
+
+      context 'count & delay' do
+        it 'uses either the count or the delay to buffer and send' do
+          trackable = described_class.make do |subscriber|
+            subscriber.on_value(1)
+            subscriber.on_value(2)
+            subscriber.on_value(3)
+            subscriber.on_value(4)
+            subscriber.on_value(5)
+            sleep 1
+            subscriber.on_value(6)
+            subscriber.on_close
+          end.buffer(delay: 0.5, count: 3)
+
+          trackable.on(
+            value: test_on_value, close: test_on_close, error: test_on_error
+          )
+          expect(test_data).to be ==
+            [[1, 2, 3], [4, 5], [6], '|']
+        end
+      end
     end
   end
 end
