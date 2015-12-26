@@ -186,6 +186,10 @@ module Reacto
       lift(Operations::Take.new(how_many_to_take))
     end
 
+    def uniq
+      lift(Operations::Uniq.new)
+    end
+
     def last
       lift(Operations::Last.new)
     end
