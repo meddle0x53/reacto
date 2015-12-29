@@ -79,19 +79,19 @@ module Reacto
 
       def on_value(_)
         return unless subscribed?
-        subscriber.on_value(@combinator.call(*@subscriptions.map(&:last_value)))
+        @subscriber.on_value(@combinator.call(*@subscriptions.map(&:last_value)))
       end
 
       def on_error(e)
         return unless subscribed?
-        subscriber.on_error(e)
+        @subscriber.on_error(e)
       end
 
       def on_close
         return unless subscribed?
         return unless @subscriptions.any? { |s| !s.closed? }
 
-        subscriber.on_close
+        @subscriber.on_close
       end
 
       def subscription!
