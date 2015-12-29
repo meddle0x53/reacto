@@ -79,10 +79,14 @@ module Reacto
 
       def on_value(_)
         return unless subscribed?
-        @subscriber.on_value(@combinator.call(*@subscriptions.map(&:last_value)))
+        @subscriber.on_value(
+          @combinator.call(*@subscriptions.map(&:last_value))
+        )
       end
 
       def on_error(e)
+        # Introduce a multi-error and not call on_error right away when there is
+        # an error and an option is set?
         return unless subscribed?
         @subscriber.on_error(e)
       end
