@@ -4,6 +4,7 @@ require 'reacto/subscriptions/tracker_subscription'
 require 'reacto/subscriptions/operation_subscription'
 require 'reacto/subscriptions/executor_subscription'
 require 'reacto/subscriptions/simple_subscription'
+require 'reacto/subscriptions/combining_subscription'
 
 module Reacto
   module Subscriptions
