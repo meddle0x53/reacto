@@ -16,6 +16,16 @@ module Reacto
         self.new
       end
 
+      def combine(combinator, *trackables)
+        make do |subscriber|
+          main =
+            Subscriptions::CombiningSubscription.new(combinator, subscriber)
+          trackables.each do |trackable|
+            trackable.do_track(main.subscription!)
+          end
+        end
+      end
+
       def close(executor = nil)
         make(nil, executor) do |subscriber|
           subscriber.on_close
