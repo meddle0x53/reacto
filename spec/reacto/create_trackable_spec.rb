@@ -209,4 +209,8 @@ context Reacto::Trackable do
 
     end
   end
+
+  context '.combine' do
+
+  end
 end
