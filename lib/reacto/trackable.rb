@@ -21,7 +21,7 @@ module Reacto
           main =
             Subscriptions::CombiningSubscription.new(combinator, subscriber)
           trackables.each do |trackable|
-            trackable.do_track(main.subscription!)
+            trackable.do_track main.subscription!
           end
         end
       end
