@@ -79,6 +79,8 @@ module Reacto
 
       def on_value(_)
         return unless subscribed?
+        return if @subscriptions.map(&:last_value).any? { |v| v == NO_VALUE }
+
         @subscriber.on_value(
           @combinator.call(*@subscriptions.map(&:last_value))
         )
