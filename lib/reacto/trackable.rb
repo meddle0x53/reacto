@@ -16,10 +16,10 @@ module Reacto
         self.new
       end
 
-      def combine(combinator, *trackables)
+      def combine(*trackables, &block)
         make do |subscriber|
           main =
-            Subscriptions::CombiningSubscription.new(combinator, subscriber)
+            Subscriptions::CombiningSubscription.new(block, subscriber)
           trackables.each do |trackable|
             trackable.do_track main.subscription!
           end
@@ -238,8 +238,6 @@ module Reacto
     end
 
     alias_method :skip, :drop
-
-    protected
 
     def do_track(subscription)
       if @executor
