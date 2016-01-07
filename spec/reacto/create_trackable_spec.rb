@@ -211,6 +211,19 @@ context Reacto::Trackable do
   end
 
   context '.combine' do
+    it 'combines the notifications of different Trackables using the ' \
+      'passed combinator' do
+      trackable1 = described_class.interval(0.05).take(5)
+      trackable2 = described_class.interval(0.06).take(5).map { |v| v * 2 }
+      trackable = described_class.combine(trackable1, trackable2) do |v1, v2|
+        v1 + v2
+      end
+
+      subscription = attach_test_trackers(trackable)
+      trackable.await(subscription)
+
+      expect(test_data).to be == [0, 1, 3, 4, 6, 7, 9, 10, 12, '|']
+    end
 
   end
 end
