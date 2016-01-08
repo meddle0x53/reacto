@@ -215,6 +215,7 @@ context Reacto::Trackable do
       'passed combinator' do
       trackable1 = described_class.interval(0.05).take(5)
       trackable2 = described_class.interval(0.06).take(5).map { |v| v * 2 }
+
       trackable = described_class.combine(trackable1, trackable2) do |v1, v2|
         v1 + v2
       end
