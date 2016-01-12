@@ -1,12 +1,11 @@
+require 'reacto/constants'
 require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
   module Operations
     class Inject
 
-      NO_INITIAL = Object.new
-
-      def initialize(injector, initial = NO_INITIAL)
+      def initialize(injector, initial = NO_VALUE)
         @injector = injector
         @current = initial
         @has_values = false
@@ -14,7 +13,7 @@ module Reacto
 
       def call(tracker)
         inject = lambda do |v|
-          if @current == NO_INITIAL
+          if @current == NO_VALUE
             @current = v
           else
             @current = @injector.call(@current, v)
@@ -25,7 +24,7 @@ module Reacto
         end
 
         close = lambda do
-          unless @has_values || @current == NO_INITIAL
+          unless @has_values || @current == NO_VALUE
             tracker.on_value(@current)
           end
 
