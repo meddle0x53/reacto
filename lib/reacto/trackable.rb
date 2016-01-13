@@ -187,7 +187,7 @@ module Reacto
       lift(Operations::Select.new(block_given? ? block : filter))
     end
 
-    def inject(initial = Operations::Inject::NO_INITIAL, injector = nil, &block)
+    def inject(initial = NO_VALUE, injector = nil, &block)
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
