@@ -191,6 +191,10 @@ module Reacto
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
+    def diff(initial = NO_VALUE, fn = nil, &block)
+      lift(Operations::Diff.new(block_given? ? block : fn, initial))
+    end
+
     def drop(how_many_to_drop)
       lift(Operations::Drop.new(how_many_to_drop))
     end
