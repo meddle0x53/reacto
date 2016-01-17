@@ -169,6 +169,10 @@ context Reacto::Trackable do
     end
   end
 
+  context '#diff' do
+
+  end
+
   context '#prepend' do
     it 'emits the passed enumerable before the values, emited by the caller' do
       source = described_class.enumerable((1..5))
