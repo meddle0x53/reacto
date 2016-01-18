@@ -191,7 +191,7 @@ module Reacto
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
-    def diff(initial = NO_VALUE, fn = nil, &block)
+    def diff(initial = NO_VALUE, fn = Operations::Diff::DEFAULT_FN, &block)
       lift(Operations::Diff.new(block_given? ? block : fn, initial))
     end
 
