@@ -170,7 +170,16 @@ context Reacto::Trackable do
   end
 
   context '#diff' do
+    it 'by default emits arrays with two values the - previous and current ' \
+      'element' do
+      source = described_class.enumerable((1..10))
+      trackable = source.diff
+      trackable.on(value: test_on_value, error: test_on_error)
 
+      expect(test_data).to be == [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10
+      ]]
+    end
   end
 
   context '#prepend' do
