@@ -190,13 +190,21 @@ context Reacto::Trackable do
       expect(test_data).to be == [1] * 9
     end
 
-    it 'can be passed a diff lock to calculate the difference between ' \
+    it 'can be passed a diff block to calculate the difference between ' \
       'the previously emitted value and the current and to emit it' do
       source = described_class.enumerable((1..10))
       trackable = source.diff { |p, c| c - p }
       trackable.on(value: test_on_value, error: test_on_error)
 
       expect(test_data).to be == [1] * 9
+    end
+
+    it 'can receive initial value to be used as seed - the first value' do
+      source = described_class.enumerable((1..10))
+      trackable = source.diff(-5) { |p, c| c - p }
+      trackable.on(value: test_on_value, error: test_on_error)
+
+      expect(test_data).to be == [6] + ([1] * 9)
     end
   end
 
