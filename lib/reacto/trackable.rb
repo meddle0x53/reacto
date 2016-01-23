@@ -177,9 +177,9 @@ module Reacto
       end
     end
 
-    def map(mapping = nil, error: nil, &block)
+    def map(mapping = nil, error: nil, close: nil, &block)
       lift(Operations::Map.new(
-        block_given? ? block : mapping, error: error
+        block_given? ? block : mapping, error: error, close: close
       ))
     end
 
