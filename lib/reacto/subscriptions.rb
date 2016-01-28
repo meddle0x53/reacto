@@ -5,6 +5,7 @@ require 'reacto/subscriptions/operation_subscription'
 require 'reacto/subscriptions/executor_subscription'
 require 'reacto/subscriptions/simple_subscription'
 require 'reacto/subscriptions/combining_subscription'
+require 'reacto/subscriptions/zipping_subscription'
 
 module Reacto
   module Subscriptions
