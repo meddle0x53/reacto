@@ -9,6 +9,12 @@ module Reacto
 
         @subscriptions.each { |sub| sub.last_value = NO_VALUE }
       end
+
+      def on_close
+        return unless subscribed?
+
+        @subscriber.on_close
+      end
     end
   end
 end

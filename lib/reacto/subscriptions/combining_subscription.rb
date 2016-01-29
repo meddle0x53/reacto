@@ -55,6 +55,7 @@ module Reacto
         return unless @subscriptions.any? { |s| !s.closed? }
 
         @subscriber.on_close
+        unsubscribe
       end
 
       def subscription!
