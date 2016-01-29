@@ -26,6 +26,16 @@ module Reacto
         end
       end
 
+      def zip(*trackables, &block)
+        make do |subscriber|
+          main =
+            Subscriptions::ZippingSubscription.new(block, subscriber)
+          trackables.each do |trackable|
+            trackable.do_track main.subscription!
+          end
+        end
+      end
+
       def close(executor = nil)
         make(nil, executor) do |subscriber|
           subscriber.on_close
