@@ -232,4 +232,7 @@ context Reacto::Trackable do
       ]
     end
   end
+
+  context '.zip' do
+  end
 end
