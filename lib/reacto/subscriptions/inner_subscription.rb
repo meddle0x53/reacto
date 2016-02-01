@@ -3,7 +3,7 @@ module Reacto
     class InnerSubscription < SimpleSubscription
       include Subscription
 
-      attr_reader :last_value, :last_error
+      attr_accessor :last_value, :last_error
 
       def initialize(parent)
         @parent = parent
