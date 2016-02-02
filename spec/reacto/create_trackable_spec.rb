@@ -234,5 +234,23 @@ context Reacto::Trackable do
   end
 
   context '.zip' do
+    it 'TODO' do
+      trackable1 = described_class.interval(0.3).take(4)
+      trackable2 = described_class.interval(0.7, ('a'..'b').each)
+      trackable3 = described_class.interval(0.5, ('A'..'C').each)
+
+      trackable = described_class.zip(
+        trackable1, trackable2, trackable3
+      ) do |v1, v2, v3|
+        "#{v1} : #{v2} : #{v3}"
+      end
+
+      subscription = attach_test_trackers(trackable)
+      trackable.await(subscription)
+
+      expect(test_data).to be == [
+        '1 : a : A', '3 : b : B', '|'
+      ]
+    end
   end
 end
