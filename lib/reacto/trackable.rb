@@ -216,6 +216,10 @@ module Reacto
       lift(Operations::Uniq.new)
     end
 
+    def flatten
+      lift(Operations::Flatten.new)
+    end
+
     def last
       lift(Operations::Last.new)
     end
