@@ -220,6 +220,10 @@ module Reacto
       lift(Operations::Flatten.new)
     end
 
+    def first
+      take(1)
+    end
+
     def last
       lift(Operations::Last.new)
     end
