@@ -224,6 +224,10 @@ module Reacto
       take(1)
     end
 
+    def [](x)
+      lift(Operations::Drop.new(x, 1))
+    end
+
     def last
       lift(Operations::Last.new)
     end
