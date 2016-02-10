@@ -230,7 +230,7 @@ context Reacto::Trackable do
     end
   end
 
-  context '#drop, #take, #last' do
+  context '#drop, #take, #last, #first, #[]' do
     let(:test_behaviour) do
       lambda do |tracker_subscription|
         (1..15).each do |value|
@@ -283,6 +283,16 @@ context Reacto::Trackable do
         )
 
         expect(test_data).to be == [15, err]
+      end
+    end
+
+    context('#first') do
+      it 'emits only the first value of the source and closes' do
+        described_class.enumerable((1..15)).first.on(
+          value: test_on_value, close: test_on_close
+        )
+
+        expect(test_data).to be == [1, '|']
       end
     end
   end
