@@ -262,17 +262,17 @@ context Reacto::Trackable do
     context('#last') do
       it 'emits only the last value of the source and the closing ' \
         'notification' do
+        source.last.on(value: test_on_value, close: test_on_close)
+
+        expect(test_data).to be == [15, '|']
+      end
+
+      it 'only closes if no value was emitted by the source' do
         described_class.close.last.on(
           value: test_on_value, close: test_on_close
         )
 
         expect(test_data).to be == ['|']
-      end
-
-      it 'only closes if no value was emitted by the source' do
-        source.last.on(value: test_on_value, close: test_on_close)
-
-        expect(test_data).to be == [15, '|']
       end
 
       it 'emits the last value before the error and the error when error ' \
@@ -288,11 +288,19 @@ context Reacto::Trackable do
 
     context('#first') do
       it 'emits only the first value of the source and closes' do
-        described_class.enumerable((1..15)).first.on(
+        source.first.on(
           value: test_on_value, close: test_on_close
         )
 
         expect(test_data).to be == [1, '|']
+      end
+
+      it 'only closes if no value was emitted by the source' do
+        described_class.close.first.on(
+          value: test_on_value, close: test_on_close
+        )
+
+        expect(test_data).to be == ['|']
       end
     end
   end
