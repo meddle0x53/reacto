@@ -312,7 +312,6 @@ context Reacto::Trackable do
 
         expect(test_data).to be == [5, '|']
       end
-
     end
   end
 
