@@ -303,6 +303,17 @@ context Reacto::Trackable do
         expect(test_data).to be == ['|']
       end
     end
+
+    context('#[]') do
+      it 'emits only the n-th value of the source and closes' do
+        source[4].on(
+          value: test_on_value, close: test_on_close
+        )
+
+        expect(test_data).to be == [5, '|']
+      end
+
+    end
   end
 
   context '#concat' do
