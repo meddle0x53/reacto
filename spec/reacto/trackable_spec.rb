@@ -312,6 +312,14 @@ context Reacto::Trackable do
 
         expect(test_data).to be == [5, '|']
       end
+
+      it 'just closes if no value was emitted by the source' do
+        described_class.close[3].on(
+          value: test_on_value, close: test_on_close
+        )
+
+        expect(test_data).to be == ['|']
+      end
     end
   end
 
