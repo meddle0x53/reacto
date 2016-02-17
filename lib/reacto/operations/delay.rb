@@ -14,7 +14,6 @@ module Reacto
       def call(tracker)
         return tracker if @timeout <= 0
 
-
         # TODO
         Subscriptions::OperationSubscription.new(
           tracker
