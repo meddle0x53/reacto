@@ -248,6 +248,10 @@ module Reacto
       lift(Operations::Buffer.new(count: count, delay: delay))
     end
 
+    def delay(delay)
+      buffer(delay: delay)
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
