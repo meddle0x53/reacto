@@ -4,7 +4,6 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class Drop
-
       def initialize(how_many_to_drop, offset = NO_VALUE)
         if how_many_to_drop < 0
           raise ArgumentError.new('Attempt to drop negative size!')

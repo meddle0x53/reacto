@@ -208,6 +208,10 @@ module Reacto
       lift(Operations::Drop.new(how_many_to_drop))
     end
 
+    def drop_errors
+      lift(Operations::DropErrors.new)
+    end
+
     def take(how_many_to_take)
       lift(Operations::Take.new(how_many_to_take))
     end
@@ -267,6 +271,7 @@ module Reacto
     end
 
     alias_method :skip, :drop
+    alias_method :skip_errors, :drop_errors
 
     def do_track(subscription)
       if @executor
