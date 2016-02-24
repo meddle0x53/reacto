@@ -1,0 +1,69 @@
+require 'reacto/constants'
+require 'reacto/subscriptions/subscription'
+require 'reacto/subscriptions/inner_subscription'
+
+module Reacto
+  module Subscriptions
+    class CompositeSubscription
+      include Subscription
+
+      def initialize(combinator, subscriber)
+        @combinator = combinator
+        @subscriptions = []
+        @subscriber = subscriber
+      end
+
+      def subscribed?
+        @subscriptions.any? { |s| s.subscribed? }
+      end
+
+      def unsubscribe
+        @subscriptions.each(&:unsubscribe)
+        @subscriptions = []
+      end
+
+      def add(_)
+      end
+
+      def add_resource(_)
+      end
+
+      def on_open
+        return unless subscribed?
+        return unless @subscriptions.any? { |s| !s.active? }
+        @subscriber.on_open
+      end
+
+      def on_value(_)
+        return unless subscribed?
+        return if @subscriptions.map(&:last_value).any? { |v| v == NO_VALUE }
+
+        @subscriber.on_value(
+          @combinator.call(*@subscriptions.map(&:last_value))
+        )
+      end
+
+      def on_error(e)
+        # Introduce a multi-error and not call on_error right away when there is
+        # an error and an option is set?
+        return unless subscribed?
+        @subscriber.on_error(e)
+      end
+
+      def on_close
+        return unless subscribed?
+        return unless @subscriptions.any? { |s| !s.closed? }
+
+        @subscriber.on_close
+        unsubscribe
+      end
+
+      def subscription!
+        subscription = InnerSubscription.new(self)
+        @subscriptions << subscription
+
+        subscription
+      end
+    end
+  end
+end
