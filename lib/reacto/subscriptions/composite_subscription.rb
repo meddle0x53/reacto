@@ -34,13 +34,22 @@ module Reacto
         @subscriber.on_open
       end
 
-      def on_value(_)
+      def on_value(val)
         return unless subscribed?
         return if @subscriptions.map(&:last_value).any? { |v| v == NO_VALUE }
 
+        on_value_subscriptions(val)
+        after_on_value(val)
+      end
+
+      def on_value_subscriptions(_)
         @subscriber.on_value(
           @combinator.call(*@subscriptions.map(&:last_value))
         )
+      end
+
+      def after_on_value(_)
+        #nothing by default
       end
 
       def on_error(e)
