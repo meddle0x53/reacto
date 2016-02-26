@@ -1,9 +1,9 @@
 require 'reacto/constants'
-require 'reacto/subscriptions/combining_subscription'
+require 'reacto/subscriptions/composite_subscription'
 
 module Reacto
   module Subscriptions
-    class ZippingSubscription < CombiningSubscription
+    class ZippingSubscription < CompositeSubscription
       def subscribed?
         @subscriptions.all? { |s| s.subscribed? }
       end
