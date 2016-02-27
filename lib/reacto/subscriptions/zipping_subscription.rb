@@ -15,7 +15,6 @@ module Reacto
 
       def on_close
         return unless subscribed?
-
         @subscriber.on_close
       end
     end
