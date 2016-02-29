@@ -3,7 +3,7 @@ require 'reacto/subscriptions/composite_subscription'
 
 module Reacto
   module Subscriptions
-    class ZippingSubscription < CompositeSubscription
+    class CombiningLastSubscription < CompositeSubscription
       def subscribed?
         @subscriptions.all? { |s| s.subscribed? }
       end

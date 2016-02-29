@@ -26,9 +26,9 @@ module Reacto
         end
       end
 
-      def zip(*trackables, &block)
+      def combine_last(*trackables, &block)
         make do |subscriber|
-          main = Subscriptions::ZippingSubscription.new(block, subscriber)
+          main = Subscriptions::CombiningLastSubscription.new(block, subscriber)
           trackables.each do |trackable|
             trackable.do_track main.subscription!
           end
