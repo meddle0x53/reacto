@@ -233,7 +233,7 @@ context Reacto::Trackable do
     end
   end
 
-  context '.zip' do
+  context '.combine_last' do
     it 'combines the notifications of Trackables based on their ' \
       'sequence number - the first notification of the sources, then ' \
       'the next ones and in the end closes if any of the sources closes' do
@@ -241,7 +241,7 @@ context Reacto::Trackable do
       trackable2 = described_class.interval(0.7, ('a'..'b').each)
       trackable3 = described_class.interval(0.5, ('A'..'C').each)
 
-      trackable = described_class.zip(
+      trackable = described_class.combine_last(
         trackable1, trackable2, trackable3
       ) do |v1, v2, v3|
         "#{v1} : #{v2} : #{v3}"
