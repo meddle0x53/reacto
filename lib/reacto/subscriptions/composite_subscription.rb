@@ -34,9 +34,13 @@ module Reacto
         @subscriber.on_open
       end
 
+      def waiting?
+        @subscriptions.map(&:last_value).any? { |v| v == NO_VALUE }
+      end
+
       def on_value(val)
         return unless subscribed?
-        return if @subscriptions.map(&:last_value).any? { |v| v == NO_VALUE }
+        return if waiting?
 
         on_value_subscriptions(val)
         after_on_value(val)
