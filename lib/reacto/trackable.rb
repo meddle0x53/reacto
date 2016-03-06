@@ -16,6 +16,7 @@ module Reacto
         self.new
       end
 
+      # TODO Make abstract method for these three.
       def combine(*trackables, &block)
         make do |subscriber|
           main =
