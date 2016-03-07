@@ -16,33 +16,20 @@ module Reacto
         self.new
       end
 
-      # TODO Make abstract method for these three.
       def combine(*trackables, &block)
-        make do |subscriber|
-          main =
-            Subscriptions::CombiningSubscription.new(block, subscriber)
-          trackables.each do |trackable|
-            trackable.do_track main.subscription!
-          end
-        end
+        combine_create(
+          Subscriptions::CombiningSubscription, *trackables, &block
+        )
       end
 
       def combine_last(*trackables, &block)
-        make do |subscriber|
-          main = Subscriptions::CombiningLastSubscription.new(block, subscriber)
-          trackables.each do |trackable|
-            trackable.do_track main.subscription!
-          end
-        end
+        combine_create(
+          Subscriptions::CombiningLastSubscription, *trackables, &block
+        )
       end
 
       def zip(*trackables, &block)
-        make do |subscriber|
-          main = Subscriptions::ZippingSubscription.new(block, subscriber)
-          trackables.each do |trackable|
-            trackable.do_track main.subscription!
-          end
-        end
+        combine_create(Subscriptions::ZippingSubscription, *trackables, &block)
       end
 
       def close(executor = nil)
@@ -155,6 +142,17 @@ module Reacto
       end
 
       def combine_with(function, *trackables)
+      end
+
+      private
+
+      def combine_create(type, *trackables, &block)
+        make do |subscriber|
+          main = type.new(block, subscriber)
+          trackables.each do |trackable|
+            trackable.do_track main.subscription!
+          end
+        end
       end
     end
 
