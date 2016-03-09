@@ -15,13 +15,13 @@ module Reacto
       end
 
       def waiting?
-        @subscriptions.any? { |sub| sub.buffer[@current_value] == NO_VALUE }
+        @subscriptions.any? { |sub| sub.buffer[current_value] == NO_VALUE }
       end
 
       def on_value_subscriptions(_)
         @subscriber.on_value(
           @combinator.call(
-            *@subscriptions.map { |sub| sub.buffer[@current_value] }
+            *@subscriptions.map { |sub| sub.buffer[current_value] }
           )
         )
         @current_value += 1
