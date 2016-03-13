@@ -5,7 +5,6 @@ require 'reacto/subscriptions/buffered_subscription'
 module Reacto
   module Subscriptions
     class ZippingSubscription < CompositeSubscription
-
       def current_value
         @current_value ||= 0
       end
