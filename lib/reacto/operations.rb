@@ -13,6 +13,7 @@ require 'reacto/operations/merge'
 require 'reacto/operations/buffer'
 require 'reacto/operations/uniq'
 require 'reacto/operations/flatten'
+require 'reacto/operations/throttle'
 
 module Reacto
   module Operations
