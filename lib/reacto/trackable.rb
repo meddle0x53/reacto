@@ -264,6 +264,10 @@ module Reacto
       buffer(delay: delay)
     end
 
+    def throttle(delay)
+      lift(Operations::Throttle.new(delay))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
