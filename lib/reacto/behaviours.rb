@@ -34,5 +34,17 @@ module Reacto
         end
       end
     end
+
+    def array_repeat_enumerator(array)
+      size = array.size
+
+      Enumerator.new do |yielder|
+        n = 0
+        loop do
+          yielder.yield array[n % size]
+          n = n + 1
+        end
+      end
+    end
   end
 end
