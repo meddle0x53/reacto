@@ -122,6 +122,12 @@ module Reacto
         end
       end
 
+      def repeat(array, int: 0.1, executor: nil)
+        interval(
+          int, Behaviours.array_repeat_enumerator(array), executor: executor
+        )
+      end
+
       def value(value, executor = nil)
         make(Behaviours.single_value(value), executor)
       end
