@@ -92,7 +92,7 @@ context Reacto::Trackable do
     it 'emits what is produced by the passed `close` function before close' do
       trackable =
         described_class.enumerable((1..5)).map(close: ->() { 10 }) do |v|
-          v
+        v
         end
 
       trackable.on(value: test_on_value, close: test_on_close)
@@ -148,35 +148,35 @@ context Reacto::Trackable do
     it 'sends the values created by applying the `inject` operation on the ' \
       'last value and current value, using for first value ' \
       'the first emitted by the source if no initial value provided' do
-      trackable = source.inject do |prev, v|
-        prev + v
+        trackable = source.inject do |prev, v|
+          prev + v
+        end
+        trackable.on(value: test_on_value)
+
+        expect(test_data.size).to be(3)
+        expect(test_data).to be == [16, 23, 2037]
       end
-      trackable.on(value: test_on_value)
 
-      expect(test_data.size).to be(3)
-      expect(test_data).to be == [16, 23, 2037]
-    end
+      it 'sends the initial value if no value is emitted' do
+        source = described_class.new(-> (t) { t.on_close })
+        trackable = source.inject(0) do |prev, v|
+          prev + v
+        end
+        trackable.on(value: test_on_value)
 
-    it 'sends the initial value if no value is emitted' do
-      source = described_class.new(-> (t) { t.on_close })
-      trackable = source.inject(0) do |prev, v|
-        prev + v
+        expect(test_data.size).to be(1)
+        expect(test_data).to be == [0]
       end
-      trackable.on(value: test_on_value)
 
-      expect(test_data.size).to be(1)
-      expect(test_data).to be == [0]
-    end
+      it 'sends nothing if no initial value and no value emitted' do
+        source = described_class.new(-> (t) { t.on_close })
+        trackable = source.inject do |prev, v|
+          prev + v
+        end
+        trackable.on(value: test_on_value)
 
-    it 'sends nothing if no initial value and no value emitted' do
-      source = described_class.new(-> (t) { t.on_close })
-      trackable = source.inject do |prev, v|
-        prev + v
+        expect(test_data.size).to be(0)
       end
-      trackable.on(value: test_on_value)
-
-      expect(test_data.size).to be(0)
-    end
   end
 
   context '#diff' do
@@ -402,81 +402,27 @@ context Reacto::Trackable do
       end
     end
 
-    context '#buffer' do
-      context 'count' do
-        it 'sends values on batches with the size of the passed count' do
-          trackable = described_class.enumerable((1..20)).buffer(count: 5)
-          trackable.on(
-            value: test_on_value, close: test_on_close, error: test_on_error
-          )
+    context 'uniq' do
+      it 'sends only uniq values, dropping the repeating ones' do
+        trackable =
+          described_class.enumerable([1, 2, 3, 2, 4, 3, 2, 1, 5]).uniq
 
-          expect(test_data).to be ==
-            [(1..5).to_a, (6..10).to_a, (11..15).to_a, (16..20).to_a, '|']
-        end
+        trackable.on(
+          value: test_on_value, close: test_on_close, error: test_on_error
+        )
+        expect(test_data).to be == [1, 2, 3, 4, 5, '|']
       end
+    end
 
-      context 'delay' do
-        it 'sends values on batches on intervals - the passed delay' do
-          trackable = described_class.interval(0.1).take(20).buffer(delay: 0.5)
-          subscription = trackable.on(
-            value: test_on_value, close: test_on_close, error: test_on_error
-          )
-          trackable.await(subscription)
-          expect(test_data).to be ==
-            [
-              [0, 1, 2, 3],
-              [4, 5, 6, 7, 8],
-              [9, 10, 11, 12, 13],
-              [14, 15, 16, 17, 18],
-              [19],
-              "|"
-          ]
-        end
-      end
+    context 'flatten' do
+      it 'sends the members of array values as values' do
+        trackable =
+          described_class.enumerable([[1, 2, 3], [4, 3], [2, 1, 5]]).flatten
 
-      context 'count & delay' do
-        it 'uses either the count or the delay to buffer and send' do
-          trackable = described_class.make do |subscriber|
-            subscriber.on_value(1)
-            subscriber.on_value(2)
-            subscriber.on_value(3)
-            subscriber.on_value(4)
-            subscriber.on_value(5)
-            sleep 1
-            subscriber.on_value(6)
-            subscriber.on_close
-          end.buffer(delay: 0.5, count: 3)
-
-          trackable.on(
-            value: test_on_value, close: test_on_close, error: test_on_error
-          )
-          expect(test_data).to be ==
-            [[1, 2, 3], [4, 5], [6], '|']
-        end
-      end
-
-      context 'uniq' do
-        it 'sends only uniq values, dropping the repeating ones' do
-          trackable =
-            described_class.enumerable([1, 2, 3, 2, 4, 3, 2, 1, 5]).uniq
-
-          trackable.on(
-            value: test_on_value, close: test_on_close, error: test_on_error
-          )
-          expect(test_data).to be == [1, 2, 3, 4, 5, '|']
-        end
-      end
-
-      context 'flatten' do
-        it 'sends the members of array values as values' do
-          trackable =
-            described_class.enumerable([[1, 2, 3], [4, 3], [2, 1, 5]]).flatten
-
-          trackable.on(
-            value: test_on_value, close: test_on_close, error: test_on_error
-          )
-          expect(test_data).to be == [1, 2, 3, 4, 3, 2, 1, 5, '|']
-        end
+        trackable.on(
+          value: test_on_value, close: test_on_close, error: test_on_error
+        )
+        expect(test_data).to be == [1, 2, 3, 4, 3, 2, 1, 5, '|']
       end
     end
   end
