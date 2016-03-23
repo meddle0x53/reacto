@@ -14,6 +14,7 @@ require 'reacto/operations/buffer'
 require 'reacto/operations/uniq'
 require 'reacto/operations/flatten'
 require 'reacto/operations/throttle'
+require 'reacto/operations/flat_map'
 
 module Reacto
   module Operations
