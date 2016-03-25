@@ -7,6 +7,7 @@ require 'reacto/subscriptions/simple_subscription'
 require 'reacto/subscriptions/combining_subscription'
 require 'reacto/subscriptions/combining_last_subscription'
 require 'reacto/subscriptions/zipping_subscription'
+require 'reacto/subscriptions/flat_map_subscription'
 
 module Reacto
   module Subscriptions
