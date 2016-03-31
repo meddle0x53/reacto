@@ -204,6 +204,10 @@ module Reacto
       lift(Operations::FlatMap.new(block_given? ? block : transform))
     end
 
+    def flat_map_latest(transform = nil, &block)
+      lift(Operations::FlatMapLatest.new(block_given? ? block : transform))
+    end
+
     def map(mapping = nil, error: nil, close: nil, &block)
       lift(Operations::Map.new(
         block_given? ? block : mapping, error: error, close: close
