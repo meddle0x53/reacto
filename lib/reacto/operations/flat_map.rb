@@ -16,8 +16,14 @@ module Reacto
           trackable.do_track subscription.subscription!
         end
 
+        close = lambda do
+          return unless subscription.closed?
+
+          tracker.on_close
+        end
+
         Subscriptions::OperationSubscription.new(
-          tracker, value: value
+          tracker, value: value, close: close
         )
       end
     end

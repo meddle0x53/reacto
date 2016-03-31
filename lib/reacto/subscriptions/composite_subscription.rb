@@ -63,6 +63,10 @@ module Reacto
         @subscriber.on_error(e)
       end
 
+      def closed?
+        @subscriptions.all? { |s| s.closed? }
+      end
+
       def on_close
         return unless subscribed?
         return unless @subscriptions.any? { |s| !s.closed? }
