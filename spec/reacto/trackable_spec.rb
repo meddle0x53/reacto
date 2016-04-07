@@ -1,20 +1,6 @@
 require 'spec_helper'
 
 context Reacto::Trackable do
-  let(:test_data) { [] }
-  let(:test_on_value) { -> (v) { test_data << v }}
-  let(:test_on_error) { -> (e) { test_data << e }}
-  let(:test_on_close) { -> () { test_data << '|' }}
-
-  let(:test_behaviour) do
-    lambda do |tracker_subscription|
-      tracker_subscription.on_value(5)
-      tracker_subscription.on_close
-    end
-  end
-
-  let(:source) { described_class.new(test_behaviour) }
-
   context '.new' do
     it 'supports behavior invoked on tracking, passed as block' do
       trackable = described_class.new do |tracker_subscription|
@@ -331,86 +317,6 @@ context Reacto::Trackable do
         )
 
         expect(test_data).to be == ['|']
-      end
-    end
-  end
-
-  context '#concat' do
-    it 'starts emitting the values from the concatenated after emitting the ' \
-      'values from the source, then emits a `close` notification' do
-      trackable = source.concat(described_class.enumerable((6..10)))
-      trackable.on(value: test_on_value, close: test_on_close)
-
-      expect(test_data).to be == (5..10).to_a + ['|']
-    end
-
-    it 'can be chained' do
-      trackable = source
-      .concat(described_class.enumerable((6..8)))
-      .concat(described_class.enumerable((9..10)))
-      trackable.on(value: test_on_value, close: test_on_close)
-
-      expect(test_data).to be == (5..10).to_a + ['|']
-    end
-
-    it 'closes on error' do
-      err = StandardError.new('Hey')
-      trackable = source
-      .concat(described_class.error(err))
-      .concat(described_class.enumerable((9..10)))
-      trackable.on(
-        value: test_on_value, close: test_on_close, error: test_on_error
-      )
-
-      expect(test_data).to be == [5, err]
-    end
-
-    context '#merge' do
-      it 'merges the passed trackable\'s emitions with the source ones' do
-        trackable =
-          described_class.interval(0.2).map { |v| v.to_s + 'a'}.take(5)
-        to_be_merged =
-          described_class.interval(0.35).map { |v| v.to_s + 'b'}.take(4)
-        subscription = trackable.merge(to_be_merged).on(
-          value: test_on_value, close: test_on_close, error: test_on_error
-        )
-        trackable.await(subscription)
-
-        expect(test_data).to be ==
-          ["0a", "0b", "1a", "2a", "1b", "3a", "4a", "2b", "3b", "|"]
-      end
-
-      it 'finishes with the error if `delay_error` is true' do
-        err = StandardError.new('Hey')
-        trackable = described_class.interval(0.2).map do |v|
-          raise err if v == 3
-          v.to_s + 'a'
-        end.take(5)
-
-        to_be_merged =
-          described_class.interval(0.35).map { |v| v.to_s + 'b'}.take(4)
-
-        trackable = trackable.merge(to_be_merged, delay_error: true)
-        subscription = trackable.on(
-          value: test_on_value, close: test_on_close, error: test_on_error
-        )
-        trackable.await(subscription, 2)
-
-        expect(test_data).to be ==
-          ["0a", "0b", "1a", "2a", "1b", "2b", "3b", err]
-
-      end
-    end
-
-    context 'uniq' do
-      it 'sends only uniq values, dropping the repeating ones' do
-        trackable =
-          described_class.enumerable([1, 2, 3, 2, 4, 3, 2, 1, 5]).uniq
-
-        trackable.on(
-          value: test_on_value, close: test_on_close, error: test_on_error
-        )
-        expect(test_data).to be == [1, 2, 3, 4, 5, '|']
       end
     end
   end
