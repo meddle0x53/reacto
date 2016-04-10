@@ -1,3 +1,5 @@
+require 'forwardable'
+
 require 'reacto/subscriptions/subscription'
 
 module Reacto
