@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    reacto (0.0.0)
+    reacto (0.0.1)
       concurrent-ruby (~> 1.0.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    concurrent-ruby (1.0.0)
+    concurrent-ruby (1.0.1)
     diff-lcs (1.2.5)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)

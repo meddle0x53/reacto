@@ -16,9 +16,4 @@ require 'reacto/operations/flatten'
 require 'reacto/operations/throttle'
 require 'reacto/operations/flat_map'
 require 'reacto/operations/flat_map_latest'
-
-module Reacto
-  module Operations
-  end
-end
-
+require 'reacto/operations/cache'

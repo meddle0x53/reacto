@@ -1,5 +1,6 @@
 require 'concurrent'
 
+require 'reacto/constants'
 require 'reacto/behaviours'
 require 'reacto/subscriptions'
 require 'reacto/tracker'
@@ -193,7 +194,8 @@ module Reacto
       operation = block_given? ? block : operation
       Trackable.new(nil, @executor) do |tracker_subscription|
         begin
-          lift_behaviour(operation.call(tracker_subscription))
+          modified = operation.call(tracker_subscription)
+          lift_behaviour(modified) unless modified == NOTHING
         rescue Exception => e
           tracker_subscription.on_error(e)
         end
@@ -280,6 +282,10 @@ module Reacto
 
     def throttle(delay)
       lift(Operations::Throttle.new(delay))
+    end
+
+    def cache(type: :memory, settings: {})
+      lift(Operations::Cache.new(type: type, settings: settings))
     end
 
     def track_on(executor)
