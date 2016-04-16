@@ -42,6 +42,7 @@ module Reacto
         return unless subscribed?
         return if waiting?
 
+
         on_value_subscriptions(val)
         after_on_value(val)
       end
@@ -69,7 +70,7 @@ module Reacto
 
       def on_close
         return unless subscribed?
-        return unless @subscriptions.any? { |s| !s.closed? }
+        return if @subscriptions.any? { |s| !s.closed? }
 
         @subscriber.on_close
         unsubscribe

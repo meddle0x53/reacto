@@ -7,9 +7,15 @@ module Reacto
       attr_reader :location, :ttl
       attr_reader :data
 
-      def initialize(settings)
-        @location = settings[:location]
-        @ttl = settings[:ttl] || 60
+      def initialize(location: nil, ttl: 60)
+        @location = location
+        @ttl = ttl
+
+        if @location.nil?
+          fail(
+            ArgumentError, 'File location is mandatory while using file cache!'
+          )
+        end
       end
 
       def ready?
@@ -71,7 +77,7 @@ module Reacto
       private
 
       def fresh?
-        File.file?(location) && (Time.now - File.mtime(location)) <= ttl
+        ::File.file?(location) && (Time.now - ::File.mtime(location)) <= ttl
       end
 
       def init_data
@@ -81,14 +87,14 @@ module Reacto
       def deserialize
         return unless fresh?
 
-        @data ||= YAML::load(File.read(location))
+        @data ||= YAML::load(::File.read(location))
       end
 
       def serialize
         return if data.nil?
 
-        File.open(location, 'w') do |f|
-          f.written(YAML::dump(data))
+        ::File.open(location, 'w') do |f|
+          f.write(YAML::dump(data))
         end
       end
     end

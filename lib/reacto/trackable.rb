@@ -284,8 +284,9 @@ module Reacto
       lift(Operations::Throttle.new(delay))
     end
 
-    def cache(type: :memory, settings: {})
-      lift(Operations::Cache.new(type: type, settings: settings))
+    def cache(type: :memory, **settings)
+      settings ||= {}
+      lift(Operations::Cache.new(type: type, **settings))
     end
 
     def track_on(executor)

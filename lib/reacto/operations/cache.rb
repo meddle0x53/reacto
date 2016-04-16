@@ -1,18 +1,20 @@
 require 'reacto/constants'
 require 'reacto/subscriptions/operation_subscription'
 require 'reacto/cache/memory'
+require 'reacto/cache/file'
 
 module Reacto
   module Operations
     class Cache
       TYPES = {
-        memory: Reacto::Cache::Memory
+        memory: Reacto::Cache::Memory,
+        file: Reacto::Cache::File
       }
 
-      def initialize(type: :memory, settings: {})
+      def initialize(type: :memory, **settings)
         type = TYPES[type] if TYPES.key?(type)
 
-        @cache = type.new(settings)
+        @cache = type.new(**settings)
       end
 
       def call(tracker)

@@ -1,7 +1,7 @@
 module Reacto
   module Cache
     class Memory
-      def initialize(_)
+      def initialize(_ = nil)
         @values = []
         @closed = false
       end
