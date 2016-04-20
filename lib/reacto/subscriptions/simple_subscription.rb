@@ -62,7 +62,7 @@ module Reacto
       def on_error(e)
         return unless subscribed?
 
-        @error.call(error)
+        @error.call(e)
         @subscriptions.each { |s| s.on_error(e) }
         unsubscribe
       end
