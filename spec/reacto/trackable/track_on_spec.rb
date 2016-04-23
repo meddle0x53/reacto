@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 context Reacto::Trackable do
-
-  let(:test_data) { [] }
-  let(:test_on_value) { -> (v) { test_data << v }}
-  let(:test_on_close) { -> () { test_data << '|' }}
-
   subject do
    described_class.new do |tracker_subscription|
       tracker_subscription.on_value(16)
@@ -30,3 +25,4 @@ context Reacto::Trackable do
     end
   end
 end
+
