@@ -17,6 +17,7 @@ module Reacto
         end
 
         close = lambda do
+          subscription.source_closed = true
           return unless subscription.closed?
 
           tracker.on_close

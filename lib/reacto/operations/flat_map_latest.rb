@@ -13,14 +13,15 @@ module Reacto
         value = lambda do |v|
           trackable = @transform.call(v)
 
-          sub = subscription.subscription!
-
           @last_active.unsubscribe if @last_active
+
+          sub = subscription.subscription!
           trackable.do_track sub
           @last_active = sub
         end
 
         close = lambda do
+          subscription.source_closed = true
           return unless subscription.closed?
 
           tracker.on_close
@@ -33,5 +34,3 @@ module Reacto
     end
   end
 end
-
-
