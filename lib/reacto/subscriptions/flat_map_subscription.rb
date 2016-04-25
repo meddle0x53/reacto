@@ -4,8 +4,12 @@ require 'reacto/subscriptions/composite_subscription'
 module Reacto
   module Subscriptions
     class FlatMapSubscription < CompositeSubscription
+      attr_accessor :source_closed
+
       def initialize(subscriber)
         super(nil, subscriber)
+
+        @source_closed = false
       end
 
       def waiting?
@@ -17,8 +21,9 @@ module Reacto
       end
 
       def on_close
+        return unless source_closed
         return unless subscribed?
-        return unless @subscriptions.any? { |s| !s.closed? }
+        return unless @subscriptions.all? { |s| s.closed? }
 
         @subscriber.on_close
         unsubscribe

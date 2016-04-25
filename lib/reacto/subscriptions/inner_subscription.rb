@@ -35,6 +35,11 @@ module Reacto
         super(open: open, value: value, error: error, close: close)
       end
 
+      def unsubscribe
+        @closed = true
+        super
+      end
+
       def active?
         @active
       end
