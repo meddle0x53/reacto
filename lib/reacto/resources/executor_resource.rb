@@ -6,7 +6,7 @@ module Reacto
         @threads = threads
       end
       def cleanup
-        @executor.shutdown
+        @executor.shutdown unless @executor.nil?
         @executor = nil
 
         @threads.each do |thread|
