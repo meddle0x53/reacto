@@ -12,7 +12,7 @@ module Reacto
         Subscriptions::OperationSubscription.new(
           tracker,
           close: -> () { @trackable.send(:do_track, tracker) },
-          error: -> (e) { 
+          error: -> (e) {
             tracker.on_error(e)
             @trackable.send(:do_track, tracker)
           }
