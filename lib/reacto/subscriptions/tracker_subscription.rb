@@ -20,6 +20,7 @@ module Reacto
 
       def unsubscribe
         @subscriptions.each(&:unsubscribe)
+        return unless subscribed?
 
         @trackable.off(@notification_tracker)
 

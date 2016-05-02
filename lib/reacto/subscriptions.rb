@@ -9,6 +9,8 @@ require 'reacto/subscriptions/combining_last_subscription'
 require 'reacto/subscriptions/zipping_subscription'
 require 'reacto/subscriptions/flat_map_subscription'
 
+require 'reacto/resources/shared_resource'
+
 module Reacto
   module Subscriptions
     class << self
@@ -21,6 +23,10 @@ module Reacto
           close: -> () { block.call },
           error: -> (_e) { block.call }
         )
+      end
+
+      def shared_subscription(trackable)
+        SimpleSubscription.new
       end
     end
   end

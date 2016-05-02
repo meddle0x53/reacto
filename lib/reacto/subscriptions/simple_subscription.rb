@@ -6,6 +6,8 @@ module Reacto
     class SimpleSubscription
       include Subscription
 
+      attr_reader :subscriptions
+
       def initialize(
         open: NO_ACTION,
         value: NO_ACTION,
@@ -77,4 +79,3 @@ module Reacto
     end
   end
 end
-
