@@ -1,4 +1,5 @@
 require 'concurrent'
+require 'ostruct'
 
 require 'reacto/constants'
 require 'reacto/behaviours'
@@ -89,10 +90,13 @@ module Reacto
           end
         else
           make do |tracker|
+            Thread::abort_on_exception = true
+
             queue = Queue.new
             task = Concurrent::TimerTask.new(execution_interval: interval) do
               queue.push('ready')
             end
+
             thread = Thread.new do
               begin
                 loop do
@@ -177,7 +181,7 @@ module Reacto
       track(Tracker.new(trackers))
     end
 
-    def off(notification_tracker)
+    def off(notification_tracker = nil)
       # Clean-up logic
     end
 
@@ -192,7 +196,7 @@ module Reacto
 
     def lift(operation = nil, &block)
       operation = block_given? ? block : operation
-      Trackable.new(nil, @executor) do |tracker_subscription|
+      self.class.new(nil, @executor) do |tracker_subscription|
         begin
           modified = operation.call(tracker_subscription)
           lift_behaviour(modified) unless modified == NOTHING
@@ -214,6 +218,10 @@ module Reacto
       lift(Operations::Map.new(
         block_given? ? block : mapping, error: error, close: close
       ))
+    end
+
+    def wrap(**args)
+      lift(Operations::Wrap.new(args))
     end
 
     def select(filter = nil, &block)
@@ -289,12 +297,18 @@ module Reacto
       lift(Operations::Cache.new(type: type, **settings))
     end
 
+    def depend_on(trackable, key: :data, accumulator: nil, &block)
+      lift(Operations::DependOn.new(
+        trackable, key: key, accumulator: (block_given? ? block : accumulator)
+      ))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
 
     def execute_on(executor)
-      Trackable.new(@behaviour, executor)
+      self.class.new(@behaviour, executor)
     end
 
     def await(subscription, timeout = nil)
