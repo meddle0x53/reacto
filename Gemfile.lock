@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    reacto (0.0.4)
+    reacto (0.0.5)
       concurrent-ruby (~> 1.0.0)
 
 GEM
