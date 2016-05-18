@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#map' do
     it 'transforms the value of the source Trackable using the passed ' \
