@@ -303,6 +303,12 @@ module Reacto
       ))
     end
 
+    def label(labeling_action = nil, executor: nil, &block)
+      lift(Operations::Label.new(
+        block_given? ? block : labeling_action, executor
+      ))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
