@@ -9,6 +9,7 @@ require 'reacto/operations'
 require 'reacto/executors'
 require 'reacto/resources'
 
+# TODO: Refactor the constructors and the factory methods
 module Reacto
   class Trackable
     TOPICS = [:open, :value, :error, :close]
