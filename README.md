@@ -58,6 +58,7 @@ anything until necessary.
 
 ```ruby
   trackable.on(value: ->(v) { puts v })
+
   # => 5
 ```
 
