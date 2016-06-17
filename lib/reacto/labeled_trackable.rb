@@ -10,6 +10,12 @@ module Reacto
       @label = label
     end
 
+    def relabel
+      new_label = yield label
+
+      self.class.new(new_label, @executor, @behaviour)
+    end
+
     protected
 
     def create_lifted(&block)
