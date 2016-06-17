@@ -9,5 +9,11 @@ module Reacto
 
       @label = label
     end
+
+    protected
+
+    def create_lifted(&block)
+      self.class.new(label, @executor, nil, &block)
+    end
   end
 end

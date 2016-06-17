@@ -34,5 +34,28 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value, close: test_on_close)
       expect(test_data).to be == (1..5).to_a + [10, '|']
     end
+
+    context 'with label' do
+      it 'applies the mapping passed only to the incoming values of type ' \
+        'LabeledTrackable with matching label' do
+        trackable =
+          Reacto::Trackable.enumerable((1..10).each).label do |value|
+            [(value % 3), value]
+          end
+
+        trackable = trackable.map(label: 1) do |value|
+          value / 3
+        end
+
+        trackable.on(value: test_on_value)
+
+        labeled_trackable = test_data.first
+        expect(labeled_trackable.label).to eq(1)
+
+        labeled_data = []
+        labeled_trackable.on(value: ->(v) { labeled_data << v })
+        expect(labeled_data).to eq([1 / 3, 4 / 3, 7 / 3, 10 / 3])
+      end
+    end
   end
 end

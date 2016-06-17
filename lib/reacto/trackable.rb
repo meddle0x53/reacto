@@ -197,7 +197,7 @@ module Reacto
 
     def lift(operation = nil, &block)
       operation = block_given? ? block : operation
-      self.class.new(nil, @executor) do |tracker_subscription|
+      create_lifted do |tracker_subscription|
         begin
           modified = operation.call(tracker_subscription)
           lift_behaviour(modified) unless modified == NOTHING
@@ -215,10 +215,16 @@ module Reacto
       lift(Operations::FlatMapLatest.new(block_given? ? block : transform))
     end
 
-    def map(mapping = nil, error: nil, close: nil, &block)
-      lift(Operations::Map.new(
-        block_given? ? block : mapping, error: error, close: close
-      ))
+    def map(mapping = nil, error: nil, close: nil, label: nil, &block)
+      if label
+        lift(Operations::MapLabel.new(
+          label, block_given? ? block : mapping, error: error, close: close
+        ))
+      else
+        lift(Operations::Map.new(
+          block_given? ? block : mapping, error: error, close: close
+        ))
+      end
     end
 
     def wrap(**args)
@@ -310,6 +316,16 @@ module Reacto
       ))
     end
 
+    def flatten_labeled(accumulator: nil, initial: NO_VALUE, &block)
+      lift(Operations::FlattenLabeled.new(
+        block_given? ? block : accumulator, initial
+      ))
+    end
+
+    def act(action = NO_ACTION, on: Operations::Act::ALL, &block)
+      lift(Operations::Act.new(block_given? ? block : action, on))
+    end
+
     def track_on(executor)
       lift(Operations::TrackOn.new(executor))
     end
@@ -333,6 +349,12 @@ module Reacto
       else
         @behaviour.call(subscription)
       end
+    end
+
+    protected
+
+    def create_lifted(&block)
+      self.class.new(nil, @executor, &block)
     end
 
     private

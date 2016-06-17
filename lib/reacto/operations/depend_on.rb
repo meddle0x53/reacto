@@ -1,3 +1,5 @@
+require 'ostruct'
+
 require 'reacto/constants'
 require 'reacto/subscriptions/operation_subscription'
 

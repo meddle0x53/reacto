@@ -3,7 +3,6 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class Flatten
-
       def call(tracker)
         behaviour = lambda do |value|
           if value.kind_of?(Array)
@@ -23,4 +22,3 @@ module Reacto
     end
   end
 end
-
