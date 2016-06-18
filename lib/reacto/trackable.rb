@@ -310,8 +310,8 @@ module Reacto
       ))
     end
 
-    def label(labeling_action = nil, executor: nil, &block)
-      lift(Operations::Label.new(
+    def group_by_label(labeling_action = nil, executor: nil, &block)
+      lift(Operations::GroupByLabel.new(
         block_given? ? block : labeling_action, executor
       ))
     end
@@ -320,6 +320,10 @@ module Reacto
       lift(Operations::FlattenLabeled.new(
         block_given? ? block : accumulator, initial
       ))
+    end
+
+    def split_labeled(label, executor: nil, &block)
+      lift(Operations::SplitLabeled.new(label, block, executor))
     end
 
     def act(action = NO_ACTION, on: Operations::Act::ALL, &block)

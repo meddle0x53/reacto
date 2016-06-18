@@ -39,7 +39,7 @@ context Reacto::Trackable do
       it 'applies the mapping passed only to the incoming values of type ' \
         'LabeledTrackable with matching label' do
         trackable =
-          Reacto::Trackable.enumerable((1..10).each).label do |value|
+          Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
             [(value % 3), value]
           end
 
