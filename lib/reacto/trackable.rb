@@ -301,6 +301,10 @@ module Reacto
       buffer(delay: delay)
     end
 
+    def delay_each(delay)
+      lift(Operations::DelayEach.new(delay))
+    end
+
     def throttle(delay)
       lift(Operations::Throttle.new(delay))
     end

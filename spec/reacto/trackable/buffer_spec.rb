@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#buffer' do
     context 'count' do
@@ -55,4 +53,3 @@ context Reacto::Trackable do
     end
   end
 end
-
