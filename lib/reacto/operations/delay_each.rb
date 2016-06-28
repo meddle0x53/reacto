@@ -6,6 +6,12 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class DelayEach
+      class TaskObserver
+        def update(time, result, e)
+          raise e unless e.is_a?(Concurrent::TimeoutError)
+        end
+      end
+
       def initialize(delay)
         @delay = delay
         @queue = []
@@ -55,6 +61,7 @@ module Reacto
             @task.shutdown
           end
         end
+        @task.add_observer(TaskObserver.new)
 
         @task.execute
       end

@@ -91,7 +91,7 @@ module Reacto
           end
         else
           make do |tracker|
-            Thread::abort_on_exception = true
+            Thread.abort_on_exception = true
 
             queue = Queue.new
             task = Concurrent::TimerTask.new(execution_interval: interval) do
