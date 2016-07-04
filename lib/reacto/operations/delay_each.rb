@@ -7,8 +7,13 @@ module Reacto
   module Operations
     class DelayEach
       class TaskObserver
+        def initialize(tracker)
+          @tracker = tracker
+        end
         def update(time, result, e)
-          raise e unless e.is_a?(Concurrent::TimeoutError)
+          if e
+            @tracker.on_error(e) unless e.is_a?(Concurrent::TimeoutError)
+          end
         end
       end
 
@@ -61,7 +66,7 @@ module Reacto
             @task.shutdown
           end
         end
-        @task.add_observer(TaskObserver.new)
+        @task.add_observer(TaskObserver.new(tracker))
 
         @task.execute
       end
