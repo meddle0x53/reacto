@@ -16,7 +16,7 @@ module Reacto
               tracker.on_value(labeled_trackable)
             end
 
-            v.group_by_label(@chose_label, executor: @executor)
+            v.group_by_label(executor: @executor, &@chose_label)
               .on(value: action)
           else
             tracker.on_value(v)

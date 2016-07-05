@@ -245,8 +245,10 @@ module Reacto
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
 
-    def diff(initial = NO_VALUE, fn = Operations::Diff::DEFAULT_FN, &block)
-      lift(Operations::Diff.new(block_given? ? block : fn, initial))
+    def diff(initial = NO_VALUE, &block)
+      lift(Operations::Diff.new(
+        block_given? ? block : Operations::Diff::DEFAULT_FN, initial
+      ))
     end
 
     def drop(how_many_to_drop)
@@ -314,30 +316,30 @@ module Reacto
       lift(Operations::Cache.new(type: type, **settings))
     end
 
-    def depend_on(trackable, key: :data, accumulator: nil, &block)
+    def depend_on(trackable, key: :data, &block)
       lift(Operations::DependOn.new(
-        trackable, key: key, accumulator: (block_given? ? block : accumulator)
+        trackable, key: key, accumulator: block
       ))
     end
 
-    def group_by_label(labeling_action = nil, executor: nil, &block)
-      lift(Operations::GroupByLabel.new(
-        block_given? ? block : labeling_action, executor
-      ))
+    def group_by_label(executor: nil, &block)
+      lift(Operations::GroupByLabel.new(block, executor))
     end
 
-    def flatten_labeled(accumulator: nil, initial: NO_VALUE, &block)
-      lift(Operations::FlattenLabeled.new(
-        block_given? ? block : accumulator, initial
-      ))
+    def flatten_labeled(initial: NO_VALUE, &block)
+      lift(Operations::FlattenLabeled.new(block, initial))
     end
 
     def split_labeled(label, executor: nil, &block)
       lift(Operations::SplitLabeled.new(label, block, executor))
     end
 
-    def act(action = NO_ACTION, on: Operations::Act::ALL, &block)
-      lift(Operations::Act.new(block_given? ? block : action, on))
+    def act(on: Operations::Act::ALL, &block)
+      lift(Operations::Act.new(block, on))
+    end
+
+    def retry(retries = 1)
+      lift(Operations::Retry.new(@behaviour, retries))
     end
 
     def track_on(executor)
