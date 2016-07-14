@@ -29,7 +29,7 @@ module Reacto
       Enumerator.new do |yielder|
         n = 0
         loop do
-          yielder.yield n
+          yielder << n
           n = n + 1
         end
       end

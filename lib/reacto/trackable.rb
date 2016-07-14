@@ -36,20 +36,20 @@ module Reacto
       end
 
       def close(executor = nil)
-        make(nil, executor) do |subscriber|
+        make(executor) do |subscriber|
           subscriber.on_close
         end
       end
 
       def error(err, executor = nil)
-        make(nil, executor) do |subscriber|
+        make(executor) do |subscriber|
           subscriber.on_error(err)
         end
       end
 
-      def make(behaviour = NO_ACTION, executor = nil, &block)
-        behaviour = block_given? ? block : behaviour
-        self.new(behaviour, executor)
+      def make(executor = nil, &block)
+        behaviour = block_given? ? block : NO_ACTION
+        self.new(executor, &behaviour)
       end
 
       def later(secs, value, executor: Reacto::Executors.tasks)
@@ -135,11 +135,11 @@ module Reacto
       end
 
       def value(value, executor = nil)
-        make(Behaviours.single_value(value), executor)
+        make(executor, &Behaviours.single_value(value))
       end
 
       def enumerable(enumerable, executor = nil)
-        make(nil, executor) do |tracker|
+        make(executor) do |tracker|
           begin
             enumerable.each do |val|
               break unless tracker.subscribed?
@@ -168,12 +168,14 @@ module Reacto
       end
     end
 
-    def initialize(behaviour = NO_ACTION, executor = nil, &block)
-      @behaviour = block_given? ? block : behaviour
+    def initialize(executor = nil, &block)
+      @behaviour = block_given? ? block : NO_ACTION
       @executor = executor
     end
 
-    def on(trackers = {})
+    def on(trackers = {}, &block)
+      trackers[:value] = block if block_given?
+
       unless (trackers.keys - TOPICS).empty?
         raise "This Trackable supports only #{TOPICS}, " \
           "but #{trackers.keys} were passed."
@@ -186,7 +188,9 @@ module Reacto
       # Clean-up logic
     end
 
-    def track(notification_tracker)
+    def track(notification_tracker, &block)
+      return on(&block) if block_given?
+
       subscription =
         Subscriptions::TrackerSubscription.new(notification_tracker, self)
 
@@ -347,7 +351,7 @@ module Reacto
     end
 
     def execute_on(executor)
-      self.class.new(@behaviour, executor)
+      self.class.new(executor, &@behaviour)
     end
 
     def await(subscription, timeout = nil)
@@ -370,7 +374,7 @@ module Reacto
     protected
 
     def create_lifted(&block)
-      self.class.new(nil, @executor, &block)
+      self.class.new(@executor, &block)
     end
 
     private
