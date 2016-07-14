@@ -13,7 +13,7 @@ module Helpers
     end
   end
 
-  let(:source) { described_class.new(test_behaviour) }
+  let(:source) { described_class.new(&test_behaviour) }
 
   def attach_test_trackers(trackable)
     trackable.on(

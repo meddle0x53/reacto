@@ -36,7 +36,7 @@ context Reacto::Trackable do
     end
 
     it 'sends the initial value if no value is emitted' do
-      source = described_class.new(-> (t) { t.on_close })
+      source = described_class.new(&-> (t) { t.on_close })
       trackable = source.inject(0) do |prev, v|
         prev + v
       end
@@ -47,7 +47,7 @@ context Reacto::Trackable do
     end
 
     it 'sends nothing if no initial value and no value emitted' do
-      source = described_class.new(-> (t) { t.on_close })
+      source = described_class.new(&-> (t) { t.on_close })
       trackable = source.inject do |prev, v|
         prev + v
       end
