@@ -18,5 +18,14 @@ context Reacto::Trackable do
         expect(test_data[0]).to be(5)
       end
     end
+
+    context 'with block' do
+      it 'behaves as #on value: <lambda>' do
+        described_class.new(&test_behaviour).on(&test_on_value)
+
+        expect(test_data.size).to be(1)
+        expect(test_data[0]).to be(5)
+      end
+    end
   end
 end

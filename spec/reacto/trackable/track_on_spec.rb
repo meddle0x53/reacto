@@ -17,7 +17,7 @@ context Reacto::Trackable do
   end
 
   context '#track_on' do
-    it 'executes the trackable login on the passed executor' do
+    it 'executes the trackable behaviour on the passed executor' do
       subject
       .execute_on(Reacto::Executors.io)
       .map(-> (v) { v * 2 })
@@ -25,4 +25,3 @@ context Reacto::Trackable do
     end
   end
 end
-
