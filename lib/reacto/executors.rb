@@ -27,5 +27,9 @@ module Reacto
     def tasks
       Concurrent::FixedThreadPool.new(4) # Number of cores here?
     end
+
+    def new_thread
+      Concurrent::SimpleExecutorService.new
+    end
   end
 end

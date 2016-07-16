@@ -12,7 +12,18 @@ require 'reacto/resources'
 # TODO: Refactor the constructors and the factory methods
 module Reacto
   class Trackable
-    TOPICS = [:open, :value, :error, :close]
+    TOPICS = %i(open value error close)
+
+    EXECUTOR_ALIASES = {
+      new_thread: Executors.new_thread,
+      background: Executors.tasks,
+      tasks: Executors.tasks,
+      io: Executors.io,
+      current: Executors.current,
+      immediate: Executors.immediate,
+      current: Executors.immediate,
+      now: Executors.immediate
+    }
 
     class << self
       def never
@@ -347,17 +358,26 @@ module Reacto
     end
 
     def track_on(executor)
+      stored = EXECUTOR_ALIASES[executor]
+      executor = stored if stored
+
       lift(Operations::TrackOn.new(executor))
     end
 
     def execute_on(executor)
+      stored = EXECUTOR_ALIASES[executor]
+      executor = stored if stored
+
       self.class.new(executor, &@behaviour)
     end
 
     def await(subscription, timeout = nil)
       latch = Concurrent::CountDownLatch.new(1)
       subscription.add(Subscriptions.on_close_and_error { latch.count_down })
+
       latch.wait(timeout)
+    rescue Exception => e
+      raise e unless e.message.include?('No live threads left')
     end
 
     alias_method :skip, :drop

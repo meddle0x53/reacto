@@ -45,17 +45,25 @@ module Reacto
       def on_close
         return if !subscribed? || @closed
 
+        unsubscribe_subscription = Subscriptions.on_close_and_error do
+          @executor.post(&method(:unsubscribe))
+          @closed = true
+        end
+        @wrapped.add(unsubscribe_subscription)
+
         @executor.post(&@wrapped.method(:on_close))
-        @executor.post(&method(:unsubscribe))
-        @closed = true
       end
 
       def on_error(error)
         return if !subscribed? || @closed
 
+        unsubscribe_subscription = Subscriptions.on_close_and_error do
+          @executor.post(&method(:unsubscribe))
+          @closed = true
+        end
+        @wrapped.add(unsubscribe_subscription)
+
         @executor.post(error, &@wrapped.method(:on_error))
-        unsubscribe
-        @closed = true
       end
     end
   end
