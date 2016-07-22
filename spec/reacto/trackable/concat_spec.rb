@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#concat' do
     it 'starts emitting the values from the concatenated after emitting the ' \

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#act' do
     it 'can be used to do something with the currently incloming data, ' \
