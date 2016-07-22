@@ -4,14 +4,15 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class Inject
-
       def initialize(injector, initial = NO_VALUE)
         @injector = injector
-        @current = initial
-        @has_values = false
+        @initial = initial
       end
 
       def call(tracker)
+        @current = @initial
+        @has_values = false
+
         inject = lambda do |v|
           if @current == NO_VALUE
             @current = v
@@ -40,4 +41,3 @@ module Reacto
     end
   end
 end
-

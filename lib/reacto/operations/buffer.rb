@@ -30,10 +30,7 @@ module Reacto
                 end
 
         Subscriptions::OperationSubscription.new(
-          tracker,
-          value: value,
-          close: close,
-          error: error
+          tracker, value: value, close: close, error: error
         )
       end
 

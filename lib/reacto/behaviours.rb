@@ -25,6 +25,21 @@ module Reacto
       end
     end
 
+    def enumerable(enumerable_value)
+      ->(tracker) do
+        begin
+          enumerable_value.each do |val|
+            break unless tracker.subscribed?
+            tracker.on_value(val)
+          end
+
+          tracker.on_close if tracker.subscribed?
+        rescue => error
+          tracker.on_error(error) if tracker.subscribed?
+        end
+      end
+    end
+
     def integers_enumerator
       Enumerator.new do |yielder|
         n = 0

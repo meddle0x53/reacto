@@ -150,21 +150,7 @@ module Reacto
       end
 
       def enumerable(enumerable, executor = nil)
-        make(executor) do |tracker|
-          begin
-            enumerable.each do |val|
-              break unless tracker.subscribed?
-              tracker.on_value(val)
-            end
-
-            tracker.on_close if tracker.subscribed?
-          rescue => error
-            tracker.on_error(error) if tracker.subscribed?
-          end
-        end
-      end
-
-      def combine_with(function, *trackables)
+        make(executor, &Behaviours.enumerable(enumerable))
       end
 
       private
@@ -182,6 +168,19 @@ module Reacto
     def initialize(executor = nil, &block)
       @behaviour = block_given? ? block : NO_ACTION
       @executor = executor
+    end
+
+    def all?(&block)
+      lift(Operations::BlockingEnumerable.new('all?', block))
+    end
+
+    def any?(&block)
+      lift(Operations::BlockingEnumerable.new('any?', block))
+    end
+
+    def chunk(executor: nil, &block)
+      executor = @executor if executor.nil?
+      lift(Operations::Chunk.new(block, executor: executor))
     end
 
     def on(trackers = {}, &block)

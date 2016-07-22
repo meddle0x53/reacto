@@ -10,13 +10,13 @@ module Reacto
 
       def call(tracker)
         subscription = Subscriptions::FlatMapSubscription.new(tracker)
-        value = lambda do |v|
+        value = ->(v) do
           trackable = @transform.call(v)
 
           trackable.do_track subscription.subscription!
         end
 
-        close = lambda do
+        close = ->() do
           subscription.source_closed = true
           return unless subscription.closed?
 
