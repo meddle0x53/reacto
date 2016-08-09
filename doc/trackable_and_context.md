@@ -36,12 +36,12 @@ from zero.
       yielder << n
       n = n + 1
     end
-
-    p enumerator.next # 1
-    p enumerator.next # 2
-    p enumerator.next # 3
-    # .....
   end
+
+  p enumerator.next # 1
+  p enumerator.next # 2
+  p enumerator.next # 3
+  # .....
 ```
 
 OK so we can look at the `Enumerator` as a behavior or a source which
