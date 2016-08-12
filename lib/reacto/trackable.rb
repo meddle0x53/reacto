@@ -21,7 +21,6 @@ module Reacto
       io: Executors.io,
       current: Executors.current,
       immediate: Executors.immediate,
-      current: Executors.immediate,
       now: Executors.immediate
     }
 
