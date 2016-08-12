@@ -167,6 +167,9 @@ module Reacto
 
     def initialize(executor = nil, &block)
       @behaviour = block_given? ? block : NO_ACTION
+
+      stored = EXECUTOR_ALIASES[executor]
+      executor = stored if stored
       @executor = executor
     end
 
