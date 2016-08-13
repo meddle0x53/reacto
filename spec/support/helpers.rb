@@ -22,4 +22,12 @@ module Helpers
       close: test_on_close
     )
   end
+
+  def expect_trackable_values(trackable, expected, label: nil)
+    expect(trackable.label).to eq(label) if label
+
+    values = []
+    trackable.on { |v| values << v }
+    expect(values).to eq(expected)
+  end
 end

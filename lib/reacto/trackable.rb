@@ -181,8 +181,17 @@ module Reacto
     end
 
     def chunk(executor: nil, &block)
+      executor = retrieve_executor(executor)
       executor = @executor if executor.nil?
+
       lift(Operations::Chunk.new(block, executor: executor))
+    end
+
+    def chunk_while(executor: nil, &block)
+      executor = retrieve_executor(executor)
+      executor = @executor if executor.nil?
+
+      lift(Operations::ChunkWhile.new(block, executor: executor))
     end
 
     def on(trackers = {}, &block)
@@ -399,6 +408,13 @@ module Reacto
     end
 
     private
+
+    def retrieve_executor(executor)
+      return nil if executor.nil?
+
+      stored = EXECUTOR_ALIASES[executor]
+      stored ? stored : executor
+    end
 
     def lift_behaviour(lifted_tracker_subscription)
       begin
