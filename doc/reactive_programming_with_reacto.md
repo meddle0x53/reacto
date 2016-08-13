@@ -1,5 +1,26 @@
 # Reactive programming with Reacto
 
+## Reactive programming
+
+Reactive programming is a buzzword these days. Many think it is something
+really complex and new, but in reality it is very simple thing.
+It creates applications which know when and how to react to changes.
+These changes could be outside ones - from some data source or another application,
+or inside ones - parts of the application depend on other parts and react to
+changes in them.
+
+Reactive programming can be achieved by building the right dependencies between
+applications, sources of data, or modules of applications and logic around
+these dependencies -> the changes in all the modules/sources should be propagated
+to the interested modules. There are frameworks and languages that do that
+for us, there are different implementations of that too. In ruby we have
+[RxRuby](https://github.com/ReactiveX/RxRuby), [Frappuccino](https://github.com/steveklabnik/frappuccino) and
+now - Reacto.
+
+The truth is that the way Reacto implements its _Reactive programming_ is by
+implementing a not so complex design pattern. In this document we'll introduce it
+and compare it to another pattern, which we already know.
+
 ## Patterns
 
 ### Enumerator

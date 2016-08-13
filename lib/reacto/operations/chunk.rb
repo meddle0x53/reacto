@@ -32,6 +32,7 @@ module Reacto
           end
 
           if key.to_s.start_with?('_')
+            flush_current!(tracker)
             tracker.on_error(RuntimeError.new(
               'symbols beginning with an underscore are reserved'
             ))
