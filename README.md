@@ -70,6 +70,17 @@ should be called when the `trackable` emits any value. This example is very
 simple and the `trackable` emits only one value - `5` when a tracker is attached
 to it so the lambda will be called and the value will be printed.
 
+
+#### error
+
+If we want to emit only an error notification we can do it with `Trackable.error`,
+it works the same way as `Trackable.value`, but the notification is of type
+`error`:
+
+```ruby
+  trackable = Reacto::Trackable.error(StandardError.new('Some error!'))
+```
+
 #### enumerable
 
 Another example is `Trackable` with source an Enumerable instance:

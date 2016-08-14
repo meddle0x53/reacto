@@ -194,6 +194,10 @@ module Reacto
       lift(Operations::ChunkWhile.new(block, executor: executor))
     end
 
+    def cycle(n = nil)
+      lift(Operations::Cycle.new(@behaviour, n))
+    end
+
     def count(value = NO_VALUE, &block)
       source =
         if value != NO_VALUE
