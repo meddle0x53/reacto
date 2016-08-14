@@ -79,6 +79,19 @@ it works the same way as `Trackable.value`, but the notification is of type
 
 ```ruby
   trackable = Reacto::Trackable.error(StandardError.new('Some error!'))
+
+  trackable.on(error: ->(e) { raise e })
+```
+
+#### close
+
+There is a way to create a `Reacto::Trackable` emitting only close notification
+too:
+
+```ruby
+  trackable = Reacto::Trackable.error(StandardError.new('Some error!'))
+
+  trackable.on(close: ->() { p 'closed' })
 ```
 
 #### enumerable
@@ -167,3 +180,8 @@ end
 trackable.activate!
 
 ```
+
+## Tested on
+
+ * Ruby 2.0.0+
+ * JRuby 9.1.2.0

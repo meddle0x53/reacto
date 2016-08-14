@@ -357,11 +357,6 @@ module Reacto
       lift(Operations::Throttle.new(delay))
     end
 
-    def cache(type: :memory, **settings)
-      settings ||= {}
-      lift(Operations::Cache.new(type: type, **settings))
-    end
-
     def depend_on(trackable, key: :data, &block)
       lift(Operations::DependOn.new(
         trackable, key: key, accumulator: block
