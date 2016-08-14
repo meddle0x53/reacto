@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#depend_on' do
     it 'suspends its caller untill the passed Trackable emits its ' \

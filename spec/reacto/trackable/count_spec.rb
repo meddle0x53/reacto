@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   subject(:source) { described_class.enumerable([1, 2, 4, 2]) }
 
