@@ -46,6 +46,9 @@ It is something you can track for notifications. Usually A `Reacto::Trackable`
 implemenation is pushing notifications to some notification tracker.
 It depends on the source. We can have some remote streaming service as a source,
 or an asynchronous HTTP request or some process pushing updates to another.
+
+#### value
+
 Of course the source can be very simple, for example a single value:
 
 ```ruby
@@ -67,6 +70,8 @@ should be called when the `trackable` emits any value. This example is very
 simple and the `trackable` emits only one value - `5` when a tracker is attached
 to it so the lambda will be called and the value will be printed.
 
+#### enumerable
+
 Another example is `Trackable` with source an Enumerable instance:
 
 ```ruby
@@ -75,6 +80,16 @@ Another example is `Trackable` with source an Enumerable instance:
 
 Again we'll have to call `on` on it in order to push its values to the tracker
 function.
+
+#### never
+
+It is possible that a Trackable which never emits anything is needed. Some
+operations behave according to Trackable instances returned, so a way to have
+such a Trackable is:
+
+```ruby
+  trackable = Reacto::Trackable.never
+```
 
 
 ### Programming Trackable behavior

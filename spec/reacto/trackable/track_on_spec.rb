@@ -20,7 +20,7 @@ context Reacto::Trackable do
     it 'executes the trackable behaviour on the passed executor' do
       subject
       .execute_on(Reacto::Executors.io)
-      .map(-> (v) { v * 2 })
+      .map(&-> (v) { v * 2 })
       .on(value: test_on_value, close: test_on_close)
     end
   end

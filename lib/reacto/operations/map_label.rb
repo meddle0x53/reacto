@@ -14,7 +14,7 @@ module Reacto
         value = -> (v) do
           to_emit =
             if v.is_a?(LabeledTrackable) && v.label == @label
-              v.map(@mapping, error: @error, close: @close)
+              v.map(error: @error, close: @close, &@mapping)
             else
               v
             end

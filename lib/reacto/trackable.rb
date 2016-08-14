@@ -194,6 +194,19 @@ module Reacto
       lift(Operations::ChunkWhile.new(block, executor: executor))
     end
 
+    def count(value = NO_VALUE, &block)
+      source =
+        if value != NO_VALUE
+          select(Behaviours.same_predicate(value))
+        elsif block_given?
+          select(block)
+        else
+          self
+        end
+
+      source.map(1).inject(&:+).last
+    end
+
     def on(trackers = {}, &block)
       trackers[:value] = block if block_given?
 
@@ -246,15 +259,19 @@ module Reacto
       lift(Operations::FlatMapLatest.new(block_given? ? block : transform))
     end
 
-    def map(mapping = nil, error: nil, close: nil, label: nil, &block)
+    def map(val = NO_VALUE, error: nil, close: nil, label: nil, &block)
+      action =
+        if block_given?
+          block
+        else
+          val == NO_VALUE ? IDENTITY_ACTION : Behaviours.constant(val)
+        end
       if label
         lift(Operations::MapLabel.new(
-          label, block_given? ? block : mapping, error: error, close: close
+          label, action, error: error, close: close
         ))
       else
-        lift(Operations::Map.new(
-          block_given? ? block : mapping, error: error, close: close
-        ))
+        lift(Operations::Map.new(action, error: error, close: close))
       end
     end
 
@@ -393,6 +410,7 @@ module Reacto
     alias_method :skip, :drop
     alias_method :skip_errors, :drop_errors
     alias_method :collect, :map
+    alias_method :collect_concat, :flat_map
 
     def do_track(subscription)
       if @executor

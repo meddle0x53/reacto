@@ -17,7 +17,7 @@ context Reacto::Trackable do
         subscriber.on_value(4)
         subscriber.on_error(StandardError.new('error'))
       end
-      trackable = source.map(-> (v) { v }, error: -> (e) { 5 })
+      trackable = source.map(error: -> (e) { 5 }, &-> (v) { v })
 
       trackable.on(value: test_on_value, error: test_on_error)
 

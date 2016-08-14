@@ -61,5 +61,13 @@ module Reacto
         end
       end
     end
+
+    def constant(const)
+      -> (_val) { const }
+    end
+
+    def same_predicate(val)
+      -> (value) { val == value }
+    end
   end
 end
