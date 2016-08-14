@@ -45,7 +45,7 @@ The main entry point to the lib is the `Reacto::Trackable` class.
 It is something you can track for notifications. Usually A `Reacto::Trackable`
 implemenation is pushing notifications to some notification tracker.
 It depends on the source. We can have some remote streaming service as a source,
-or an synchronous HTTP request or some process pushing updates to another.
+or an asynchronous HTTP request or some process pushing updates to another.
 Of course the source can be very simple, for example a single value:
 
 ```ruby
@@ -67,6 +67,16 @@ should be called when the `trackable` emits any value. This example is very
 simple and the `trackable` emits only one value - `5` when a tracker is attached
 to it so the lambda will be called and the value will be printed.
 
+Another example is `Trackable` with source an Enumerable instance:
+
+```ruby
+  trackable = Reacto::Trackable.enumerable([1, 3, 4])
+```
+
+Again we'll have to call `on` on it in order to push its values to the tracker
+function.
+
+
 ### Programming Trackable behavior
 
 A `Reacto::Trackable` can have custom behavior, defining what and when should
@@ -87,3 +97,47 @@ When a tracker is attached this behavior will become active and the tracker
 will receive the first two sentences as values, then, after one second the third
 one and then a closing notification.
 
+Every time a tracker is attached with call to `on`, this behavior will be
+executed for the given tracker. If we want to have a shared behavior for all
+the trackers we can create a `Reacto::SharedTrackable` instance:
+
+```ruby
+
+require 'socket'
+
+trackable = Reacto::SharedTrackable.make do |subscriber|
+  hostname = 'localhost'
+  port = 3555
+
+  return unless subscriber.subscribed?
+
+  socket = nil
+  begin
+    socket = TCPSocket.open(hostname, port)
+
+    while line = socket.gets
+      break unless subscriber.subscribed?
+
+      subscriber.on_value(line)
+    end
+
+    subscriber.on_close if subscriber.subscribed?
+  rescue StandardError => error
+    subscriber.on_error(error) if subscriber.subscribed?
+  ensure
+    socket.close unless socket.nil?
+  end
+
+end
+
+trackable.on(value: -> (v) { puts v })
+trackable.on do |v|
+  puts v
+end
+
+# The above calls of `on` are identical. And the two will the same data.
+# Nothing happens on calling `on` though, the `trackable` has to be activated:
+
+trackable.activate!
+
+```

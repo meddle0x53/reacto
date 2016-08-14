@@ -392,6 +392,7 @@ module Reacto
 
     alias_method :skip, :drop
     alias_method :skip_errors, :drop_errors
+    alias_method :collect, :map
 
     def do_track(subscription)
       if @executor
