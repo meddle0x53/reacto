@@ -105,6 +105,25 @@ Another example is `Trackable` with source an Enumerable instance:
 Again we'll have to call `on` on it in order to push its values to the tracker
 function.
 
+#### interval
+
+A neat way to create `Trackable` emitting the values of some Enumerable on
+every second, for example is `Reacto::Trackable.interval`:
+
+```ruby
+  trackable = described_class.interval(0.3)
+```
+
+This one emits the natural number (1..N) on every _0.3_ seconds.
+The second argument can be an `Enumerator` - limited or unlimited, for example:
+
+```ruby
+  trackable = described_class.interval(2, ('a'..'z').each)
+```
+
+Emits the letters _a to z_ on every two seconds. We can create a custom
+enumerator and use it.
+
 #### never
 
 It is possible that a Trackable which never emits anything is needed. Some
@@ -178,7 +197,6 @@ end
 # Nothing happens on calling `on` though, the `trackable` has to be activated:
 
 trackable.activate!
-
 ```
 
 ## Tested on

@@ -198,6 +198,10 @@ module Reacto
       lift(Operations::Cycle.new(@behaviour, n))
     end
 
+    def find(&block)
+      select(block).first
+    end
+
     def count(value = NO_VALUE, &block)
       source =
         if value != NO_VALUE
