@@ -17,7 +17,18 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(1)
-      expect(test_data[0]).to be(5)
+      expect(test_data.first).to be(5)
+    end
+
+    it 'notifies with the given value if value is given and nothing is found' do
+      trackable = source.find(15) do |v|
+        v > 10
+      end
+
+      trackable.on(value: test_on_value)
+
+      expect(test_data.size).to be(1)
+      expect(test_data.first).to be(15)
     end
   end
 end

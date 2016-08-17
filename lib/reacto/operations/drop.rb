@@ -10,15 +10,16 @@ module Reacto
         end
 
         @how_many_to_drop = how_many_to_drop
-        @dropped = 0
         @offset = offset
       end
 
       def call(tracker)
-        behaviour = lambda do |value|
-          @dropped += 1
+        dropped = 0
 
-          if @dropped > @how_many_to_drop
+        behaviour = -> (value) do
+          dropped += 1
+
+          if dropped > @how_many_to_drop
             if @offset != NO_VALUE
               if @offset <= 0
                 tracker.on_close
@@ -31,10 +32,7 @@ module Reacto
           end
         end
 
-        Subscriptions::OperationSubscription.new(
-          tracker,
-          value: behaviour
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: behaviour)
       end
     end
   end

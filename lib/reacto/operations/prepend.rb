@@ -1,5 +1,3 @@
-require 'reacto/subscriptions/operation_subscription'
-
 module Reacto
   module Operations
     class Prepend

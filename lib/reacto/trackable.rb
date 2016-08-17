@@ -198,8 +198,14 @@ module Reacto
       lift(Operations::Cycle.new(@behaviour, n))
     end
 
-    def find(&block)
-      select(block).first
+    def find(if_none = NO_VALUE, &block)
+      trackable = select(block).first
+
+      if if_none != NO_VALUE
+        trackable = trackable.append(if_none, condition: :source_empty)
+      end
+
+      trackable
     end
 
     def count(value = NO_VALUE, &block)
@@ -213,6 +219,22 @@ module Reacto
         end
 
       source.map(1).inject(&:+).last
+    end
+
+    def each_cons(n, &block)
+      raise ArgumentError.new('invalid size') if n <= 0
+      return each(&block) if n == 1
+
+      current = []
+      each do |value|
+        current << value
+
+        if current.size == n
+          block.call(current)
+
+          current = current[1..-1]
+        end
+      end
     end
 
     def on(trackers = {}, &block)
@@ -305,6 +327,11 @@ module Reacto
       lift(Operations::Drop.new(how_many_to_drop))
     end
 
+    def drop_while(&block)
+      predicate = block_given? ? block : FALSE_PREDICATE
+      lift(Operations::DropWhile.new(predicate))
+    end
+
     def drop_errors
       lift(Operations::DropErrors.new)
     end
@@ -335,6 +362,10 @@ module Reacto
 
     def prepend(enumerable)
       lift(Operations::Prepend.new(enumerable))
+    end
+
+    def append(to_append, condition: nil)
+      lift(Operations::Append.new(to_append, condition: condition))
     end
 
     def concat(trackable)
@@ -414,6 +445,8 @@ module Reacto
     alias_method :skip_errors, :drop_errors
     alias_method :collect, :map
     alias_method :collect_concat, :flat_map
+    alias_method :detect, :find
+    alias_method :each, :on
 
     def do_track(subscription)
       if @executor

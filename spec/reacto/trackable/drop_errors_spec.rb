@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#drop_errors' do
     it 'drops all the errors from the source and continues' do
@@ -9,7 +7,7 @@ context Reacto::Trackable do
         value: test_on_value, error: test_on_error, close: test_on_close
       )
 
-      expect(test_data).to be == (1..10).to_a + ['|']
+      expect(test_data).to eq((1..10).to_a + ['|'])
     end
   end
 end

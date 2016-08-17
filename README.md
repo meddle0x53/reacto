@@ -137,6 +137,8 @@ such a Trackable is:
 
 ### Programming Trackable behavior
 
+#### make
+
 A `Reacto::Trackable` can have custom behavior, defining what and when should
 be sent:
 
@@ -155,12 +157,13 @@ When a tracker is attached this behavior will become active and the tracker
 will receive the first two sentences as values, then, after one second the third
 one and then a closing notification.
 
+#### SharedTrackable
+
 Every time a tracker is attached with call to `on`, this behavior will be
 executed for the given tracker. If we want to have a shared behavior for all
 the trackers we can create a `Reacto::SharedTrackable` instance:
 
 ```ruby
-
 require 'socket'
 
 trackable = Reacto::SharedTrackable.make do |subscriber|
@@ -199,7 +202,149 @@ end
 trackable.activate!
 ```
 
-## Tested on
+### Tracking for notifications
+
+#### on
+
+The easiest way to listen a `Reacto::Trackable` is to call `#on` on it:
+
+```ruby
+  consumer = -> (value) do
+    # Consume the incoming value
+  end
+
+  trackable.on(value: consumer)
+```
+
+Calling it like that will trigger the behaviour of the `trackable` and
+all the values it emits, will be passed to the consumer. A block can be passed
+to `#on` and it will have the same effect:
+
+```ruby
+  trackable.on do |value|
+    # Consume the incoming value
+  end
+```
+
+If we want to fetch an error we can call `#on` like that:
+
+```ruby
+  error_consumer = -> (error) do
+    # Consume the incoming error
+  end
+
+  trackable.on(error: error_consumer)
+```
+
+Only one error can be emitted by a `Trackable` for subscription and that will
+close the `Reacto::Trackable`. If there is no error, the normal closing
+notification should be emitted. We can fetch it like this:
+
+```ruby
+  to_be_called_on_close = -> () do
+    # Fnalize?
+  end
+
+  trackable.on(close: to_be_called_on_cloe)
+```
+
+#### track
+
+Under the hood `#on` creates a new `Reacto::Tracker` instance with the right
+methods. If we want to create our own tracker, we can always call `#track` on
+the trackable with the given instance:
+
+```ruby
+  consumer = -> (value) do
+    # Consume the incoming value
+  end
+  error_consumer = -> (error) do
+    # Consume the incoming error
+  end
+
+  trackable.track(Reacto::Trackable.new(
+    value: consumer, error: error_consumer, close: -> () { p 'Closing!' }
+  ))
+```
+
+All of these keyword parameters have default values - for example if we don't
+pass a `value:` action, a _no-action_ will be used, doing nothing with the
+value, the same is right about not passing `close:` action. Be aware that
+the default `error:` action is raising the error.
+
+
+### Subscriptions
+
+Calling `#on` or `#track` will create and return a `Reacto::Subscription`.
+We can unsubscribe form the `Trackable` with it by calling `#unsubscribe`:
+
+
+```ruby
+  subscription = trackable.on(value: consumer)
+
+  subscription.unsubscribe
+```
+
+This way our notification tracker won't receive notification any more.
+Checking if a `Subscription` is subscribed can be done by calling `subscribed?`
+on it.
+
+```ruby
+  subscription = trackable.on(value: consumer)
+
+  subscription.subscribed? # true
+```
+
+Subscriptions can be used for other things, adding additional subscriptions
+to them, adding resources, which should be closed on receiving the `close`
+notification and waiting for trackable operating on background to finish.
+
+### Operations
+
+Operations are methods which can be invoked on a `Reacto::Trackable` instance,
+and always return a new `Reacto::Trackable` instance. The new trackable has
+emits all or some of the notifications of the source, somewhat changed by
+the operation. Let's look at an example:
+
+#### map
+
+The `map` operation is a transformation, it transforms every
+value (and not only), emitted by the source using the _block_ given.
+
+```ruby
+  source_trackable = Reacto::Trackable.enumerable((1..100))
+
+  trackable = source_trackable.map do |value|
+    value - 1
+  end
+
+  trackable.on(value: -> (val) { puts val })
+  # the numbers from 0 to 99 will be printed
+```
+
+The `map` operation is able to transform errors as well, it can transform
+the stream of notifications itself and add new notification before the
+close notification for example.
+
+#### select
+
+The `select` operation filters values using a predicate block:
+
+```ruby
+  source_trackable = Reacto::Trackable.enumerable((1..100))
+
+  trackable = source_trackable.select do |value|
+    value % 5 == 0
+  end
+
+  trackable.on(value: -> (val) { puts val })
+  # the numbers printed will be 5, 10, 15, ... 95, 100
+```
+
+There are more filtering operations - `drop`, `skip`, `first`, `last`, etc.
+Look at the specs for examples of them.
+
+## Tested with rubies
 
  * Ruby 2.0.0+
  * JRuby 9.1.2.0

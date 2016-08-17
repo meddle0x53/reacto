@@ -28,11 +28,11 @@ context Reacto::Trackable do
     it 'emits what is produced by the passed `close` function before close' do
       trackable =
         described_class.enumerable((1..5)).map(close: ->() { 10 }) do |v|
-        v
+          v
         end
 
       trackable.on(value: test_on_value, close: test_on_close)
-      expect(test_data).to be == (1..5).to_a + [10, '|']
+      expect(test_data).to eq((1..5).to_a + [10, '|'])
     end
 
     context 'with label' do

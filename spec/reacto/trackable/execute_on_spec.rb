@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   subject do
    described_class.new do |tracker_subscription|
