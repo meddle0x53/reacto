@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#inject' do
     let(:test_behaviour) do

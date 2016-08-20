@@ -225,16 +225,20 @@ module Reacto
       raise ArgumentError.new('invalid size') if n <= 0
       return each(&block) if n == 1
 
-      current = []
-      each do |value|
-        current << value
+      reset_action = -> (current) { current[1..-1] }
 
-        if current.size == n
-          block.call(current)
+      trackable = lift(Operations::EachCollect.new(
+        n, reset_action, on_error: NO_ACTION, on_close: NO_ACTION
+      ))
+      block_given? ? trackable.on(&block) : trackable
+    end
 
-          current = current[1..-1]
-        end
-      end
+    def each_slice(n, &block)
+      raise ArgumentError.new('invalid size') if n <= 0
+
+      trackable = lift(Operations::EachCollect.new(n))
+
+      block_given? ? trackable.on(&block) : trackable
     end
 
     def on(trackers = {}, &block)
@@ -447,6 +451,7 @@ module Reacto
     alias_method :collect_concat, :flat_map
     alias_method :detect, :find
     alias_method :each, :on
+    alias_method :each_entry, :on
 
     def do_track(subscription)
       if @executor

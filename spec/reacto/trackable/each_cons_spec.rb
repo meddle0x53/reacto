@@ -37,5 +37,17 @@ context Reacto::Trackable do
       expect(subscription).to_not be(nil)
       expect(subscription).to be_kind_of(Reacto::Subscriptions::Subscription)
     end
+
+    it 'returns a new Trackable with the each_cons behavior ' \
+      'if no block was given' do
+      trackable = test_source.each_cons(4)
+
+      attach_test_trackers(trackable)
+
+      expect(test_data).to eq([
+        [1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8],
+        [6, 7, 8, 9], [7, 8, 9, 10], '|'
+      ])
+    end
   end
 end

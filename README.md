@@ -123,6 +123,8 @@ The second argument can be an `Enumerator` - limited or unlimited, for example:
 
 Emits the letters _a to z_ on every two seconds. We can create a custom
 enumerator and use it.
+Note that `.interval` creates `Reacto::Trackable` which emits in a special
+thread, so calling `#on` on it won't block the current thread.
 
 #### never
 
@@ -341,8 +343,92 @@ The `select` operation filters values using a predicate block:
   # the numbers printed will be 5, 10, 15, ... 95, 100
 ```
 
-There are more filtering operations - `drop`, `skip`, `first`, `last`, etc.
+There are more filtering operations - `drop`, `take`, `first`, `last`, etc.
 Look at the specs for examples of them.
+
+#### inject
+
+A way to accumulate and emit data based on the current incomming value and
+the accumulated data from the previous ones. That was recursive... A better
+way to explain it is an example:
+
+```ruby
+  source_trackable = Reacto::Trackable.enumerable((1..100))
+
+  trackable = source.inject(0) do |prev, v|
+    prev + v
+  end
+
+  trackable.on(value: -> (val) { puts val })
+  # Will print a sequesnce of sums 0+1 then 1+2=3, then 3+4=7, etc, the last
+  # value will be the sum of all the source values
+```
+
+There are more operations that let the emitted values interact, for example
+`diff` and `each_cons`.
+
+#### flat_map
+
+This operation takes a block which will be called for every emitted value
+by the source. The block has to return a `Reacto::Trackable` instance for
+every value. So if the source emits 10 values, ten Trackable instances will
+be created, all of which will emit values. All these values are flattened
+and emitted by the `Reacto::Trackable` created by calling `flat_map`.
+
+```ruby
+  source = Reacto::Trackable.enumerable([(-10..-1), [0], (1..10)])
+  trackable = source.flat_map do |v|
+    Reacto::Trackable.enumerable(v)
+  end
+
+  trackable.on(value: -> (val) { puts val })
+  # Will print all the numbers from -10 to 10
+```
+
+It is a very powerful operation, which allows us to create `Reacto::Trackable`
+instances from incoming data and write logic using operations on them.
+
+#### more operations
+
+*Reacto* is in continuous development more and more _operations_ are being added
+to it and there are even more to come.
+So soon there will be a documentation page for all of the available operations,
+which will be updated when new ones are added, or existing ones are modified.
+TODO!
+
+### Interacting Trackables
+
+Trackables can interact with one another, for example one `Reacto::Trackable`
+instance can merge with another to produce a new one - emitting the
+notifications of the two sources.
+
+#### merge
+
+This is done by calling `merge` on one fo the Trackables and passing to it
+the other. `merge` is an operation - it produces a new `Reacto::Trackable`
+instance:
+
+```ruby
+  trackable =
+    Reacto::Trackable.interval(2).map { |v| v.to_s + 'a'}.take(5)
+  to_be_merged =
+    Reacto::Trackable.interval(3.5).map { |v| v.to_s + 'b'}.take(4)
+
+  subscription = trackable.merge(to_be_merged).on(value: -> (val) { puts val })
+  trackable.await(subscription)
+
+  # Something like '0a', '0b', '1a', '2a', '1b', '3a', '4a', '2b', '3b' will
+  # be printed
+```
+
+As mentioned before, interval is exucuted in the background by default, so
+adding trackers to either of the sources won't block the current thread.
+This means that the `Reacto::Trackable` created by `merge` will emit the
+source notifications in the order they are coming adn that doesn't depend on
+which source they are coming from. We call `#await` to it passing the
+_subscription_ because we don't want the current thread to terminate, we want
+it to wait for the threads of the two sources to finish. More on that later.
+
 
 ## Tested with rubies
 
