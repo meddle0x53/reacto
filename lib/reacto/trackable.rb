@@ -152,6 +152,8 @@ module Reacto
         make(executor, &Behaviours.enumerable(enumerable))
       end
 
+      alias_method :combine_latest, :combine
+
       private
 
       def combine_create(type, *trackables, &block)
@@ -228,7 +230,7 @@ module Reacto
       reset_action = -> (current) { current[1..-1] }
 
       trackable = lift(Operations::EachCollect.new(
-        n, reset_action, on_error: NO_ACTION, on_close: NO_ACTION
+        n, reset_action: reset_action, on_error: NO_ACTION, on_close: NO_ACTION
       ))
       block_given? ? trackable.on(&block) : trackable
     end
@@ -237,6 +239,23 @@ module Reacto
       raise ArgumentError.new('invalid size') if n <= 0
 
       trackable = lift(Operations::EachCollect.new(n))
+
+      block_given? ? trackable.on(&block) : trackable
+    end
+
+    def each_with_index(&block)
+      index = 0
+
+      collect_action = -> (val, collection) do
+        collection << val
+        collection << index
+        index += 1
+      end
+
+      trackable = lift(Operations::EachCollect.new(
+        2, collect_action: collect_action, init_action: -> () { index = 0 },
+        on_error: NO_ACTION, on_close: NO_ACTION
+      ))
 
       block_given? ? trackable.on(&block) : trackable
     end
@@ -422,6 +441,18 @@ module Reacto
       lift(Operations::Retry.new(@behaviour, retries))
     end
 
+    def combine_last(*trackables, &block)
+      self.class.combine_last(*([self] + trackables), &block)
+    end
+
+    def combine(*trackables, &block)
+      self.class.combine(*([self] + trackables), &block)
+    end
+
+    def zip(*trackables, &block)
+      self.class.zip(*([self] + trackables), &block)
+    end
+
     def track_on(executor)
       stored = EXECUTOR_ALIASES[executor]
       executor = stored if stored
@@ -452,6 +483,7 @@ module Reacto
     alias_method :detect, :find
     alias_method :each, :on
     alias_method :each_entry, :on
+    alias_method :combine_latest, :combine
 
     def do_track(subscription)
       if @executor

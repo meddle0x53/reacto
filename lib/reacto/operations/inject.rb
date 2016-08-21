@@ -13,7 +13,7 @@ module Reacto
         @current = @initial
         @has_values = false
 
-        inject = lambda do |v|
+        inject = -> (v) do
           if @current == NO_VALUE
             @current = v
           else
@@ -24,7 +24,7 @@ module Reacto
           tracker.on_value(@current)
         end
 
-        close = lambda do
+        close = -> () do
           unless @has_values || @current == NO_VALUE
             tracker.on_value(@current)
           end
@@ -32,10 +32,16 @@ module Reacto
           tracker.on_close
         end
 
+        error = -> (e) do
+          unless @has_values || @current == NO_VALUE
+            tracker.on_value(@current)
+          end
+
+          tracker.on_error(e)
+        end
+
         Subscriptions::OperationSubscription.new(
-          tracker,
-          value: inject,
-          close: close
+          tracker, value: inject, close: close, error: error
         )
       end
     end

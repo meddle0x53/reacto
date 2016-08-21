@@ -429,6 +429,70 @@ which source they are coming from. We call `#await` to it passing the
 _subscription_ because we don't want the current thread to terminate, we want
 it to wait for the threads of the two sources to finish. More on that later.
 
+#### zip
+
+Zip combines the notifications emitted by multiple `Reacto::Trackable` instances
+into one, using a combinator function. The first notifications of all the
+trackables are combined, then the second notifications and when one of the
+sources emits close/error notification, the one produced by `zip` emits it and
+closes.
+
+```ruby
+  source1 = Reacto::Trackable.interval(3).drop(1).take(4)
+  source2 = Reacto::Trackable.interval(7, ('a'..'b').each)
+  source3 = Reacto::Trackable.interval(5, ('A'..'C').each)
+
+  trackable = Reacto::Trackable.zip(source1, source2, source3) do |v1, v2, v3|
+    "#{v1} : #{v2} : #{v3}"
+  end
+
+  subscription = trackable.on(
+    value: -> (val) { puts val }, close: -> () { puts 'Bye!' }
+  )
+  trackable.await(subscription)
+
+  # '1 : a : A' and '2 : b : B' will be printed, then 'Bye!', because the second
+  # source will emit the close notification after emitting 'b'.
+```
+
+Here the first source - `source1` is emitting the numbers from `0` to infinity
+on every 3 seconds, we want to drop the `0` and start by emitting `1`, so we
+drop the first emitted value with `drop(1)`, then we don't want to emit to
+infinity, so we `take(4)` - only the first `4` numbers, so `1`, `2`, `3` and `4`
+. This is an example of how to use the positional filtering operations.
+
+#### combine
+
+There is the `combine` operation which behaves in a fasion similar to `zip`
+but combines the last emitted values with its combinator function on every new
+value incoming from any source and closes when all of the sources have closed.
+
+```ruby
+  source1 = Reacto::Trackable.interval(3).take(4)
+  source2 = Reacto::Trackable.interval(7, ('a'..'b').each)
+  source3 = Reacto::Trackable.interval(5, ('A'..'C').each)
+
+  trackable = Reacto::Trackable.combine(source1, source2, source3) do |v1, v2, v3|
+    "#{v1} : #{v2} : #{v3}"
+  end
+
+  subscription = trackable.on(
+    value: -> (val) { puts val }, close: -> () { puts 'Bye!' }
+  )
+  trackable.await(subscription)
+
+  # '1 : a : A', '2 : a : A', '2 : a : B', '3 : a : B', '3 : b : B',
+  # '3 : b : C' and then 'Bye!' will be printed.
+```
+
+All of these values will be emitted on the right intervals. For example
+`'1 : a : A'` will be emitted `7` seconds after the subscription, because `a`
+takes the most time and the first notification of the combined trackable have
+to include data from all of the sources. Then the second - `'2 : a : A'` will be
+emitted the `9th` second from the start, because `2` is emitted on the `9th`
+second, etc. In the beginning the `0` emitted by the first source is silently
+skipped.
+
 
 ## Tested with rubies
 

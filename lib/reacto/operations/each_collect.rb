@@ -5,10 +5,14 @@ module Reacto
   module Operations
     class EachCollect
       def initialize(
-        n, reset_action = -> (_) { [] }, on_error: nil, on_close: nil
+        n,
+        reset_action: -> (_) { [] }, collect_action: nil,
+        init_action: NO_ACTION, on_error: nil, on_close: nil
       )
         @n = n
         @reset_action = reset_action
+        @collect_action = collect_action
+        @init_action = init_action
 
         @error = on_error
         @close = on_close
@@ -16,6 +20,11 @@ module Reacto
 
       def call(tracker)
         current = []
+        @init_action.call
+
+        unless @collect_action
+          @collect_action = -> (value, collection) { collection << value }
+        end
 
         error = @error ? @error : ->(e) do
           tracker.on_value(current) unless current.empty?
@@ -30,7 +39,7 @@ module Reacto
         close = close == NO_ACTION ? tracker.method(:on_close) : close
 
         behaviour = -> (value) do
-          current << value
+          @collect_action.call(value, current)
 
           if current.size == @n
             tracker.on_value(current)

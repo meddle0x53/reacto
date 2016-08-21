@@ -40,4 +40,3 @@ module Reacto
     end
   end
 end
-
