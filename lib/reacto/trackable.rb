@@ -214,6 +214,16 @@ module Reacto
       trackable
     end
 
+    def find_index(value = NO_VALUE, &block)
+      predicate =
+        if value != NO_VALUE
+          -> (v) { value == v }
+        else
+          block
+        end
+      lift(Operations::FindIndex.new(predicate))
+    end
+
     def count(value = NO_VALUE, &block)
       source =
         if value != NO_VALUE
@@ -513,6 +523,7 @@ module Reacto
     alias_method :each_entry, :on
     alias_method :combine_latest, :combine
     alias_method :group_by, :group_by_label
+    alias_method :find_all, :select
 
     def do_track(subscription)
       if @executor

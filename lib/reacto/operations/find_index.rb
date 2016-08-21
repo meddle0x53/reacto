@@ -2,15 +2,22 @@ require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
   module Operations
-    class Flatten
+    class FindIndex
+      def initialize(predicate)
+        @predicate = predicate
+      end
+
       def call(tracker)
+        index = 0
+
         behaviour = -> (value) do
-          if value.kind_of?(Array)
-            value.flatten.each do |sub_value|
-              tracker.on_value(sub_value)
-            end
+          found = @predicate.call(value)
+
+          if found
+            tracker.on_value(index)
+            tracker.on_close
           else
-            tracker.on_value(value)
+            index += 1
           end
         end
 
