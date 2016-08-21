@@ -1,3 +1,4 @@
+require 'concurrent'
 require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
@@ -5,27 +6,28 @@ module Reacto
     class Merge
       def initialize(trackable, delay_error: false)
         @trackable = trackable
-        @close_notifications = 2
+        @close_notifications = Concurrent::AtomicFixnum.new(2)
         @lock = Mutex.new
         @delay_error = delay_error
       end
 
       def call(tracker)
-        close = lambda do
+        error = nil
+
+        close = -> () do
           @lock.synchronize do
-            @close_notifications -= 1
-            if @close_notifications == 0
-              @error.nil? ? tracker.on_close : tracker.on_error(@error)
+            if @close_notifications.decrement == 0
+              error.nil? ? tracker.on_close : tracker.on_error(error)
             end
           end
         end
+
         err =
           if @delay_error
-            lambda do |er|
+            -> (er) do
               @lock.synchronize do
-                @error = er
-                @close_notifications -= 1
-                tracker.on_error(@error) if @close_notifications == 0
+                error = er
+                tracker.on_error(error) if @close_notifications.decrement == 0
               end
             end
           else
@@ -44,4 +46,3 @@ module Reacto
     end
   end
 end
-

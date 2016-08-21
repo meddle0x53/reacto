@@ -1,9 +1,11 @@
+require 'concurrent'
+
 module Reacto
   module Subscriptions
     class BufferedSubscription < SimpleSubscription
       include Subscription
 
-      attr_accessor :current_index, :buffer, :last_error
+      attr_accessor :buffer, :last_error
 
       def initialize(parent)
         @parent = parent
@@ -11,27 +13,27 @@ module Reacto
         @active = false
 
         @buffer = Hash.new(NO_VALUE)
-        @current_index = 0
+        @current_index = Concurrent::AtomicFixnum.new(0)
         @last_error = nil
 
-        open = lambda do
+        open = -> () do
           @active = true
           @parent.on_open
         end
 
-        value = lambda do |v|
-          @buffer[@current_index] = v
-          @current_index += 1
+        value = -> (v) do
+          @buffer[@current_index.value] = v
+          @current_index.increment
 
           @parent.on_value(v)
         end
 
-        error = lambda do |e|
+        error = -> (e) do
           @last_error = e
           @parent.on_error(e)
         end
 
-        close = lambda do
+        close = -> () do
           @closed = true
           @parent.on_close
         end
@@ -49,4 +51,3 @@ module Reacto
     end
   end
 end
-
