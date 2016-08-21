@@ -260,6 +260,24 @@ module Reacto
       block_given? ? trackable.on(&block) : trackable
     end
 
+    def entries(n = nil)
+      return [] if n && n.is_a?(Integer) && n <= 0
+
+      trackable = self
+      trackable = trackable.take(n) if n && n.is_a?(Integer) && n > 0
+
+      result = []
+      subscription = trackable.on(value: ->(v) { result << v })
+
+      trackable.await(subscription)
+
+      result
+    end
+
+    def to_a
+      entries
+    end
+
     def on(trackers = {}, &block)
       trackers[:value] = block if block_given?
 
@@ -338,6 +356,10 @@ module Reacto
 
     def inject(initial = NO_VALUE, injector = nil, &block)
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
+    end
+
+    def each_with_object(obj, &block)
+      lift(Operations::EachWithObject.new(block, obj))
     end
 
     def diff(initial = NO_VALUE, &block)
@@ -468,6 +490,8 @@ module Reacto
     end
 
     def await(subscription, timeout = nil)
+      return unless subscription.subscribed?
+
       latch = Concurrent::CountDownLatch.new(1)
       subscription.add(Subscriptions.on_close_and_error { latch.count_down })
 
@@ -484,6 +508,7 @@ module Reacto
     alias_method :each, :on
     alias_method :each_entry, :on
     alias_method :combine_latest, :combine
+    alias_method :group_by, :group_by_label
 
     def do_track(subscription)
       if @executor

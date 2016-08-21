@@ -15,7 +15,7 @@ module Reacto
         taken = 0
         closed = false
 
-        behaviour = lambda do |value|
+        behaviour = -> (value) do
           return if closed
           if taken < @how_many_to_take
             tracker.on_value(value)
