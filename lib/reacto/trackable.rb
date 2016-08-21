@@ -35,6 +35,10 @@ module Reacto
         )
       end
 
+      def concat(*trackables)
+        trackables.inject { |current, trackable| current.concat(trackable) }
+      end
+
       def combine_last(*trackables, &block)
         combine_create(
           Subscriptions::CombiningLastSubscription, *trackables, &block
@@ -417,8 +421,8 @@ module Reacto
       lift(Operations::Concat.new(trackable))
     end
 
-    def merge(trackable, delay_error: false)
-      lift(Operations::Merge.new(trackable, delay_error: delay_error))
+    def merge(*trackables, delay_error: false)
+      lift(Operations::Merge.new(trackables, delay_error: delay_error))
     end
 
     def buffer(count: nil, delay: nil)

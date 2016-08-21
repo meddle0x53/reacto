@@ -209,6 +209,12 @@ as value.
   trackable.on { |val| p val } # will print 1 3(1+2) 6(3 + 3) 10(6 + 4) 15(10 + 5)
 ```
 
+Operation similar to `inject` are `diff`, which calls a given block for every
+two consequetly emitted values and the `Reacto::Trackable` resulting from it,
+emits this the block's return value. Another one is `each_with_object`, which
+calls a given block for each value emitted by the source with an arbitrary
+object given, and emits the initially given object.
+
 #### FlatMap
 
 Interesting operation is the `flat_map`. It accepts a block, which for

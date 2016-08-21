@@ -4,9 +4,11 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class Merge
-      def initialize(trackable, delay_error: false)
-        @trackable = trackable
-        @close_notifications = Concurrent::AtomicFixnum.new(2)
+      def initialize(trackables, delay_error: false)
+        @trackables = trackables
+
+        @close_notifications =
+          Concurrent::AtomicFixnum.new(@trackables.size + 1)
         @lock = Mutex.new
         @delay_error = delay_error
       end
@@ -35,12 +37,10 @@ module Reacto
           end
 
         sub = Subscriptions::OperationSubscription.new(
-          tracker,
-          close: close,
-          error: err
+          tracker, close: close, error: err
         )
 
-        @trackable.send(:do_track, sub)
+        @trackables.each { |trackable| trackable.send(:do_track, sub) }
         sub
       end
     end

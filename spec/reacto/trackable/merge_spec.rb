@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#merge' do
     it 'merges the passed trackable\'s emitions with the source ones' do
@@ -12,8 +10,9 @@ context Reacto::Trackable do
       )
       trackable.await(subscription)
 
-      expect(test_data).to be ==
-        ["0a", "0b", "1a", "2a", "1b", "3a", "4a", "2b", "3b", "|"]
+      expect(test_data).to eq(
+        ['0a', '0b', '1a', '2a', '1b', '3a', '4a', '2b', '3b', '|']
+      )
     end
 
     it 'finishes with the error if `delay_error` is true' do
@@ -32,9 +31,9 @@ context Reacto::Trackable do
       )
       trackable.await(subscription, 2)
 
-      expect(test_data).to be ==
-        ["0a", "0b", "1a", "2a", "1b", "2b", "3b", err]
-
+      expect(test_data).to eq(
+        ['0a', '0b', '1a', '2a', '1b', '2b', '3b', err]
+      )
     end
   end
 end

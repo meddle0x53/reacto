@@ -364,8 +364,11 @@ way to explain it is an example:
   # value will be the sum of all the source values
 ```
 
-There are more operations that let the emitted values interact, for example
-`diff` and `each_cons`.
+Operation similar to `inject` are `diff`, which calls a given block for every
+two consequetly emitted values and the `Reacto::Trackable` resulting from it,
+emits this the block's return value. Another one is `each_with_object`, which
+calls a given block for each value emitted by the source with an arbitrary
+object given, and emits the initially given object.
 
 #### flat_map
 
@@ -493,6 +496,24 @@ emitted the `9th` second from the start, because `2` is emitted on the `9th`
 second, etc. In the beginning the `0` emitted by the first source is silently
 skipped.
 
+#### concat
+
+Concatenating one `Reacto::Trackable` to another, basically means that the
+resulting `Trackable` will emit the values of the first one, then the values
+of the second one:
+
+```ruby
+  source1 = Reacto::Trackable.enumerable((1..5))
+  source2 = Reacto::Trackable.enumerable((6..10))
+
+  trackable = source1.concat(source2)
+
+  trackable.on(
+    value: -> (val) { puts val }, close: -> () { puts 'Bye!' }
+  )
+
+  # The values from 1 to 10 will be printed, then 'Bye!'
+```
 
 ## Tested with rubies
 

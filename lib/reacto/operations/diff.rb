@@ -25,10 +25,7 @@ module Reacto
         end
 
 
-        Subscriptions::OperationSubscription.new(
-          tracker,
-          value: value
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: value)
       end
     end
   end
