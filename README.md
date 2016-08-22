@@ -218,7 +218,7 @@ The easiest way to listen a `Reacto::Trackable` is to call `#on` on it:
   trackable.on(value: consumer)
 ```
 
-Calling it like that will trigger the behaviour of the `trackable` and
+Calling it like that will trigger the behavior of the `trackable` and
 all the values it emits, will be passed to the consumer. A block can be passed
 to `#on` and it will have the same effect:
 
@@ -348,7 +348,7 @@ Look at the specs for examples of them.
 
 #### inject
 
-A way to accumulate and emit data based on the current incomming value and
+A way to accumulate and emit data based on the current incoming value and
 the accumulated data from the previous ones. That was recursive... A better
 way to explain it is an example:
 
@@ -365,7 +365,7 @@ way to explain it is an example:
 ```
 
 Operation similar to `inject` are `diff`, which calls a given block for every
-two consequetly emitted values and the `Reacto::Trackable` resulting from it,
+two emitted in sequence values and the `Reacto::Trackable` resulting from it,
 emits this the block's return value. Another one is `each_with_object`, which
 calls a given block for each value emitted by the source with an arbitrary
 object given, and emits the initially given object.
@@ -407,7 +407,7 @@ notifications of the two sources.
 
 #### merge
 
-This is done by calling `merge` on one fo the Trackables and passing to it
+This is done by calling `merge` on one of the Trackables and passing to it
 the other. `merge` is an operation - it produces a new `Reacto::Trackable`
 instance:
 
@@ -424,10 +424,10 @@ instance:
   # be printed
 ```
 
-As mentioned before, interval is exucuted in the background by default, so
+As mentioned before, interval is executed in the background by default, so
 adding trackers to either of the sources won't block the current thread.
 This means that the `Reacto::Trackable` created by `merge` will emit the
-source notifications in the order they are coming adn that doesn't depend on
+source notifications in the order they are coming and that doesn't depend on
 which source they are coming from. We call `#await` to it passing the
 _subscription_ because we don't want the current thread to terminate, we want
 it to wait for the threads of the two sources to finish. More on that later.
@@ -466,7 +466,7 @@ infinity, so we `take(4)` - only the first `4` numbers, so `1`, `2`, `3` and `4`
 
 #### combine
 
-There is the `combine` operation which behaves in a fasion similar to `zip`
+There is the `combine` operation which behaves in a fashion similar to `zip`
 but combines the last emitted values with its combinator function on every new
 value incoming from any source and closes when all of the sources have closed.
 
@@ -514,6 +514,35 @@ of the second one:
 
   # The values from 1 to 10 will be printed, then 'Bye!'
 ```
+
+#### depend_on
+
+One `Reacto::Trackable`'s notifications can depend on another's accumulated
+notifications. The `depend_on` operation, expects a `Trackable` and a block,
+the block is used in the same manner as `inject` uses its block on this passed
+`Trackable`. When the passed `Trackable` closes, the accumulated data by the
+block (the last value) is emitted with every notification of the caller:
+
+```ruby
+  dependency = Reacto::Trackable.enumerable((1..10))
+  trackable = Reacto::Trackable.enumerable([5, 4]).depend_on(dependency, &:+)
+
+  trackable.on(
+    value: -> (val) { puts val }, close: -> () { puts 'Bye!' }
+  )
+
+  # The emitted notifications will printed:
+  # Value notification : notification.value: 5, notification.data: 55
+  # Value notification : notification.value: 4, notification.data: 55
+  # Close notification : prints 'Bye!'
+```
+
+Without passed block, the first emitted value of the dependency is used as data.
+If there is an error from the dependency, it is emitted by the caller. The key
+of the dependency, can be changed from `data` to something else by passing a
+`key:` to the operation.
+
+### Concurency
 
 ## Tested with rubies
 
