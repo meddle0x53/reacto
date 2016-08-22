@@ -4,32 +4,26 @@ require 'concurrent/executor/fixed_thread_pool'
 
 module Reacto
   module Executors
-    class CurrentExecutor
-      def post
-
-      end
-    end
-
     module_function
 
     def immediate
-      Concurrent::ImmediateExecutor.new
+      @immediate ||= Concurrent::ImmediateExecutor.new
     end
 
     def current
-      Concurrent::ImmediateExecutor.new
+      immediate
     end
 
     def io
-      Concurrent::CachedThreadPool.new
+      @io ||= Concurrent::CachedThreadPool.new
     end
 
     def tasks
-      Concurrent::FixedThreadPool.new(4) # Number of cores here?
+      @tasks ||= Concurrent::FixedThreadPool.new(4) # Number of cores here?
     end
 
     def new_thread
-      Concurrent::SimpleExecutorService.new
+      @new_thread ||= Concurrent::SimpleExecutorService.new
     end
   end
 end

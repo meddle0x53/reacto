@@ -360,6 +360,14 @@ module Reacto
       end
     end
 
+    def grep(pattern, &block)
+      action = -> (v) { pattern === v }
+      result = select(&action)
+      result = result.map(&block) if block_given?
+
+      result
+    end
+
     def wrap(**args)
       lift(Operations::Wrap.new(args))
     end
@@ -407,8 +415,10 @@ module Reacto
       lift(Operations::Flatten.new)
     end
 
-    def first
-      take(1)
+    def first(n = 1)
+      raise ArgumentError.new('negative array size') if n < 0
+
+      take(n)
     end
 
     def [](x)

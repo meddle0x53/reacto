@@ -1,5 +1,5 @@
 context Reacto::Trackable do
-  subject do
+  subject(:test_source) do
    described_class.new do |tracker_subscription|
       tracker_subscription.on_value(32)
       sleep 1
@@ -12,7 +12,7 @@ context Reacto::Trackable do
     it 'executes the whole chain of methods on a background managed thread' do
       threads = []
 
-      trackable = subject
+      trackable = test_source
         .act { |n| threads << Thread.current }
         .map { |v| v / 8 }
         .execute_on(:background)

@@ -1,8 +1,6 @@
 context Reacto::Trackable do
   context '#entries' do
-    subject(:test_source) do
-      described_class.enumerable((1..100))
-    end
+    subject(:test_source) { described_class.enumerable((1..100)) }
 
     it 'returns an array containing all the values emitted by the source' do
       result = test_source.entries

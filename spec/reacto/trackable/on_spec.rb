@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#on' do
     it 'returns a Reacto::Subscription' do

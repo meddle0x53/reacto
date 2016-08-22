@@ -544,6 +544,94 @@ of the dependency, can be changed from `data` to something else by passing a
 
 ### Concurency
 
+Aside from factory methods like `.interval` or `.later`, `Reacto::Trackable`
+has two other ways of emitting its notification concurrently to the thread
+that created it (or some other thread). Every trackable can do that by using
+the two dedicated operations `execute_on` and `track_on`.
+
+#### execute_on
+
+This operation returns a `Reacto::Trackable` which operations will be executed
+on the given `executor` plus the operations of its source will be executed on
+this `executor` as well. Basically this means that the whole logic - the
+behavior of the first trackable in the chain of operations and all subsequent
+operations will be executed on the given `executor`.
+By `executor`, we mean the ones provided by the `Reacto::Executors`'s methods or
+a custom implementation complying to `concurrent-ruby`'s
+`Concurrent::ExecutorService`. These executors menage threads for us, some of
+them are thread pools, which allows us to reuse unused threads from the pool,
+others provide always new threads on demand or just a single thread. In the
+following example the `Reacto::Executors.io`
+executor is used (passed as just `:io`) :
+
+```ruby
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  request_url_behavior = -> (url) do
+    -> (subscriber) do
+      begin
+        response = Net::HTTP.get_response(URI.parse(url))
+
+        if response.code == '200'
+          subscriber.on_value(response.body)
+          subscriber.on_close
+        else
+          subscriber.on_error(StandardError.new(response))
+        end
+      rescue StandardError => e
+        subscriber.on_error(e)
+      end
+    end
+  end
+
+  trackable = Reacto::Trackable.make(
+    &request_url_behavior.call('https://api.github.com/repos/meddle0x53/reacto')
+  )
+
+  trackable = trackable.map { |response| JSON.parse(response) }
+
+  star_count = trackable.map { |val| val['stargazers_count'] }.map do |val|
+    "#{val} star(s) on Reacto's github page!"
+  end
+
+  star_count = star_count.execute_on(:io)
+
+  star_count_subscription = star_count.on(
+    value: -> (val) { puts val }, close: -> () { puts '---------' }
+  )
+
+  star_gazers = trackable.map { |val| val['stargazers_url'] }.flat_map do |url|
+    Reacto::Trackable.make(&request_url_behavior.call(url)).map do |response|
+      JSON.parse(response)
+    end.flat_map do |array|
+      Reacto::Trackable.enumerable(array).map { |data| data['login'] }
+    end
+  end
+
+  star_gazers = star_gazers.execute_on(:io)
+
+  star_gazers_subscription = star_gazers.on(
+    value: -> (val) { puts val }, close: -> () { puts 'Thank you all!' }
+  )
+
+  star_gazers.await(star_gazers_subscription, 60)
+  star_count.await(star_count_subscription, 60)
+
+```
+
+This example is a bit silly because it makes two requests to the same URL,
+but they are concurrent thanks to `execute_on` and that's the important thing.
+The first trackable reads the number of the stars of the repository and its
+consumer prints them, and the second one requests the _stargazers_ list, using
+`flat_map` and prints the names of the star gazers. The IO operations can happen
+in parallel (GIL is released while waiting for IO) and the two chains are
+executed concurrently.
+The `IO` executor is a cached thread pool, which means that threads are reused
+if available, otherwise new are created, the thread pool does not have fixed
+size.
+
 ## Tested with rubies
 
  * Ruby 2.0.0+

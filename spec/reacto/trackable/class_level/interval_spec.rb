@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '.interval' do
     it 'emits an infinite sequence of number on every n seconds by default' do
@@ -8,7 +6,7 @@ context Reacto::Trackable do
       sleep 1
       subscription.unsubscribe
 
-      expect(test_data).to be == (0..2).to_a
+      expect(test_data).to eq((0..2).to_a)
     end
 
     it 'can use any enumerator to produce the sequence to emit' do
@@ -17,7 +15,7 @@ context Reacto::Trackable do
       sleep 1
       subscription.unsubscribe
 
-      expect(test_data).to be == ('a'..'i').to_a
+      expect(test_data).to include(*('a'..'i').to_a)
     end
 
     it 'handles interval of intervals' do
@@ -28,7 +26,7 @@ context Reacto::Trackable do
 
       trackable.await(subscription)
 
-      expect(test_data).to be == (10..15).to_a + ['|']
+      expect(test_data).to eq((10..15).to_a + ['|'])
     end
 
     it 'can use the immediate executor to block the current thread while ' \
@@ -38,7 +36,7 @@ context Reacto::Trackable do
       )
       subscription = attach_test_trackers(trackable)
 
-      expect(test_data).to be == (1..5).to_a + ['|']
+      expect(test_data).to eq((1..5).to_a + ['|'])
     end
   end
 end
