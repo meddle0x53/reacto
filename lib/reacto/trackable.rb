@@ -179,11 +179,19 @@ module Reacto
     end
 
     def all?(&block)
-      lift(Operations::BlockingEnumerable.new('all?', block))
+      lift(Operations::BlockingEnumerable.new(:'all?', block))
     end
 
     def any?(&block)
-      lift(Operations::BlockingEnumerable.new('any?', block))
+      lift(Operations::BlockingEnumerable.new(:'any?', block))
+    end
+
+    def none?(&block)
+      lift(Operations::BlockingEnumerable.new(:'none?', block))
+    end
+
+    def one?(&block)
+      lift(Operations::BlockingEnumerable.new(:'one?', block))
     end
 
     def chunk(executor: nil, &block)
@@ -360,12 +368,44 @@ module Reacto
       end
     end
 
-    def grep(pattern, &block)
-      action = -> (v) { pattern === v }
-      result = select(&action)
-      result = result.map(&block) if block_given?
+    def max(&block)
+      lift(Operations::Extremums.new(action: block))
+    end
 
-      result
+    def max_by(&block)
+      lift(Operations::Extremums.new(by: block))
+    end
+
+    def min(&block)
+      lift(Operations::Extremums.new(action: block, type: :min))
+    end
+
+    def min_by(&block)
+      lift(Operations::Extremums.new(by: block, type: :min))
+    end
+
+    def minmax(&block)
+      lift(Operations::Extremums.new(action: block, type: :minmax))
+    end
+
+    def minmax_by(&block)
+      lift(Operations::Extremums.new(by: block, type: :minmax))
+    end
+
+    def grep(pattern, &block)
+      select_map(-> (v) { pattern === v }, &block)
+    end
+
+    def grep_v(pattern, &block)
+      select_map(-> (v) { !(pattern === v) }, &block)
+    end
+
+    def include?(obj)
+      lift(Operations::Include.new(obj))
+    end
+
+    def lazy
+      self # Just to comply with Enumerable
     end
 
     def wrap(**args)
@@ -534,6 +574,7 @@ module Reacto
     alias_method :combine_latest, :combine
     alias_method :group_by, :group_by_label
     alias_method :find_all, :select
+    alias_method :'member?', :'include?'
 
     def do_track(subscription)
       if @executor
@@ -550,6 +591,13 @@ module Reacto
     end
 
     private
+
+    def select_map(predicate, &block)
+      result = select(&predicate)
+      result = result.map(&block) if block_given?
+
+      result
+    end
 
     def retrieve_executor(executor)
       return nil if executor.nil?

@@ -8,7 +8,7 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(10)
-      expect(test_data).to be == (1..10).to_a
+      expect(test_data).to eq((1..10).to_a)
     end
 
     it 'does not append anything if `condition: :source_empty` is given ' \
@@ -19,7 +19,7 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(5)
-      expect(test_data).to be == (1..5).to_a
+      expect(test_data).to eq((1..5).to_a)
     end
 
     it 'emits a given enumerable after the `close` notification, incoming ' \
@@ -31,7 +31,7 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(5)
-      expect(test_data).to be == (6..10).to_a
+      expect(test_data).to eq((6..10).to_a)
     end
   end
 end

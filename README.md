@@ -623,14 +623,81 @@ executor is used (passed as just `:io`) :
 
 This example is a bit silly because it makes two requests to the same URL,
 but they are concurrent thanks to `execute_on` and that's the important thing.
-The first trackable reads the number of the stars of the repository and its
+The first trackable reads the number of the stars of this repository and its
 consumer prints them, and the second one requests the _stargazers_ list, using
-`flat_map` and prints the names of the star gazers. The IO operations can happen
-in parallel (GIL is released while waiting for IO) and the two chains are
+`flat_map` and prints the names of the star gazers. The two chains are
 executed concurrently.
 The `IO` executor is a cached thread pool, which means that threads are reused
 if available, otherwise new are created, the thread pool does not have fixed
 size.
+
+#### track_on
+
+The difference between `execute_on` and `track_on` is that `track_on` executes
+on the given executor only the the operations executed after it in the chain.
+
+```ruby
+  trackable =
+    Reacto::Trackable.enumerable((1..100)).map { |v| v * 10 }.track_on(:tasks)
+  trackable = trackable.inject(&:+).last
+
+  subscription = trackable.on(
+    value: -> (val) { puts val }, close: -> () { puts 'DONE.' }
+  )
+
+  trackable.await(subscription, 10)
+```
+
+Only the sum and `last` will happen on the `tasks` executor - a thread pool
+with fixed number of threads. The `map` will execute on the current thread.
+
+#### Executors and factory methods
+
+Executors can be passed to most of the methods which create `Reacto::Trackable`
+instances. The methods can receive a keyword argument - `executor:` and will
+execute the whole trackable chain on it. The same way if it was passed to
+`execute_on`.
+
+```ruby
+ trackable = Reacto::Trackable.enummerable((1..1000), executor: :new_thread)
+```
+
+All the operations on called on this `Trackable` and its derivative
+`Trackable`s will be executed in the `new_thread` executor. This executor
+is a bit unuseful, it creates a new thread always.
+
+The available executors are:
+
+* `IO` - can be passed as `:io` or `Executors.io` - an unlimited cached thread
+  pool.
+* `Tasks` - can be passed as `:tasks`, `:background` and `Executors.tasks` -
+  a thread pool with fixed size.
+* `New thread` - can be passed as `:new_thread` ot `Executors.new_thread` -
+  always creates a new thread.
+* `Current` - can be passed as `:immediate`, `:current`, `:now`,
+  `Executors.current` and `Executors.immediate` - uses the current thread to
+  execute operations, does not create a new thread at all.
+
+### Buffering, delaying and skipping
+
+There are a few special operations realted to buffering incomming notifications
+and emit notifications consisting of the buffered ones.
+
+#### buffer
+
+It is possible to buffer values using a count and then emit them as one array
+of values.
+
+```ruby
+  trackable = Reacto::Trackable.enumerable((1..20)).buffer(count: 5)
+
+  trackable.on(value: -> (val) { p val })
+
+  # Will print [1, 2, 3, 4, 5], then [6, 7, 8, 9, 10], then [11, 12, 13, 14, 15]
+  # and in the end [16, 17, 18 , 19, 20]
+```
+Buffering helps lowering the number of value notification, when the source is
+emitting too many of them, too fast.
 
 ## Tested with rubies
 
