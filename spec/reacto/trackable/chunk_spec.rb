@@ -5,12 +5,12 @@ context Reacto::Trackable do
     end
 
     let(:data) { [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5] }
-    subject { described_class.enumerable(data) }
+    subject(:test_source) { described_class.enumerable(data) }
 
     it 'creates a Reacto::Trackable which chunks the incoming values ' \
       'together based on the return value of the given block. ' \
       'The chuncks are emitted as LabeledTrackable instances' do
-      trackable = subject.chunk { |v| v.even? }
+      trackable = test_source.chunk { |v| v.even? }
 
       attach_test_trackers(trackable)
 
@@ -26,7 +26,7 @@ context Reacto::Trackable do
     it 'uses nil as flag to group items' \
       'together based on the return value of the given block. ' \
       'The chuncks are emitted as LabeledTrackable instances' do
-      trackable = subject.chunk { |v| v.even? ? 'even' : nil }
+      trackable = test_source.chunk { |v| v.even? ? 'even' : nil }
 
       attach_test_trackers(trackable)
 
@@ -39,7 +39,7 @@ context Reacto::Trackable do
     it 'uses :_separator as flag to group items' \
       'together based on the return value of the given block. ' \
       'The chuncks are emitted as LabeledTrackable instances' do
-      trackable = subject.chunk { |v| v.even? ? :_separator : 'odd' }
+      trackable = test_source.chunk { |v| v.even? ? :_separator : 'odd' }
 
       attach_test_trackers(trackable)
 
@@ -52,7 +52,7 @@ context Reacto::Trackable do
 
     it 'uses :_alone as flag to emit a LabeledTrackable which emits only one ' \
       'value, the one marked as :_alone' do
-      trackable = subject.chunk do |v|
+      trackable = test_source.chunk do |v|
         v.even? ? :_alone : 'odd'
       end
 
@@ -70,7 +70,7 @@ context Reacto::Trackable do
 
     it 'emits an error if the label returned by the ckunking function is a ' \
       'symbol, which starts with `_` and it is not :_separator or :_alone' do
-      trackable = subject.chunk do |v|
+      trackable = test_source.chunk do |v|
         v.even? ? :_stuff : 'odd'
       end
 

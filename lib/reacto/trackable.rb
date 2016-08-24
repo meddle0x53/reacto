@@ -194,6 +194,13 @@ module Reacto
       lift(Operations::BlockingEnumerable.new(:'one?', block))
     end
 
+    def partition(executor: nil, &block)
+      executor = retrieve_executor(executor)
+      executor = @executor if executor.nil?
+
+      lift(Operations::Partition.new(block, executor: executor))
+    end
+
     def chunk(executor: nil, &block)
       executor = retrieve_executor(executor)
       executor = @executor if executor.nil?
@@ -416,6 +423,10 @@ module Reacto
       lift(Operations::Select.new(block_given? ? block : filter))
     end
 
+    def reject(&block)
+      select(&->(val) { !block.call(val)} )
+    end
+
     def inject(initial = NO_VALUE, injector = nil, &block)
       lift(Operations::Inject.new(block_given? ? block : injector, initial))
     end
@@ -575,6 +586,7 @@ module Reacto
     alias_method :group_by, :group_by_label
     alias_method :find_all, :select
     alias_method :'member?', :'include?'
+    alias_method :reduce, :inject
 
     def do_track(subscription)
       if @executor

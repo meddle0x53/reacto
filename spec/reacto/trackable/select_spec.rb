@@ -15,7 +15,7 @@ context Reacto::Trackable do
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(1)
-      expect(test_data[0]).to be(5)
+      expect(test_data.first).to be(5)
     end
   end
 end

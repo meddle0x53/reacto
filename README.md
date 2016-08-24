@@ -696,8 +696,49 @@ of values.
   # Will print [1, 2, 3, 4, 5], then [6, 7, 8, 9, 10], then [11, 12, 13, 14, 15]
   # and in the end [16, 17, 18 , 19, 20]
 ```
+
 Buffering helps lowering the number of value notification, when the source is
 emitting too many of them, too fast.
+
+#### delay
+
+Notifications can be buffered using a delay too, for example : don't emit
+anything from the source for 5 seconds, then emit everything received until
+now and repeat.
+
+```ruby
+  trackable = Reacto::Trackable.interval(1).take(20).buffer(delay: 5)
+
+  subscription = trackable.on(value: -> (val) { p val })
+  trackable.await(subscription)
+
+  # Will print on each 5 seconds something like
+  # [0, 1, 2, 3]
+  # [4, 5, 6, 7, 8]
+  # [9, 10, 11, 12, 13]
+  # [14, 15, 16, 17, 18]
+  # [19]
+```
+
+Insdead of using `buffer(delay: 5)`, we can use the shortcut `delay(5)`.
+We can buffer by both count and delay using the `buffer` operation.
+
+#### throttle
+
+If too many notifications are received too fast, sometimes it is better to
+skip some of them and emit only the last one. That can be done with `throttleb`.
+
+```ruby
+  trackable = Reacto::Trackable.interval(1).take(30).throttle(5)
+
+  values = []
+  subscription = trackable.on(value: -> (val) { values << val })
+  trackable.await(subscription)
+
+  puts values.size # just 6
+```
+
+### Grouping
 
 ## Tested with rubies
 
