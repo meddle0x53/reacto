@@ -740,6 +740,40 @@ skip some of them and emit only the last one. That can be done with `throttleb`.
 
 ### Grouping
 
+Incoming notifications can be grouped by some common property they have.
+The resulting `Reacto::Trackable` emits special `LabeledTrackable` instances
+which are just trackable with additional property - `label` - the name of
+the group.
+
+#### group_by_label
+
+The most basic operation which groups values into sub-trackables is
+`group_by_label` or just `group_by`:
+
+```ruby
+  trackable = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+    [(value % 3), value]
+  end
+
+  trackable.on do |labeled_trackable|
+    p "Label: #{labeled_trackable.label}"
+    p "Values: #{labeled_trackable.to_a.join(',')}"
+  end
+
+  # This produces:
+  # Label: 1
+  # Values: 1,4,7,10
+  # Label: 2
+  # Values: 2,5,8
+  # Label: 0
+  # Values: 3,6,9
+```
+
+This example prints the label of every `Reacto::LabeledTrackable` emitted and
+its values. It uses the `#to_a` method, which blocks and waits for every value
+to be received, then produces an array with all the values in the order they
+were received.
+
 ## Tested with rubies
 
  * Ruby 2.0.0+

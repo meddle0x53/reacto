@@ -3,10 +3,9 @@ context Reacto::Trackable do
     it 'transforms each of the values emitted by the source into ' \
       'LabeledTrackable instances, using the passed function to get their ' \
       'labels and values to emit' do
-      trackable =
-        Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-          [(value % 3), value]
-        end
+      trackable = described_class.enumerable((1..10)).group_by_label do |value|
+        [(value % 3), value]
+      end
 
       trackable.on(value: test_on_value)
 

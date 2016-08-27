@@ -12,6 +12,8 @@ require 'reacto/resources'
 # TODO: Refactor the constructors and the factory methods
 module Reacto
   class Trackable
+    include Enumerable
+
     TOPICS = %i(open value error close)
 
     EXECUTOR_ALIASES = {
@@ -544,6 +546,24 @@ module Reacto
 
     def combine(*trackables, &block)
       self.class.combine(*([self] + trackables), &block)
+    end
+
+    def slice_after(pattern = NO_VALUE, &block)
+      slice(pattern, type: :after, &block)
+    end
+
+    def slice_before(pattern = NO_VALUE, &block)
+      slice(pattern, type: :before, &block)
+    end
+
+    def slice(pattern = NO_ACTION, type:, &block)
+      predicate =
+        if pattern != NO_VALUE
+          -> (val) { pattern === val }
+        else
+          block
+        end
+      lift(Operations::Slice.new(predicate, type: type))
     end
 
     def zip(*trackables, &block)
