@@ -566,6 +566,10 @@ module Reacto
       lift(Operations::Slice.new(predicate, type: type))
     end
 
+    def slice_when(&block)
+      lift(Operations::SliceWhen.new(block))
+    end
+
     def zip(*trackables, &block)
       self.class.zip(*([self] + trackables), &block)
     end

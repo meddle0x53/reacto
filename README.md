@@ -774,6 +774,40 @@ its values. It uses the `#to_a` method, which blocks and waits for every value
 to be received, then produces an array with all the values in the order they
 were received.
 
+#### chunk
+
+With `chunk` we can create `LabeledTrackable` instances emitting chunks based
+on the return value of a block called on an emitted value. The difference with
+group_by is that there can be multiple trackables with the same key.
+
+```ruby
+  source = Reacto::Trackable.enumerable([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
+  trackable = source.chunk { |val| val.even? }
+
+  trackable.on do |labeled_trackable|
+    p "Label: #{labeled_trackable.label}"
+    p "Values: #{labeled_trackable.to_a.join(',')}"
+  end
+
+  # This produces:
+  # Label: false
+  # Values: 3,1
+  # Label: true
+  # Values: 4
+  # Label: false
+  # Values: 1,5,9
+  # Label: true
+  # Values: 2,6
+  # Label: false
+  # Values: 5,3,5
+```
+
+The first chunk consists of `3` and `1` - odd values, then on the first even
+value - `4` we get another chink, then we've got 3 sequential odd values, so
+a `false` chunk of `1`, `5` and `9`, then one with `2` and `6` with label
+`true`, because the values are even. The last chunk is an odd one.
+
+
 ## Tested with rubies
 
  * Ruby 2.0.0+
