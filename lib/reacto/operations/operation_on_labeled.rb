@@ -2,9 +2,10 @@ require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
   module Operations
-    class MapLabel
-      def initialize(label, mapping, error: nil, close: nil)
-        @mapping = mapping
+    class OperationOnLabeled
+      def initialize(label, action, error: nil, close: nil, op: :map)
+        @op = op
+        @action = action
         @error = error
         @close = close
         @label = label
@@ -14,7 +15,11 @@ module Reacto
         value = -> (v) do
           to_emit =
             if v.is_a?(LabeledTrackable) && v.label == @label
-              v.map(error: @error, close: @close, &@mapping)
+              if @op == :map
+                v.map(error: @error, close: @close, &@action)
+              else
+                v.send(@op, &@action)
+              end
             else
               v
             end
@@ -22,9 +27,7 @@ module Reacto
           tracker.on_value(to_emit)
         end
 
-        Subscriptions::OperationSubscription.new(
-          tracker, value: value
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: value)
       end
     end
   end

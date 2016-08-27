@@ -37,16 +37,12 @@ context Reacto::Trackable do
 
     context 'with label' do
       it 'applies the mapping passed only to the incoming values of type ' \
-        'LabeledTrackable with matching label' do
-        trackable =
-          Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-            [(value % 3), value]
-          end
-
-        trackable = trackable.map(label: 1) do |value|
-          value / 3
+        'LabeledTrackable with the matching label' do
+        source = described_class.enumerable((1..10)).group_by_label do |value|
+          [(value % 3), value]
         end
 
+        trackable = source.map(label: 1) { |value| value / 3 }
         trackable.on(value: test_on_value)
 
         labeled_trackable = test_data.first

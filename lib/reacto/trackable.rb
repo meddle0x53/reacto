@@ -222,7 +222,7 @@ module Reacto
     end
 
     def find(if_none = NO_VALUE, &block)
-      trackable = select(block).first
+      trackable = select(&block).first
 
       if if_none != NO_VALUE
         trackable = trackable.append(if_none, condition: :source_empty)
@@ -244,9 +244,9 @@ module Reacto
     def count(value = NO_VALUE, &block)
       source =
         if value != NO_VALUE
-          select(Behaviours.same_predicate(value))
+          select(&Behaviours.same_predicate(value))
         elsif block_given?
-          select(block)
+          select(&block)
         else
           self
         end
@@ -349,8 +349,8 @@ module Reacto
 
     def flat_map(transform = nil, label: nil, &block)
       if label
-        lift(Operations::FlatMapLabel.new(
-          label, block_given? ? block : transform
+        lift(Operations::OperationOnLabeled.new(
+          label, block_given? ? block : transform, op: :flat_map
         ))
       else
         lift(Operations::FlatMap.new(block_given? ? block : transform))
@@ -369,7 +369,7 @@ module Reacto
           val == NO_VALUE ? IDENTITY_ACTION : Behaviours.constant(val)
         end
       if label
-        lift(Operations::MapLabel.new(
+        lift(Operations::OperationOnLabeled.new(
           label, action, error: error, close: close
         ))
       else
@@ -421,8 +421,14 @@ module Reacto
       lift(Operations::Wrap.new(args))
     end
 
-    def select(filter = nil, &block)
-      lift(Operations::Select.new(block_given? ? block : filter))
+    def select(label: nil, &block)
+      return self unless block_given?
+
+      if label
+        lift(Operations::OperationOnLabeled.new(label, block, op: :select))
+      else
+        lift(Operations::Select.new(block))
+      end
     end
 
     def reject(&block)

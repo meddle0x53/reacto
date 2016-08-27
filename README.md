@@ -807,6 +807,35 @@ value - `4` we get another chink, then we've got 3 sequential odd values, so
 a `false` chunk of `1`, `5` and `9`, then one with `2` and `6` with label
 `true`, because the values are even. The last chunk is an odd one.
 
+#### operating only on given group
+
+The `map` operator is able to operate only on a given group by passing it
+a `label:` argument:
+
+```ruby
+  source = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+    [(value % 3), value]
+  end
+  trackable = source.map(label: 0) { |value| value / 3 }
+
+  trackable.on do |labeled_trackable|
+    p "Label: #{labeled_trackable.label}"
+    p "Values: #{labeled_trackable.to_a.join(',')}"
+  end
+
+  # This produces:
+  # Label: 1
+  # Values: 1,4,7,10
+  # Label: 2
+  # Values: 2,5,8
+  # Label: 0
+  # Values: 1,2,3
+```
+
+As we can see only the values emitted by the trackable with label `0`, the
+ones that can be devided by 3 without remainder are affected by the `map`
+operation.
+
 
 ## Tested with rubies
 
