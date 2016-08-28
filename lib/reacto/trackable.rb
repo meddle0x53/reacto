@@ -196,7 +196,19 @@ module Reacto
       lift(Operations::BlockingEnumerable.new(:'one?', block))
     end
 
+    def sort(&block)
+      lift(Operations::BlockingEnumerable.new(:sort, block))
+    end
+
+    def sort_by(&block)
+      return self unless block_given?
+
+      lift(Operations::BlockingEnumerable.new(:sort_by, block))
+    end
+
     def partition(executor: nil, &block)
+      return self unless block_given?
+
       executor = retrieve_executor(executor)
       executor = @executor if executor.nil?
 
@@ -204,6 +216,8 @@ module Reacto
     end
 
     def chunk(executor: nil, &block)
+      return self unless block_given?
+
       executor = retrieve_executor(executor)
       executor = @executor if executor.nil?
 
@@ -555,11 +569,27 @@ module Reacto
       lift(Operations::Retry.new(@behaviour, retries))
     end
 
+    def retry_when(&block)
+      return self unless block_given?
+
+      lift(Operations::RetryWhen.new(@behaviour, block))
+    end
+
+    def rescue_and_replace_error(&block)
+      return self unless block_given?
+
+      lift(Operations::RescueAndReplaceError.new(block))
+    end
+
     def combine_last(*trackables, &block)
+      return self unless block_given?
+
       self.class.combine_last(*([self] + trackables), &block)
     end
 
     def combine(*trackables, &block)
+      return self unless block_given?
+
       self.class.combine(*([self] + trackables), &block)
     end
 

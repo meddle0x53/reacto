@@ -11,19 +11,29 @@ module Reacto
       def call(tracker)
         data = []
 
-        value = ->(val) { data << val }
+        value = -> (val) { data << val }
         close = -> do
-          tracker.on_value(data.send(@method_name, &@block))
+          emit(tracker, data)
           tracker.on_close
         end
         error = ->(e) do
-          tracker.on_value(data.send(@method_name, &@block))
+          emit(tracker, data)
           tracker.on_error(e)
         end
 
         Subscriptions::OperationSubscription.new(
           tracker, value: value, error: error, close: close
         )
+      end
+
+      def emit(tracker, data)
+        result = data.send(@method_name, &@block)
+
+        if result.is_a?(Enumerable)
+          result.each { |value| tracker.on_value(value) }
+        else
+          tracker.on_value(result)
+        end
       end
     end
   end

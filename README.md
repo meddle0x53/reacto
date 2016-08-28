@@ -834,8 +834,8 @@ a `label:` argument:
 
 As we can see only the values emitted by the trackable with label `0`, the
 ones that can be devided by 3 without remainder are affected by the `map`
-operation. The operations `select` and `flat_map` have a `label:` argument too
-and can be applied only to sub-trackables with the passed laebl.
+operation. The operations `select`, `inject` and `flat_map` have a `label:`
+argument too and can be applied only to sub-trackables with the passed label.
 
 #### flatten_labeled
 
