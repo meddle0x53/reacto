@@ -9,7 +9,6 @@ require 'reacto/operations'
 require 'reacto/executors'
 require 'reacto/resources'
 
-# TODO: Refactor the constructors and the factory methods
 module Reacto
   class Trackable
     include Enumerable
@@ -29,6 +28,29 @@ module Reacto
     class << self
       def never
         self.new
+      end
+
+      def first_of(*trackables)
+        make do |subscriber|
+          ready = false
+          subscriptions = []
+
+          lock = Mutex.new
+
+          action -> (trackable) do
+            return if ready
+            ready = true
+            subscriptions.each(&:unsubscribe)
+
+            trackable.do_track(subscriber)
+          end
+
+          subscriptions = trackables.map do |trackable|
+            trackable do |_|
+              lock.synchronize { action.call(trackable) }
+            end
+          end
+        end
       end
 
       def combine(*trackables, &block)
@@ -51,24 +73,27 @@ module Reacto
         combine_create(Subscriptions::ZippingSubscription, *trackables, &block)
       end
 
-      def close(executor = nil)
-        make(executor) do |subscriber|
-          subscriber.on_close
-        end
+      def close(executor: nil)
+        make(executor) { |subscriber| subscriber.on_close }
       end
 
-      def error(err, executor = nil)
+      def error(err, executor: nil)
         make(executor) do |subscriber|
           subscriber.on_error(err)
         end
       end
 
-      def make(executor = nil, &block)
+      def make(executor_param = nil, executor: nil,  &block)
+        real_executor = executor_param ? executor_param : executor
+
         behaviour = block_given? ? block : NO_ACTION
-        self.new(executor, &behaviour)
+        self.new(real_executor, &behaviour)
       end
 
       def later(secs, value, executor: Reacto::Executors.tasks)
+        stored = EXECUTOR_ALIASES[executor]
+        executor = stored if stored
+
         if executor.is_a?(Concurrent::ImmediateExecutor)
           make do |tracker|
             sleep secs
@@ -88,6 +113,9 @@ module Reacto
         enumerator = Behaviours.integers_enumerator,
         executor: nil
       )
+        stored = EXECUTOR_ALIASES[executor]
+        executor = stored if stored
+
         if executor.is_a?(Concurrent::ImmediateExecutor)
           make do |tracker|
             Behaviours.with_close_and_error(tracker) do |subscriber|
@@ -150,11 +178,11 @@ module Reacto
         )
       end
 
-      def value(value, executor = nil)
+      def value(value, executor: nil)
         make(executor, &Behaviours.single_value(value))
       end
 
-      def enumerable(enumerable, executor = nil)
+      def enumerable(enumerable, executor: nil)
         make(executor, &Behaviours.enumerable(enumerable))
       end
 
@@ -321,6 +349,10 @@ module Reacto
 
     def to_a
       entries
+    end
+
+    def to_h
+      to_a.to_h
     end
 
     def on(trackers = {}, &block)

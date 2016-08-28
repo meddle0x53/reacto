@@ -554,7 +554,7 @@ the two dedicated operations `execute_on` and `track_on`.
 This operation returns a `Reacto::Trackable` which operations will be executed
 on the given `executor` plus the operations of its source will be executed on
 this `executor` as well. Basically this means that the whole logic - the
-behavior of the first trackable in the chain of operations and all subsequent
+behavior of the first `Trackable` in the chain of operations and all subsequent
 operations will be executed on the given `executor`.
 By `executor`, we mean the ones provided by the `Reacto::Executors`'s methods or
 a custom implementation complying to `concurrent-ruby`'s
@@ -664,7 +664,7 @@ execute the whole trackable chain on it. The same way if it was passed to
 
 All the operations on called on this `Trackable` and its derivative
 `Trackable`s will be executed in the `new_thread` executor. This executor
-is a bit unuseful, it creates a new thread always.
+creates a new thread always.
 
 The available executors are:
 
@@ -680,7 +680,7 @@ The available executors are:
 
 ### Buffering, delaying and skipping
 
-There are a few special operations realted to buffering incomming notifications
+There are a few special operations related to buffering incoming notifications
 and emit notifications consisting of the buffered ones.
 
 #### buffer
@@ -720,7 +720,7 @@ now and repeat.
   # [19]
 ```
 
-Insdead of using `buffer(delay: 5)`, we can use the shortcut `delay(5)`.
+Instead of using `buffer(delay: 5)`, we can use the shortcut `delay(5)`.
 We can buffer by both count and delay using the `buffer` operation.
 
 #### throttle
@@ -778,7 +778,7 @@ were received.
 
 With `chunk` we can create `LabeledTrackable` instances emitting chunks based
 on the return value of a block called on an emitted value. The difference with
-group_by is that there can be multiple trackables with the same key.
+`group_by` is that there can be multiple trackables with the same key.
 
 ```ruby
   source = Reacto::Trackable.enumerable([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
@@ -832,14 +832,14 @@ a `label:` argument:
   # Values: 1,2,3
 ```
 
-As we can see only the values emitted by the trackable with label `0`, the
-ones that can be devided by 3 without remainder are affected by the `map`
+As we can see only the values emitted by the `Trackable` with label `0`, the
+ones that can be divided by 3 without remainder are affected by the `map`
 operation. The operations `select`, `inject` and `flat_map` have a `label:`
 argument too and can be applied only to sub-trackables with the passed label.
 
 #### flatten_labeled
 
-The `Reacto::LabeledTrackable` instances emitted by a Trackable after grouping
+The `Reacto::LabeledTrackable` instances emitted by a `Trackable` after grouping
 can be turned to simple value notifications by using the `flatten_labeled`
 operation. It turns every sub-trackable into an object with two fields
 label and value. The label is the same as the label of the sub-trackable the
@@ -873,7 +873,7 @@ with some special operations, designed to work with errors.
 #### retrying
 
 The `retry` operator will execute the source's behavior when there is an error
-notification instead of emitting it and closing the trackable.
+notification instead of emitting it and closing the `Reacto::Trackable`.
 
 ```ruby
   source = Reacto::Trackable.make do |subscriber|
@@ -902,7 +902,7 @@ This peace of code will retry up to 5 times when the number is `5` or smaller.
 On the sixth time if we don't have luck the error will be emitted. The default
 retry count (when a value is not passed) is just `1`. There is a `retry_when`
 operation, which uses a block to determine if the error should be emitted, or
-the surce should be retried. For example:
+the source should be retried. For example:
 
 ```ruby
   source = Reacto::Trackable.make do |subscriber|
@@ -938,7 +938,7 @@ again, but this time if the unlucky number was `3` we should not retry.
 The simples way to not emit an error but to continue emitting something else
 is by using the `rescue_and_replace_error_with` operation. This one accepts
 a `Reacto::Trackable` instance as its sole argument.
-When an error notification is emitted by its source trackable, it is not
+When an error notification is emitted by its source `Trackable`, it is not
 emitted by the trackable it returns. Instead the notifications of the argument
 are emitted.
 
@@ -958,7 +958,7 @@ are emitted.
   )
 ```
 
-We want see the error cause the by division by `0`, instead after the emisison
+We want see the error cause the by division by `0`, instead after the emission
 of `10/1` -> `10`, `10/2` -> `5` and `10/3` -> `3`, the values `2`, `2` and `1`
 will be emitted -> that's `10/4`, `10/5` and `10/6`.
 
@@ -990,7 +990,7 @@ can be written around that.
 The number `1` will be emitted instead of the `ZeroDivisionError` because it is
 not an `ArgumentError`.
 
-## Tested with rubies
+## Tested with
 
  * Ruby 2.0.0+
  * JRuby 9.1.2.0
