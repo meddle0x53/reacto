@@ -489,6 +489,12 @@ module Reacto
       lift(Operations::Take.new(how_many_to_take))
     end
 
+    def take_while(&block)
+      return self unless block_given?
+
+      lift(Operations::TakeWhile.new(block))
+    end
+
     def uniq
       lift(Operations::Uniq.new)
     end
