@@ -30,29 +30,6 @@ module Reacto
         self.new
       end
 
-      def first_of(*trackables)
-        make do |subscriber|
-          ready = false
-          subscriptions = []
-
-          lock = Mutex.new
-
-          action -> (trackable) do
-            return if ready
-            ready = true
-            subscriptions.each(&:unsubscribe)
-
-            trackable.do_track(subscriber)
-          end
-
-          subscriptions = trackables.map do |trackable|
-            trackable do |_|
-              lock.synchronize { action.call(trackable) }
-            end
-          end
-        end
-      end
-
       def combine(*trackables, &block)
         combine_create(
           Subscriptions::CombiningSubscription, *trackables, &block

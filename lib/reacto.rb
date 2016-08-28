@@ -31,7 +31,7 @@ module Reacto
   end
 
   def enumerable(enumerable, executor: nil)
-    Trackable.enumerable(value, executor)
+    Trackable.enumerable(enumerable, executor: executor)
   end
 
   def later(secs, value, executor: :tasks)
@@ -56,10 +56,6 @@ module Reacto
     Trackable.combine_last(*trackables, &block)
   end
 
-  def first_of(*trackables)
-    Trackable.first_of(*trackables)
-  end
-
   def zip(*trackables, &block)
     Trackable.zip(*trackables, &block)
   end
@@ -68,14 +64,14 @@ module Reacto
     Trackable.concat(*trackables)
   end
 
-  def [] (object)
+  def [](object)
     if object.is_a?(Enumerable)
       enumerable(object)
     elsif object.is_a?(StandardError)
       error(object)
     elsif object == :close
       close
-    elsif object == :never
+    elsif object == :never || object.nil?
       never
     else
       value(object)

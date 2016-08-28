@@ -26,26 +26,27 @@ Of course there are other implementations of reactive programming for ruby:
 * [RxRuby](https://github.com/ReactiveX/RxRuby) : Very powerful implementation
   of RX. Handles concurrency and as a whole has more features than `Reacto`.
   So why `Reacto`? `Reacto` has simpler interface it is native Ruby lib and
-  is easier to use it. The goal of `Reacto` is to be competitor to `RxRuby`
+  is easier to use it. The goal of `Reacto` is to be alternative to `RxRuby`
   in the ruby world.
   Still the author of Reacto is big fan of `RX` especially `RxJava`. He even has
   a book on the topic using `RxJava` :
   [Learning Reactive Programming with Java 8](https://www.packtpub.com/application-development/learning-reactive-programming-java-8)
 * [Frappuccino](https://github.com/steveklabnik/frappuccino) : Very cool lib,
   easy to use and simply beautiful. The only drawback - it is a bit limited :
-  no concurrency and small set of operators.
-  But if you don't need more complicated operators it is the best.
+  no concurrency and small set of operations.
+  But if you don't need more complicated operations it works.
   The author of `Reacto` highly recommends it.
 
 ## Usage
 
 ### Simple Trackables
 
-The main entry point to the lib is the `Reacto::Trackable` class.
-It is something you can track for notifications. Usually A `Reacto::Trackable`
-implemenation is pushing notifications to some notification tracker.
-It depends on the source. We can have some remote streaming service as a source,
-or an asynchronous HTTP request or some process pushing updates to another.
+The main entry point to the library is the `Reacto::Trackable` class.
+It represents something you can track for notifications.
+Usually a `Reacto::Trackable` implemenation is pushing notifications to
+some notification tracker. It depends on the source. We can have some remote
+streaming service as a source or an asynchronous HTTP request or some process
+pushing updates to another.
 
 #### value
 
@@ -56,7 +57,7 @@ Of course the source can be very simple, for example a single value:
 ```
 
 This value won't be emitted as notification until there is no tracker (listener)
-attached to the `trackable` - so this `trackable` instance is lazy - won't do
+attached to `trackable` - so this `Trackable` instance is lazy - won't do
 anything until necessary.
 
 ```ruby
@@ -66,16 +67,16 @@ anything until necessary.
 ```
 
 This line attaches a notification tracker to the `trackable` - a lambda that
-should be called when the `trackable` emits any value. This example is very
+should be called when `trackable` emits any value. This example is very
 simple and the `trackable` emits only one value - `5` when a tracker is attached
-to it so the lambda will be called and the value will be printed.
-
+to it so the lambda will be called and the value will be printed. Shortcuts
+for `Reacto::Trackable.value(val)` are `Reacto.value(val)` and `Reacto[val]`.
 
 #### error
 
-If we want to emit only an error notification we can do it with `Trackable.error`,
-it works the same way as `Trackable.value`, but the notification is of type
-`error`:
+If we want to emit only an error notification we can do it with
+`Trackable.error`. It works the same way as `Trackable.value`,
+but the notification is of type _error_:
 
 ```ruby
   trackable = Reacto::Trackable.error(StandardError.new('Some error!'))
@@ -83,16 +84,22 @@ it works the same way as `Trackable.value`, but the notification is of type
   trackable.on(error: ->(e) { raise e })
 ```
 
+Shorcuts for `Reacto::Trackable.error(err)` are `Reacto.error(err)` and
+`Reacto[err]`. Notice that `Reacto[simple_vlue]` is like `Reacto.value`, but
+`Reacto[some_standart_error]` is like calling `Reacto.error`.
+
 #### close
 
-There is a way to create a `Reacto::Trackable` emitting only close notification
-too:
+There is a way to create a `Reacto::Trackable` emitting only _close_
+notification too:
 
 ```ruby
   trackable = Reacto::Trackable.error(StandardError.new('Some error!'))
 
   trackable.on(close: ->() { p 'closed' })
 ```
+
+Shorcuts are `Reacto.close` and `Reacto[:close]`.
 
 #### enumerable
 
@@ -102,19 +109,19 @@ Another example is `Trackable` with source an Enumerable instance:
   trackable = Reacto::Trackable.enumerable([1, 3, 4])
 ```
 
-Again we'll have to call `on` on it in order to push its values to the tracker
-function.
+Again we'll have to call `#on` on it in order to push its values to a tracker.
+Shorcuts are `Reacto.enumerable(enumerable)` and `Reacto[enumerable]`.
 
 #### interval
 
-A neat way to create `Trackable` emitting the values of some Enumerable on
+A neat way to create `Trackable` emitting the values of some _Enumerable_ on
 every second, for example is `Reacto::Trackable.interval`:
 
 ```ruby
   trackable = described_class.interval(0.3)
 ```
 
-This one emits the natural number (1..N) on every _0.3_ seconds.
+This one emits the natural numbers on every _0.3_ seconds.
 The second argument can be an `Enumerator` - limited or unlimited, for example:
 
 ```ruby
@@ -125,16 +132,19 @@ Emits the letters _a to z_ on every two seconds. We can create a custom
 enumerator and use it.
 Note that `.interval` creates `Reacto::Trackable` which emits in a special
 thread, so calling `#on` on it won't block the current thread.
+Shortcut is `Reacto.interval`.
 
 #### never
 
 It is possible that a Trackable which never emits anything is needed. Some
-operations behave according to Trackable instances returned, so a way to have
-such a Trackable is:
+operations behave according to `Trackable` instances returned, so a way to have
+such a `Reacto::Trackable` is:
 
 ```ruby
   trackable = Reacto::Trackable.never
 ```
+
+Shortcuts for this one are `Reacto.never` and `Reacto[:never]`
 
 
 ### Programming Trackable behavior
@@ -158,6 +168,7 @@ be sent:
 When a tracker is attached this behavior will become active and the tracker
 will receive the first two sentences as values, then, after one second the third
 one and then a closing notification.
+Shorcut is `Reacto.make`.
 
 #### SharedTrackable
 
@@ -166,42 +177,42 @@ executed for the given tracker. If we want to have a shared behavior for all
 the trackers we can create a `Reacto::SharedTrackable` instance:
 
 ```ruby
-require 'socket'
+  require 'socket'
 
-trackable = Reacto::SharedTrackable.make do |subscriber|
-  hostname = 'localhost'
-  port = 3555
+  trackable = Reacto::SharedTrackable.make do |subscriber|
+    hostname = 'localhost'
+    port = 3555
 
-  return unless subscriber.subscribed?
+    return unless subscriber.subscribed?
 
-  socket = nil
-  begin
-    socket = TCPSocket.open(hostname, port)
+    socket = nil
+    begin
+      socket = TCPSocket.open(hostname, port)
 
-    while line = socket.gets
-      break unless subscriber.subscribed?
+      while line = socket.gets
+        break unless subscriber.subscribed?
 
-      subscriber.on_value(line)
+        subscriber.on_value(line)
+      end
+
+      subscriber.on_close if subscriber.subscribed?
+    rescue StandardError => error
+      subscriber.on_error(error) if subscriber.subscribed?
+    ensure
+      socket.close unless socket.nil?
     end
 
-    subscriber.on_close if subscriber.subscribed?
-  rescue StandardError => error
-    subscriber.on_error(error) if subscriber.subscribed?
-  ensure
-    socket.close unless socket.nil?
   end
 
-end
-
-trackable.on(value: -> (v) { puts v })
-trackable.on do |v|
-  puts v
-end
+  trackable.on(value: -> (v) { puts v })
+  trackable.on do |v|
+    puts v
+  end
 
 # The above calls of `on` are identical. And the two will the same data.
 # Nothing happens on calling `on` though, the `trackable` has to be activated:
 
-trackable.activate!
+  trackable.activate!
 ```
 
 ### Tracking for notifications
@@ -218,7 +229,7 @@ The easiest way to listen a `Reacto::Trackable` is to call `#on` on it:
   trackable.on(value: consumer)
 ```
 
-Calling it like that will trigger the behavior of the `trackable` and
+Calling it like that will trigger the behavior of `trackable` and
 all the values it emits, will be passed to the consumer. A block can be passed
 to `#on` and it will have the same effect:
 
@@ -228,7 +239,7 @@ to `#on` and it will have the same effect:
   end
 ```
 
-If we want to fetch an error we can call `#on` like that:
+If we want to listen for errors we can call `#on` like that:
 
 ```ruby
   error_consumer = -> (error) do
@@ -280,14 +291,13 @@ the default `error:` action is raising the error.
 Calling `#on` or `#track` will create and return a `Reacto::Subscription`.
 We can unsubscribe form the `Trackable` with it by calling `#unsubscribe`:
 
-
 ```ruby
   subscription = trackable.on(value: consumer)
 
   subscription.unsubscribe
 ```
 
-This way our notification tracker won't receive notification any more.
+This way our notification tracker won't receive notification anymore.
 Checking if a `Subscription` is subscribed can be done by calling `subscribed?`
 on it.
 
@@ -299,7 +309,7 @@ on it.
 
 Subscriptions can be used for other things, adding additional subscriptions
 to them, adding resources, which should be closed on receiving the `close`
-notification and waiting for trackable operating on background to finish.
+notification and waiting for a `Trackable` operating on background to finish.
 
 ### Operations
 
@@ -310,15 +320,13 @@ the operation. Let's look at an example:
 
 #### map
 
-The `map` operation is a transformation, it transforms every
-value (and not only), emitted by the source using the _block_ given.
+The `map` operation is a transformation, it transforms every value
+(and not only), emitted by the source using the _block_ given.
 
 ```ruby
-  source_trackable = Reacto::Trackable.enumerable((1..100))
+  source_trackable = Reacto.enumerable((1..100))
 
-  trackable = source_trackable.map do |value|
-    value - 1
-  end
+  trackable = source_trackable.map { |value| value - 1 }
 
   trackable.on(value: -> (val) { puts val })
   # the numbers from 0 to 99 will be printed
@@ -333,11 +341,9 @@ close notification for example.
 The `select` operation filters values using a predicate block:
 
 ```ruby
-  source_trackable = Reacto::Trackable.enumerable((1..100))
+  source_trackable = Reacto.enumerable((1..100))
 
-  trackable = source_trackable.select do |value|
-    value % 5 == 0
-  end
+  trackable = source_trackable.select { |value| value % 5 == 0 }
 
   trackable.on(value: -> (val) { puts val })
   # the numbers printed will be 5, 10, 15, ... 95, 100
@@ -348,23 +354,21 @@ Look at the specs for examples of them.
 
 #### inject
 
-A way to accumulate and emit data based on the current incoming value and
-the accumulated data from the previous ones. That was recursive... A better
-way to explain it is an example:
+Using `inject` is a way to accumulate and emit data based on the current
+incoming value and the accumulated data from the previous ones. A better way
+to explain it is an example:
 
 ```ruby
-  source_trackable = Reacto::Trackable.enumerable((1..100))
+  source_trackable = Reacto.enumerable((1..100))
 
-  trackable = source.inject(0) do |prev, v|
-    prev + v
-  end
+  trackable = source.inject(0) { |prev, v| prev + v }
 
   trackable.on(value: -> (val) { puts val })
   # Will print a sequesnce of sums 0+1 then 1+2=3, then 3+4=7, etc, the last
   # value will be the sum of all the source values
 ```
 
-Operation similar to `inject` are `diff`, which calls a given block for every
+Operation similar to `inject` is `diff`, which calls a given block for every
 two emitted in sequence values and the `Reacto::Trackable` resulting from it,
 emits this the block's return value. Another one is `each_with_object`, which
 calls a given block for each value emitted by the source with an arbitrary
@@ -379,10 +383,8 @@ be created, all of which will emit values. All these values are flattened
 and emitted by the `Reacto::Trackable` created by calling `flat_map`.
 
 ```ruby
-  source = Reacto::Trackable.enumerable([(-10..-1), [0], (1..10)])
-  trackable = source.flat_map do |v|
-    Reacto::Trackable.enumerable(v)
-  end
+  source = Reacto.enumerable([(-10..-1), [0], (1..10)])
+  trackable = source.flat_map { |v| Reacto[v] }
 
   trackable.on(value: -> (val) { puts val })
   # Will print all the numbers from -10 to 10
@@ -391,18 +393,22 @@ and emitted by the `Reacto::Trackable` created by calling `flat_map`.
 It is a very powerful operation, which allows us to create `Reacto::Trackable`
 instances from incoming data and write logic using operations on them.
 
-#### more operations
+#### ... and even more operations
 
 *Reacto* is in continuous development more and more _operations_ are being added
 to it and there are even more to come.
 So soon there will be a documentation page for all of the available operations,
 which will be updated when new ones are added, or existing ones are modified.
-TODO!
+Keep in mind that `Reacto::Trackable` mirrors `Enumerable`, it even includes
+it in itself. This means that for every method in `Enumerable`, there is a
+corresponding operation or method in `Reacto::Trackable`.
+
+TODO
 
 ### Interacting Trackables
 
 Trackables can interact with one another, for example one `Reacto::Trackable`
-instance can merge with another to produce a new one - emitting the
+instance can be merged with another to produce a new one - emitting the
 notifications of the two sources.
 
 #### merge
@@ -412,10 +418,8 @@ the other. `merge` is an operation - it produces a new `Reacto::Trackable`
 instance:
 
 ```ruby
-  trackable =
-    Reacto::Trackable.interval(2).map { |v| v.to_s + 'a'}.take(5)
-  to_be_merged =
-    Reacto::Trackable.interval(3.5).map { |v| v.to_s + 'b'}.take(4)
+  trackable = Reacto.interval(2).map { |v| v.to_s + 'a'}.take(5)
+  to_be_merged = Reacto.interval(3.5).map { |v| v.to_s + 'b'}.take(4)
 
   subscription = trackable.merge(to_be_merged).on(value: -> (val) { puts val })
   trackable.await(subscription)
@@ -441,9 +445,9 @@ sources emits close/error notification, the one produced by `zip` emits it and
 closes.
 
 ```ruby
-  source1 = Reacto::Trackable.interval(3).drop(1).take(4)
-  source2 = Reacto::Trackable.interval(7, ('a'..'b').each)
-  source3 = Reacto::Trackable.interval(5, ('A'..'C').each)
+  source1 = Reacto.interval(3).drop(1).take(4)
+  source2 = Reacto.interval(7, ('a'..'b').each)
+  source3 = Reacto.interval(5, ('A'..'C').each)
 
   trackable = Reacto::Trackable.zip(source1, source2, source3) do |v1, v2, v3|
     "#{v1} : #{v2} : #{v3}"
@@ -463,6 +467,7 @@ on every 3 seconds, we want to drop the `0` and start by emitting `1`, so we
 drop the first emitted value with `drop(1)`, then we don't want to emit to
 infinity, so we `take(4)` - only the first `4` numbers, so `1`, `2`, `3` and `4`
 . This is an example of how to use the positional filtering operations.
+A shortcut for this one is `Reacto.zip`.
 
 #### combine
 
@@ -471,9 +476,9 @@ but combines the last emitted values with its combinator function on every new
 value incoming from any source and closes when all of the sources have closed.
 
 ```ruby
-  source1 = Reacto::Trackable.interval(3).take(4)
-  source2 = Reacto::Trackable.interval(7, ('a'..'b').each)
-  source3 = Reacto::Trackable.interval(5, ('A'..'C').each)
+  source1 = Reacto.interval(3).take(4)
+  source2 = Reacto.interval(7, ('a'..'b').each)
+  source3 = Reacto.interval(5, ('A'..'C').each)
 
   trackable = Reacto::Trackable.combine(source1, source2, source3) do |v1, v2, v3|
     "#{v1} : #{v2} : #{v3}"
@@ -495,6 +500,8 @@ to include data from all of the sources. Then the second - `'2 : a : A'` will be
 emitted the `9th` second from the start, because `2` is emitted on the `9th`
 second, etc. In the beginning the `0` emitted by the first source is silently
 skipped.
+Shortcut for this one is `Reacto.combine`; `Reacto::Trackable.combine_latest`
+is an alias.
 
 #### concat
 
@@ -503,8 +510,8 @@ resulting `Trackable` will emit the values of the first one, then the values
 of the second one:
 
 ```ruby
-  source1 = Reacto::Trackable.enumerable((1..5))
-  source2 = Reacto::Trackable.enumerable((6..10))
+  source1 = Reacto.enumerable((1..5))
+  source2 = Reacto.enumerable((6..10))
 
   trackable = source1.concat(source2)
 
@@ -515,6 +522,10 @@ of the second one:
   # The values from 1 to 10 will be printed, then 'Bye!'
 ```
 
+Another way to use it would be
+`Reacto::Trackable.concat(trackable1, trackable2, ... , trackableN)` with
+shortcut `Reacto.concat`.
+
 #### depend_on
 
 One `Reacto::Trackable`'s notifications can depend on another's accumulated
@@ -524,8 +535,8 @@ the block is used in the same manner as `inject` uses its block on this passed
 block (the last value) is emitted with every notification of the caller:
 
 ```ruby
-  dependency = Reacto::Trackable.enumerable((1..10))
-  trackable = Reacto::Trackable.enumerable([5, 4]).depend_on(dependency, &:+)
+  dependency = Reacto.enumerable((1..10))
+  trackable = Reacto.enumerable([5, 4]).depend_on(dependency, &:+)
 
   trackable.on(
     value: -> (val) { puts val }, close: -> () { puts 'Bye!' }
@@ -553,7 +564,7 @@ the two dedicated operations `execute_on` and `track_on`.
 
 This operation returns a `Reacto::Trackable` which operations will be executed
 on the given `executor` plus the operations of its source will be executed on
-this `executor` as well. Basically this means that the whole logic - the
+that `executor` as well. Basically this means that the whole logic - the
 behavior of the first `Trackable` in the chain of operations and all subsequent
 operations will be executed on the given `executor`.
 By `executor`, we mean the ones provided by the `Reacto::Executors`'s methods or
@@ -586,7 +597,7 @@ executor is used (passed as just `:io`) :
     end
   end
 
-  trackable = Reacto::Trackable.make(
+  trackable = Reacto.make(
     &request_url_behavior.call('https://api.github.com/repos/meddle0x53/reacto')
   )
 
@@ -603,10 +614,10 @@ executor is used (passed as just `:io`) :
   )
 
   star_gazers = trackable.map { |val| val['stargazers_url'] }.flat_map do |url|
-    Reacto::Trackable.make(&request_url_behavior.call(url)).map do |response|
+    Reacto.make(&request_url_behavior.call(url)).map do |response|
       JSON.parse(response)
     end.flat_map do |array|
-      Reacto::Trackable.enumerable(array).map { |data| data['login'] }
+      Reacto.enumerable(array).map { |data| data['login'] }
     end
   end
 
@@ -634,11 +645,10 @@ size.
 #### track_on
 
 The difference between `execute_on` and `track_on` is that `track_on` executes
-on the given executor only the the operations executed after it in the chain.
+on the given executor only the operations positioned after it in the chain.
 
 ```ruby
-  trackable =
-    Reacto::Trackable.enumerable((1..100)).map { |v| v * 10 }.track_on(:tasks)
+  trackable = Reacto.enumerable((1..100)).map { |v| v * 10 }.track_on(:tasks)
   trackable = trackable.inject(&:+).last
 
   subscription = trackable.on(
@@ -659,7 +669,7 @@ execute the whole trackable chain on it. The same way if it was passed to
 `execute_on`.
 
 ```ruby
- trackable = Reacto::Trackable.enummerable((1..1000), executor: :new_thread)
+ trackable = Reacto.enumerable((1..1000), executor: :new_thread)
 ```
 
 All the operations on called on this `Trackable` and its derivative
@@ -689,7 +699,7 @@ It is possible to buffer values using a count and then emit them as one array
 of values.
 
 ```ruby
-  trackable = Reacto::Trackable.enumerable((1..20)).buffer(count: 5)
+  trackable = Reacto.enumerable((1..20)).buffer(count: 5)
 
   trackable.on(value: -> (val) { p val })
 
@@ -707,7 +717,7 @@ anything from the source for 5 seconds, then emit everything received until
 now and repeat.
 
 ```ruby
-  trackable = Reacto::Trackable.interval(1).take(20).buffer(delay: 5)
+  trackable = Reacto.interval(1).take(20).buffer(delay: 5)
 
   subscription = trackable.on(value: -> (val) { p val })
   trackable.await(subscription)
@@ -729,7 +739,7 @@ If too many notifications are received too fast, sometimes it is better to
 skip some of them and emit only the last one. That can be done with `throttleb`.
 
 ```ruby
-  trackable = Reacto::Trackable.interval(1).take(30).throttle(5)
+  trackable = Reacto.interval(1).take(30).throttle(5)
 
   values = []
   subscription = trackable.on(value: -> (val) { values << val })
@@ -742,7 +752,7 @@ skip some of them and emit only the last one. That can be done with `throttleb`.
 
 Incoming notifications can be grouped by some common property they have.
 The resulting `Reacto::Trackable` emits special `LabeledTrackable` instances
-which are just trackable with additional property - `label` - the name of
+which are just trackables with additional property - `label` - the name of
 the group.
 
 #### group_by_label
@@ -751,7 +761,7 @@ The most basic operation which groups values into sub-trackables is
 `group_by_label` or just `group_by`:
 
 ```ruby
-  trackable = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+  trackable = Reacto.enumerable((1..10)).group_by_label do |value|
     [(value % 3), value]
   end
 
@@ -781,7 +791,7 @@ on the return value of a block called on an emitted value. The difference with
 `group_by` is that there can be multiple trackables with the same key.
 
 ```ruby
-  source = Reacto::Trackable.enumerable([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
+  source = Reacto.enumerable([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
   trackable = source.chunk { |val| val.even? }
 
   trackable.on do |labeled_trackable|
@@ -813,7 +823,7 @@ The `map` operator is able to operate only on a given group by passing it
 a `label:` argument:
 
 ```ruby
-  source = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+  source = Reacto.enumerable((1..10)).group_by_label do |value|
     [(value % 3), value]
   end
   trackable = source.map(label: 0) { |value| value / 3 }
@@ -848,7 +858,7 @@ object represents, and the value is accumulated with a block passed to
 It is the same as using inject:
 
 ```ruby
-  source = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+  source = Reacto.enumerable((1..10)).group_by_label do |value|
     [(value % 3), value]
   end
   trackable = source.flatten_labeled { |prev, curr| prev + curr }
@@ -876,7 +886,7 @@ The `retry` operator will execute the source's behavior when there is an error
 notification instead of emitting it and closing the `Reacto::Trackable`.
 
 ```ruby
-  source = Reacto::Trackable.make do |subscriber|
+  source = Reacto.make do |subscriber|
     subscriber.on_value('Test your luck!')
     number = Random.new.rand(1..10)
 
@@ -898,14 +908,14 @@ notification instead of emitting it and closing the `Reacto::Trackable`.
   )
 ```
 
-This peace of code will retry up to 5 times when the number is `5` or smaller.
+This piece of code will retry up to 5 times when the number is `5` or smaller.
 On the sixth time if we don't have luck the error will be emitted. The default
 retry count (when a value is not passed) is just `1`. There is a `retry_when`
 operation, which uses a block to determine if the error should be emitted, or
 the source should be retried. For example:
 
 ```ruby
-  source = Reacto::Trackable.make do |subscriber|
+  source = Reacto.make do |subscriber|
     subscriber.on_value('Test your luck!')
     number = Random.new.rand(1..10)
 
@@ -943,7 +953,7 @@ emitted by the trackable it returns. Instead the notifications of the argument
 are emitted.
 
 ```ruby
-  source = Reacto::Trackable.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
+  source = Reacto.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
     10 / val
   end
 
@@ -968,15 +978,15 @@ the replacement. The block has as an argument the original error, so some logic
 can be written around that.
 
 ```ruby
-  source = Reacto::Trackable.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
+  source = Reacto.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
     10 / val
   end
 
   trackable = source.rescue_and_replace_error do |error|
     if error.is_a?(ArgumentError)
-      Reacto::Trackable.error(error)
+      Reacto.error(error)
     else
-      Reacto::Trackable.value(1)
+      Reacto.value(1)
     end
   end
 
@@ -989,6 +999,10 @@ can be written around that.
 
 The number `1` will be emitted instead of the `ZeroDivisionError` because it is
 not an `ArgumentError`.
+
+## Dependencies
+
+Reacto is powered by [concurrent-ruby](https://github.com/ruby-concurrency/concurrent-ruby)
 
 ## Tested with
 
