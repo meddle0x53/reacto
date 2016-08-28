@@ -864,6 +864,74 @@ It is the same as using inject:
 Prints the original label and the sums of the values emitted by the original
 `Reacto::LabeledTrackable`.
 
+### Error handling
+
+Sometimes we want to handle incoming error notification before actually going
+out of the operation chain and in the error consumer code. This can be achieved
+with some special operations, designed to work with errors.
+
+#### retrying
+
+The `retry` operator will execute the source's behavior when there is an error
+notification instead of emitting it and closing the trackable.
+
+```ruby
+  source = Reacto::Trackable.make do |subscriber|
+    subscriber.on_value('Test your luck!')
+    number = Random.new.rand(1..10)
+
+    if number <= 5
+      subscriber.on_error(
+        StandardError.new("Bad luck, last number was : #{number}")
+      )
+    else
+      subscriber.on_value("Lucky number #{number}!")
+      subscriber.on_close
+    end
+  end
+
+  trackable = source.retry(5)
+  trackable.on(
+    value: -> (v) { puts v },
+    close: -> () { puts 'Done' },
+    error: -> (e) { puts e.message }
+  )
+```
+
+This peace of code will retry up to 5 times when the number is `5` or smaller.
+On the sixth time if we don't have luck the error will be emitted. The default
+retry count (when a value is not passed) is just `1`. There is a `retry_when`
+operation, which uses a block to determine if the error should be emitted, or
+the surce should be retried. For example:
+
+```ruby
+  source = Reacto::Trackable.make do |subscriber|
+    subscriber.on_value('Test your luck!')
+    number = Random.new.rand(1..10)
+
+    if number <= 5
+      subscriber.on_error(
+        StandardError.new("Bad luck, last number was : #{number}")
+      )
+    else
+      subscriber.on_value("Lucky number #{number}!")
+      subscriber.on_close
+    end
+  end
+
+  trackable = source.retry_when do |error, retries|
+    retries < 5 && !error.message.include?('3')
+  end
+
+  trackable.on(
+    value: -> (v) { puts v },
+    close: -> () { puts 'Done' },
+    error: -> (e) { puts e.message }
+  )
+```
+
+In this example we use the block to say the that we retry at most 5 times
+again, but this time if the unlucky number was `3` we should not retry.
 
 ## Tested with rubies
 
