@@ -2,6 +2,8 @@
 
 Reactive Programming for Ruby with some concurrency thrown into the mix!
 
+[![Gem Version](https://badge.fury.io/rb/reacto.svg)](https://badge.fury.io/rb/reacto)
+
 ## How to install?
 
 If you use `bundler` just add this line to your `Gemfile`:
