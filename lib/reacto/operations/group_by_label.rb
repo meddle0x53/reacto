@@ -2,7 +2,7 @@ require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
   module Operations
-    class Label
+    class GroupByLabel
       def initialize(chose_label, executor = nil)
         @chose_label = chose_label
         @executor = executor

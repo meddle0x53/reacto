@@ -1,4 +1,5 @@
 require 'ostruct'
+
 require 'reacto/subscriptions/operation_subscription'
 
 module Reacto
@@ -25,9 +26,7 @@ module Reacto
           tracker.on_value OpenStruct.new({ value: v }.merge(data))
         end
 
-        Subscriptions::OperationSubscription.new(
-          tracker, value: value
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: value)
       end
     end
   end

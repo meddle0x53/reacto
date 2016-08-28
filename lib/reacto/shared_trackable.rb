@@ -2,11 +2,8 @@ require 'reacto/trackable'
 
 module Reacto
   class SharedTrackable < Trackable
-    def initialize(
-      behaviour = NO_ACTION, executor = nil, activate_on_subscribe = false,
-      &block
-    )
-      super(behaviour, executor, &block)
+    def initialize(executor = nil, activate_on_subscribe = false, &block)
+      super(executor, &block)
 
       @activate_on_subscribe = activate_on_subscribe
       @active = false

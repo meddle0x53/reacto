@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '.zip' do
     it 'combines the first notifications of the source Trackable instances, ' \

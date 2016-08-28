@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Nickolay Tzvetinov - Meddle']
   spec.email         = ['n.tzvetinov@gmail.com']
   spec.description   = 'Concurrent Reactive Programming for Ruby'
-  spec.summary       = 'Concurrent Reactive Programming for Ruby'
+  spec.summary       = 'Reactive Programming for Ruby with some concurrency thrown into the mix.'
   spec.homepage      = 'https://github.com/meddle0x53/reacto'
   spec.license       = 'MIT'
 
@@ -22,6 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'rspec', '~> 3.3.0'
 
-  spec.add_dependency 'concurrent-ruby', '~> 1.0.0'
+  spec.add_dependency 'concurrent-ruby', '~> 1.0.2'
 end
-

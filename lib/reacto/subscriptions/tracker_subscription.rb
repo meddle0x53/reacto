@@ -32,14 +32,10 @@ module Reacto
       end
 
       def add_resource(resource)
-        return unless subscribed?
-
         @resources << resource
       end
 
       def add(subscription)
-        return unless subscribed?
-
         @subscriptions << subscription
       end
 

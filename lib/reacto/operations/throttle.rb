@@ -15,11 +15,11 @@ module Reacto
 
       def call(tracker)
         close = -> () { @close = true }
-        error = lambda do |e|
+        error = -> (e) do
           delay_task(tracker) unless @ready
           @error = e
         end
-        value = lambda do |v|
+        value = -> (v) do
           delay_task(tracker) unless @ready
           @last = v
         end
@@ -57,4 +57,3 @@ module Reacto
     end
   end
 end
-

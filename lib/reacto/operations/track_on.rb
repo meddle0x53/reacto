@@ -8,9 +8,7 @@ module Reacto
       end
 
       def call(tracker)
-        Subscriptions::ExecutorSubscription.new(
-          tracker, @executor
-        )
+        Subscriptions::ExecutorSubscription.new(tracker, @executor)
       end
     end
   end

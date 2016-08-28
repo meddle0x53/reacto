@@ -17,7 +17,7 @@ context Reacto::Trackable do
         subscriber.on_value(4)
         subscriber.on_error(StandardError.new('error'))
       end
-      trackable = source.map(-> (v) { v }, error: -> (e) { 5 })
+      trackable = source.map(error: -> (e) { 5 }, &-> (v) { v })
 
       trackable.on(value: test_on_value, error: test_on_error)
 
@@ -28,11 +28,25 @@ context Reacto::Trackable do
     it 'emits what is produced by the passed `close` function before close' do
       trackable =
         described_class.enumerable((1..5)).map(close: ->() { 10 }) do |v|
-        v
+          v
         end
 
       trackable.on(value: test_on_value, close: test_on_close)
-      expect(test_data).to be == (1..5).to_a + [10, '|']
+      expect(test_data).to eq((1..5).to_a + [10, '|'])
+    end
+
+    context 'with label' do
+      it 'applies the mapping passed only to the incoming values of type ' \
+        'LabeledTrackable with the matching label' do
+        source = described_class.enumerable((1..10)).group_by_label do |value|
+          [(value % 3), value]
+        end
+
+        trackable = source.map(label: 1, close: -> { 4 }) { |value| value / 3 }
+        trackable.on(value: test_on_value)
+
+        expect_trackable_values(test_data.first, [0, 1, 2, 3, 4], label: 1)
+      end
     end
   end
 end

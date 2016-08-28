@@ -8,18 +8,14 @@ module Reacto
       end
 
       def call(tracker)
-        on_value = lambda do |v|
+        behaviour = -> (v) do
           if @filter.call(v)
             tracker.on_value(v)
           end
         end
 
-        Subscriptions::OperationSubscription.new(
-          tracker,
-          value: on_value
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: behaviour)
       end
     end
   end
 end
-

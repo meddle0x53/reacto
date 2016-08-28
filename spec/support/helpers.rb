@@ -13,7 +13,7 @@ module Helpers
     end
   end
 
-  let(:source) { described_class.new(test_behaviour) }
+  let(:source) { described_class.new(&test_behaviour) }
 
   def attach_test_trackers(trackable)
     trackable.on(
@@ -21,5 +21,13 @@ module Helpers
       error: test_on_error,
       close: test_on_close
     )
+  end
+
+  def expect_trackable_values(trackable, expected, label: nil)
+    expect(trackable.label).to eq(label) if label
+
+    values = []
+    trackable.on { |v| values << v }
+    expect(values).to eq(expected)
   end
 end

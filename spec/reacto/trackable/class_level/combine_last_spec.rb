@@ -1,9 +1,7 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '.combine_last' do
     it 'combines the notifications of Trackables based on their ' \
-      'sequence number - the first notification of the sources, then ' \
+      'sequence number - the first notifications of the sources, then ' \
       'the next ones and in the end closes if any of the sources closes' do
       trackable1 = described_class.interval(0.3).take(4)
       trackable2 = described_class.interval(0.7, ('a'..'b').each)

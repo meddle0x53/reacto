@@ -11,20 +11,22 @@ module Reacto
       end
 
       def call(tracker)
-        error = if @error
-                  -> (e) { tracker.on_error(@error.call(e)) }
-                else
-                  tracker.method(:on_error)
-                end
+        error =
+          if @error
+            -> (e) { tracker.on_error(@error.call(e)) }
+          else
+            tracker.method(:on_error)
+          end
 
-        close = if @close
-                  -> () do
-                    tracker.on_value(@close.call)
-                    tracker.on_close
-                  end
-                else
-                  tracker.method(:on_close)
-                end
+        close =
+          if @close
+            -> () do
+              tracker.on_value(@close.call)
+              tracker.on_close
+            end
+          else
+            tracker.method(:on_close)
+          end
 
         Subscriptions::OperationSubscription.new(
           tracker,

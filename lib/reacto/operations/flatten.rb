@@ -3,9 +3,8 @@ require 'reacto/subscriptions/operation_subscription'
 module Reacto
   module Operations
     class Flatten
-
       def call(tracker)
-        behaviour = lambda do |value|
+        behaviour = -> (value) do
           if value.kind_of?(Array)
             value.flatten.each do |sub_value|
               tracker.on_value(sub_value)
@@ -15,12 +14,8 @@ module Reacto
           end
         end
 
-        Subscriptions::OperationSubscription.new(
-          tracker,
-          value: behaviour
-        )
+        Subscriptions::OperationSubscription.new(tracker, value: behaviour)
       end
     end
   end
 end
-

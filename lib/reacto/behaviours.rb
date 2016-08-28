@@ -25,11 +25,26 @@ module Reacto
       end
     end
 
+    def enumerable(enumerable_value)
+      ->(tracker) do
+        begin
+          enumerable_value.each do |val|
+            break unless tracker.subscribed?
+            tracker.on_value(val)
+          end
+
+          tracker.on_close if tracker.subscribed?
+        rescue => error
+          tracker.on_error(error) if tracker.subscribed?
+        end
+      end
+    end
+
     def integers_enumerator
       Enumerator.new do |yielder|
         n = 0
         loop do
-          yielder.yield n
+          yielder << n
           n = n + 1
         end
       end
@@ -45,6 +60,14 @@ module Reacto
           n = n + 1
         end
       end
+    end
+
+    def constant(const)
+      -> (_val) { const }
+    end
+
+    def same_predicate(val)
+      -> (value) { val == value }
     end
   end
 end

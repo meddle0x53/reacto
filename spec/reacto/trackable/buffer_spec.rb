@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 context Reacto::Trackable do
   context '#buffer' do
     context 'count' do
@@ -9,8 +7,9 @@ context Reacto::Trackable do
           value: test_on_value, close: test_on_close, error: test_on_error
         )
 
-        expect(test_data).to be ==
+        expect(test_data).to eq(
           [(1..5).to_a, (6..10).to_a, (11..15).to_a, (16..20).to_a, '|']
+        )
       end
     end
 
@@ -21,15 +20,14 @@ context Reacto::Trackable do
           value: test_on_value, close: test_on_close, error: test_on_error
         )
         trackable.await(subscription)
-        expect(test_data).to be ==
-          [
-            [0, 1, 2, 3],
-            [4, 5, 6, 7, 8],
-            [9, 10, 11, 12, 13],
-            [14, 15, 16, 17, 18],
-            [19],
-            "|"
-        ]
+        expect(test_data).to eq([
+          [0, 1, 2, 3],
+          [4, 5, 6, 7, 8],
+          [9, 10, 11, 12, 13],
+          [14, 15, 16, 17, 18],
+          [19],
+          '|'
+        ])
       end
     end
 
@@ -49,10 +47,8 @@ context Reacto::Trackable do
         trackable.on(
           value: test_on_value, close: test_on_close, error: test_on_error
         )
-        expect(test_data).to be ==
-          [[1, 2, 3], [4, 5], [6], '|']
+        expect(test_data).to eq([[1, 2, 3], [4, 5], [6], '|'])
       end
     end
   end
 end
-

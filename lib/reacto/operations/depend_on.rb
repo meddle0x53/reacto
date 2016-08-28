@@ -1,3 +1,5 @@
+require 'ostruct'
+
 require 'reacto/constants'
 require 'reacto/subscriptions/operation_subscription'
 
@@ -10,7 +12,7 @@ module Reacto
           if accumulator.nil?
             trackable.first
           else
-            trackable.inject(NO_VALUE, accumulator)
+            trackable.inject(NO_VALUE, &accumulator)
           end
 
         @lock = Mutex.new
@@ -92,10 +94,7 @@ module Reacto
         end
 
         Subscriptions::OperationSubscription.new(
-          tracker,
-          value: value,
-          error: error,
-          close: close
+          tracker, value: value, error: error, close: close
         )
       end
     end
