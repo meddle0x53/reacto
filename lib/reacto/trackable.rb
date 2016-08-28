@@ -581,6 +581,10 @@ module Reacto
       lift(Operations::RescueAndReplaceError.new(block))
     end
 
+    def rescue_and_replace_error_with(trackable)
+      rescue_and_replace_error { |_error| trackable }
+    end
+
     def combine_last(*trackables, &block)
       return self unless block_given?
 
