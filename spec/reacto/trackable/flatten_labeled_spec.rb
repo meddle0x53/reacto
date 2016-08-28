@@ -3,10 +3,9 @@ context Reacto::Trackable do
     it 'transfomrs the LabeledTrackable instances emitted into objects with' \
       'two attributes - label the label of the LabeledTrackable and value -' \
       'the first value of emitted by the LabeledTrackable' do
-      trackable =
-        Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-          [(value % 3), value]
-        end
+      trackable = described_class.enumerable((1..10)).group_by_label do |value|
+        [(value % 3), value]
+      end
       trackable = trackable.flatten_labeled
 
       trackable.on(value: test_on_value)
@@ -18,13 +17,10 @@ context Reacto::Trackable do
     it 'transfomrs the LabeledTrackable instances emitted into objects with' \
       'two attributes - label the label of the LabeledTrackable and value -' \
       'the last value computed by the passed accumulator block' do
-      trackable =
-        Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-          [(value % 3), value]
-        end
-      trackable = trackable.flatten_labeled do |prev, curr|
-        prev + curr
+      trackable = described_class.enumerable((1..10)).group_by_label do |value|
+        [(value % 3), value]
       end
+      trackable = trackable.flatten_labeled { |prev, curr| prev + curr }
 
       trackable.on(value: test_on_value)
 
@@ -36,10 +32,9 @@ context Reacto::Trackable do
       'two attributes - label the label of the LabeledTrackable and value -' \
       'the last value computed by the passed accumulator block, using the ' \
       'passed initial value' do
-      trackable =
-        Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-          [(value % 3), value]
-        end
+      trackable = described_class.enumerable((1..10)).group_by_label do |value|
+        [(value % 3), value]
+      end
       trackable = trackable.flatten_labeled(initial: -10) do |prev, curr|
         prev + curr
       end

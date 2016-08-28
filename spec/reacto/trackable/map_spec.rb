@@ -42,15 +42,10 @@ context Reacto::Trackable do
           [(value % 3), value]
         end
 
-        trackable = source.map(label: 1) { |value| value / 3 }
+        trackable = source.map(label: 1, close: -> { 4 }) { |value| value / 3 }
         trackable.on(value: test_on_value)
 
-        labeled_trackable = test_data.first
-        expect(labeled_trackable.label).to eq(1)
-
-        labeled_data = []
-        labeled_trackable.on(value: ->(v) { labeled_data << v })
-        expect(labeled_data).to eq([1 / 3, 4 / 3, 7 / 3, 10 / 3])
+        expect_trackable_values(test_data.first, [0, 1, 2, 3, 4], label: 1)
       end
     end
   end

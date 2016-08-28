@@ -834,7 +834,35 @@ a `label:` argument:
 
 As we can see only the values emitted by the trackable with label `0`, the
 ones that can be devided by 3 without remainder are affected by the `map`
-operation.
+operation. The operations `select` and `flat_map` have a `label:` argument too
+and can be applied only to sub-trackables with the passed laebl.
+
+#### flatten_labeled
+
+The `Reacto::LabeledTrackable` instances emitted by a Trackable after grouping
+can be turned to simple value notifications by using the `flatten_labeled`
+operation. It turns every sub-trackable into an object with two fields
+label and value. The label is the same as the label of the sub-trackable the
+object represents, and the value is accumulated with a block passed to
+`flatten_labeled` from the notifications emitted by the sub-trackable.
+It is the same as using inject:
+
+```ruby
+  source = Reacto::Trackable.enumerable((1..10)).group_by_label do |value|
+    [(value % 3), value]
+  end
+  trackable = source.flatten_labeled { |prev, curr| prev + curr }
+
+  trackable.on { |object| puts "#{object.label} : #{object.value}"}
+
+  # This produces:
+  # 1 : 22
+  # 2 : 15
+  # 0 : 18
+```
+
+Prints the original label and the sums of the values emitted by the original
+`Reacto::LabeledTrackable`.
 
 
 ## Tested with rubies

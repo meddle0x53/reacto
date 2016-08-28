@@ -435,8 +435,17 @@ module Reacto
       select(&->(val) { !block.call(val)} )
     end
 
-    def inject(initial = NO_VALUE, injector = nil, &block)
-      lift(Operations::Inject.new(block_given? ? block : injector, initial))
+    def inject(initial = NO_VALUE, label: nil, initial_value: NO_VALUE, &block)
+      return self unless block_given?
+
+      init = initial != NO_VALUE ? initial : initial_value
+      if label
+        lift(Operations::OperationOnLabeled.new(
+          label, block, op: :inject, initial_value: init
+        ))
+      else
+        lift(Operations::Inject.new(block, init))
+      end
     end
 
     def each_with_object(obj, &block)

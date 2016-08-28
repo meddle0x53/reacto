@@ -25,7 +25,7 @@ module Reacto
             if @accumulator.nil?
               v.first
             else
-              v.inject(@initial, @accumulator).last
+              v.inject(@initial, &@accumulator).last
             end
 
           accumulated = []

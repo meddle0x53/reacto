@@ -65,5 +65,21 @@ context Reacto::Trackable do
 
       expect(test_data.size).to be(0)
     end
+
+    context 'with label' do
+      it 'applies the  accumulation only to the emitted values of type ' \
+        'LabeledTrackable with the matching label' do
+        source = described_class.enumerable((1..10)).group_by_label do |value|
+          [(value % 3), value]
+        end
+
+        trackable = source.inject(12, label: 0) { |prev, curr| prev + curr }
+        trackable.on(value: test_on_value)
+
+        expect_trackable_values(test_data.first, [1, 4, 7, 10], label: 1)
+        expect_trackable_values(test_data[1], [2, 5, 8], label: 2)
+        expect_trackable_values(test_data.last, [15, 21, 30], label: 0)
+      end
+    end
   end
 end

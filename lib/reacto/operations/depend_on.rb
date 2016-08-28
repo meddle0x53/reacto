@@ -12,7 +12,7 @@ module Reacto
           if accumulator.nil?
             trackable.first
           else
-            trackable.inject(NO_VALUE, accumulator)
+            trackable.inject(NO_VALUE, &accumulator)
           end
 
         @lock = Mutex.new
