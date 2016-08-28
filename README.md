@@ -933,6 +933,63 @@ the surce should be retried. For example:
 In this example we use the block to say the that we retry at most 5 times
 again, but this time if the unlucky number was `3` we should not retry.
 
+#### how to rescue from errors
+
+The simples way to not emit an error but to continue emitting something else
+is by using the `rescue_and_replace_error_with` operation. This one accepts
+a `Reacto::Trackable` instance as its sole argument.
+When an error notification is emitted by its source trackable, it is not
+emitted by the trackable it returns. Instead the notifications of the argument
+are emitted.
+
+```ruby
+  source = Reacto::Trackable.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
+    10 / val
+  end
+
+  trackable = source.rescue_and_replace_error_with(
+    Reacto::Trackable.enumerable((4..6)).map { |val| 10 / val }
+  )
+
+  trackable.on(
+    value: -> (v) { puts v },
+    close: -> () { puts 'Done' },
+    error: -> (e) { puts e.message }
+  )
+```
+
+We want see the error cause the by division by `0`, instead after the emisison
+of `10/1` -> `10`, `10/2` -> `5` and `10/3` -> `3`, the values `2`, `2` and `1`
+will be emitted -> that's `10/4`, `10/5` and `10/6`.
+
+Another more precise way to do that is to use the `rescue_and_replace_error`
+operation which receives a block returning a `Reacto::Trackable` -
+the replacement. The block has as an argument the original error, so some logic
+can be written around that.
+
+```ruby
+  source = Reacto::Trackable.enumerable([1, 2, 3, 0, 7, 8, 9]).map do |val|
+    10 / val
+  end
+
+  trackable = source.rescue_and_replace_error do |error|
+    if error.is_a?(ArgumentError)
+      Reacto::Trackable.error(error)
+    else
+      Reacto::Trackable.value(1)
+    end
+  end
+
+  trackable.on(
+    value: -> (v) { puts v },
+    close: -> () { puts 'Done' },
+    error: -> (e) { puts e.message }
+  )
+```
+
+The number `1` will be emitted instead of the `ZeroDivisionError` because it is
+not an `ArgumentError`.
+
 ## Tested with rubies
 
  * Ruby 2.0.0+
