@@ -42,7 +42,6 @@ module Reacto
         return unless subscribed?
         return if waiting?
 
-
         on_value_subscriptions(val)
         after_on_value(val)
       end
@@ -54,7 +53,7 @@ module Reacto
       end
 
       def after_on_value(_)
-        #nothing by default
+        # nothing by default
       end
 
       def on_error(e)

@@ -9,7 +9,6 @@ module Reacto
       end
 
       def call(tracker)
-
         close = -> do
           if @n.nil? || @n > 1
             next_n = @n.nil? ? @n : @n - 1
@@ -24,4 +23,3 @@ module Reacto
     end
   end
 end
-

@@ -2,9 +2,9 @@ module Helpers
   extend RSpec::SharedContext
 
   let(:test_data) { [] }
-  let(:test_on_value) { -> (v) { test_data << v }}
-  let(:test_on_close) { -> () { test_data << '|' }}
-  let(:test_on_error) { -> (e) { test_data << e }}
+  let(:test_on_value) { -> (v) { test_data << v } }
+  let(:test_on_close) { -> () { test_data << '|' } }
+  let(:test_on_error) { -> (e) { test_data << e } }
 
   let(:test_behaviour) do
     lambda do |tracker_subscription|

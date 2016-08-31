@@ -10,6 +10,7 @@ module Reacto
         def initialize(tracker)
           @tracker = tracker
         end
+
         def update(time, result, e)
           if e
             @tracker.on_error(e) unless e.is_a?(Concurrent::TimeoutError)

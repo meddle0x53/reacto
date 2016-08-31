@@ -1,6 +1,5 @@
 context Reacto::Trackable do
   context '#chunk_while' do
-
     let(:data) { [1, 2, 4, 9, 10, 11, 12, 15, 16, 19, 20, 21] }
     subject(:source_trackable) { described_class.enumerable(data) }
 

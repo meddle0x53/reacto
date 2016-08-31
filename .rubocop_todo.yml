@@ -186,37 +186,6 @@ Style/ConditionalAssignment:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs.
-Style/EmptyLineBetweenDefs:
-  Exclude:
-    - 'lib/reacto/operations/delay_each.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/EmptyLines:
-  Exclude:
-    - 'lib/reacto/operations/act.rb'
-    - 'lib/reacto/operations/diff.rb'
-    - 'lib/reacto/subscriptions/composite_subscription.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'spec/reacto/operations/track_on_spec.rb'
-    - 'spec/reacto/trackable/chunk_while_spec.rb'
-    - 'spec/reacto/trackable/each_with_object_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyLinesAroundMethodBody:
-  Exclude:
-    - 'lib/reacto/operations/cycle.rb'
-
 # Offense count: 7
 # Cop supports --auto-correct.
 Style/EvenOdd:
@@ -226,15 +195,6 @@ Style/EvenOdd:
     - 'spec/reacto/trackable/retry_spec.rb'
     - 'spec/reacto/trackable/retry_when_spec.rb'
     - 'spec/reacto/trackable/select_spec.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Style/ExtraSpacing:
-  Exclude:
-    - 'lib/reacto/trackable.rb'
-    - 'spec/reacto/trackable/diff_spec.rb'
-    - 'spec/reacto/trackable/sort_spec.rb'
 
 # Offense count: 13
 # Cop supports --auto-correct.
@@ -276,26 +236,12 @@ Style/IndentArray:
 Style/IndentHash:
   EnforcedStyle: consistent
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'spec/reacto/trackable/execute_on_spec.rb'
-    - 'spec/reacto/trackable/track_on_spec.rb'
-
 # Offense count: 69
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: line_count_dependent, lambda, literal
 Style/Lambda:
   Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Exclude:
-    - 'lib/reacto/subscriptions/composite_subscription.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -403,22 +349,6 @@ Style/SingleLineBlockParams:
     - 'lib/reacto/trackable.rb'
     - 'spec/reacto/trackable/inject_spec.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-# SupportedStyles: space, no_space
-Style/SpaceInsideBlockBraces:
-  Exclude:
-    - 'lib/reacto/trackable.rb'
-    - 'spec/reacto/trackable/merge_spec.rb'
-    - 'spec/support/helpers.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SpaceInsideParens:
-  Exclude:
-    - 'lib/reacto/trackable.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
@@ -455,26 +385,6 @@ Style/TernaryParentheses:
   Exclude:
     - 'lib/reacto/operations/wrap.rb'
     - 'spec/reacto/trackable/split_labeled_spec.rb'
-
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: final_newline, final_blank_line
-Style/TrailingBlankLines:
-  Exclude:
-    - 'lib/reacto/cache/file.rb'
-    - 'lib/reacto/operations/act.rb'
-    - 'lib/reacto/operations/append.rb'
-    - 'lib/reacto/operations/cycle.rb'
-    - 'lib/reacto/operations/drop_errors.rb'
-    - 'lib/reacto/operations/include.rb'
-    - 'lib/reacto/operations/track_on.rb'
-    - 'lib/reacto/subscriptions/executor_subscription.rb'
-    - 'lib/reacto/version.rb'
-    - 'spec/reacto/operations/track_on_spec.rb'
-    - 'spec/reacto/trackable/any_spec.rb'
-    - 'spec/reacto/trackable/append_spec.rb'
-    - 'spec/spec_helper.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

@@ -2,9 +2,9 @@ context Reacto::Trackable do
   context '#merge' do
     it 'merges the passed trackable\'s emitions with the source ones' do
       trackable =
-        described_class.interval(0.2).map { |v| v.to_s + 'a'}.take(5)
+        described_class.interval(0.2).map { |v| v.to_s + 'a' }.take(5)
       to_be_merged =
-        described_class.interval(0.35).map { |v| v.to_s + 'b'}.take(4)
+        described_class.interval(0.35).map { |v| v.to_s + 'b' }.take(4)
       subscription = trackable.merge(to_be_merged).on(
         value: test_on_value, close: test_on_close, error: test_on_error
       )
@@ -23,7 +23,7 @@ context Reacto::Trackable do
       end.take(5)
 
       to_be_merged =
-        described_class.interval(0.35).map { |v| v.to_s + 'b'}.take(4)
+        described_class.interval(0.35).map { |v| v.to_s + 'b' }.take(4)
 
       trackable = trackable.merge(to_be_merged, delay_error: true)
       subscription = trackable.on(

@@ -60,7 +60,7 @@ module Reacto
         end
       end
 
-      def make(executor_param = nil, executor: nil,  &block)
+      def make(executor_param = nil, executor: nil, &block)
         real_executor = executor_param ? executor_param : executor
 
         behaviour = block_given? ? block : NO_ACTION
@@ -455,7 +455,7 @@ module Reacto
     end
 
     def reject(&block)
-      select(&->(val) { !block.call(val)} )
+      select(&->(val) { !block.call(val) })
     end
 
     def inject(initial = NO_VALUE, label: nil, initial_value: NO_VALUE, &block)

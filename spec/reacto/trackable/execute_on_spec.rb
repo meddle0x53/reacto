@@ -1,11 +1,11 @@
 context Reacto::Trackable do
   subject(:test_source) do
-   described_class.new do |tracker_subscription|
-      tracker_subscription.on_value(32)
-      sleep 1
+    described_class.new do |tracker_subscription|
+       tracker_subscription.on_value(32)
+       sleep 1
 
-      tracker_subscription.on_close
-    end
+       tracker_subscription.on_close
+     end
   end
 
   context '#execute_on' do

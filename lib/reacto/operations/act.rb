@@ -8,7 +8,6 @@ module Reacto
     class Act
       ALL = %i(value error close)
 
-
       def initialize(action = NO_ACTION, on = ALL)
         @action = action
         @on = on
@@ -66,4 +65,3 @@ module Reacto
     end
   end
 end
-
