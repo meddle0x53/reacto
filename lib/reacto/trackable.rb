@@ -620,7 +620,7 @@ module Reacto
       slice(pattern, type: :before, &block)
     end
 
-    def slice(pattern = NO_ACTION, type:, &block)
+    def slice(pattern = NO_ACTION, type: type, &block)
       predicate =
         if pattern != NO_VALUE
           -> (val) { pattern === val }
