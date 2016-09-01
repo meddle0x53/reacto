@@ -27,7 +27,7 @@ module Reacto
 
     class << self
       def never
-        self.new
+        new
       end
 
       def combine(*trackables, &block)
@@ -64,7 +64,7 @@ module Reacto
         real_executor = executor_param ? executor_param : executor
 
         behaviour = block_given? ? block : NO_ACTION
-        self.new(real_executor, &behaviour)
+        new(real_executor, &behaviour)
       end
 
       def later(secs, value, executor: Reacto::Executors.tasks)
