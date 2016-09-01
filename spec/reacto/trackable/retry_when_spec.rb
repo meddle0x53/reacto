@@ -5,7 +5,7 @@ context Reacto::Trackable do
       ->() do
         array << 1
 
-        array.length % 2 == 1
+        array.length.odd?
       end
     end
 
