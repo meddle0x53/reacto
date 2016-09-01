@@ -10,7 +10,7 @@ require 'reacto/labeled_trackable'
 module Reacto
   module_function
 
-  def make(executor_param = nil, executor: executor, &block)
+  def make(executor_param = nil, executor: nil, &block)
     Trackable.make(executor_param, executor: executor, &block)
   end
 
