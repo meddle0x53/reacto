@@ -1,16 +1,14 @@
 context Reacto::Trackable do
   context '#select' do
     it 'doesn\'t notify with values not passing the filter block' do
-      trackable = source.select { |v| v % 2 == 0 }
+      trackable = source.select(&:even?)
       trackable.on(value: test_on_value)
 
       expect(test_data.size).to be(0)
     end
 
     it 'notifies with values passing the filter block' do
-      trackable = source.select do |v|
-        v % 2 == 1
-      end
+      trackable = source.select(&:odd?)
 
       trackable.on(value: test_on_value)
 

@@ -10,9 +10,7 @@ context Reacto::Trackable do
     end
 
     it 'notifies with the first value passing the filter block' do
-      trackable = source.find do |v|
-        v % 2 == 1
-      end
+      trackable = source.find(&:odd?)
 
       trackable.on(value: test_on_value)
 
