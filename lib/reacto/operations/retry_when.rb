@@ -17,7 +17,7 @@ module Reacto
 
           if should_retry
             @retries[tracker] += 1
-            @behaviour.call(self.call(tracker))
+            @behaviour.call(call(tracker))
           else
             tracker.on_error(e)
           end

@@ -317,21 +317,6 @@ Style/RedundantBegin:
     - 'lib/reacto/behaviours.rb'
     - 'lib/reacto/trackable.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'lib/reacto/operations/retry.rb'
-    - 'lib/reacto/operations/retry_when.rb'
-    - 'lib/reacto/trackable.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/SelfAssignment:
-  Exclude:
-    - 'lib/reacto/behaviours.rb'
-    - 'lib/reacto/operations/retry.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

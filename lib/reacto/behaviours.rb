@@ -45,7 +45,7 @@ module Reacto
         n = 0
         loop do
           yielder << n
-          n = n + 1
+          n += 1
         end
       end
     end
@@ -57,7 +57,7 @@ module Reacto
         n = 0
         loop do
           yielder.yield array[n % size]
-          n = n + 1
+          n += 1
         end
       end
     end

@@ -10,12 +10,12 @@ module Reacto
 
       def call(tracker)
         error = ->(e) do
-          @retries = @retries - 1
+          @retries -= 1
 
           if @retries < 0
             tracker.on_error(e)
           else
-            @behaviour.call(self.call(tracker))
+            @behaviour.call(call(tracker))
           end
         end
 
