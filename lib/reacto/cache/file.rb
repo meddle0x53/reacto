@@ -87,14 +87,14 @@ module Reacto
       def deserialize
         return unless fresh?
 
-        @data ||= YAML::load(::File.read(location))
+        @data ||= YAML.load(::File.read(location))
       end
 
       def serialize
         return if data.nil?
 
         ::File.open(location, 'w') do |f|
-          f.write(YAML::dump(data))
+          f.write(YAML.dump(data))
         end
       end
     end
