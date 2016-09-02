@@ -4,7 +4,7 @@ context Reacto::Trackable do
   context '.enumerable' do
     it 'emits the whole enumerable one-by-one and then closes' do
       trackable = described_class.enumerable([1, 3, 5, 6, 7, 8])
-      subscription = attach_test_trackers(trackable)
+      attach_test_trackers(trackable)
 
       expect(test_data).to be == [1, 3, 5, 6, 7, 8, '|']
     end
@@ -31,7 +31,7 @@ context Reacto::Trackable do
 
       enumerable = PositiveArray.new(2, 3, -4, 3, 6)
       trackable = described_class.enumerable(enumerable)
-      subscription = attach_test_trackers(trackable)
+      attach_test_trackers(trackable)
 
       expect(test_data).to be == [2, 3, enumerable.error]
     end
