@@ -34,7 +34,7 @@ context Reacto::Trackable do
       trackable = described_class.interval(
         0.1, (1..5).each, executor: Reacto::Executors.immediate
       )
-      subscription = attach_test_trackers(trackable)
+      attach_test_trackers(trackable)
 
       expect(test_data).to eq((1..5).to_a + ['|'])
     end

@@ -16,7 +16,7 @@ context Reacto::Trackable do
       trackable = described_class.later(
         0.2, 5, executor: Reacto::Executors.immediate
       )
-      subscription = attach_test_trackers(trackable)
+      attach_test_trackers(trackable)
       expect(test_data).to be == [5, '|']
     end
   end

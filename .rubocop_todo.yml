@@ -50,14 +50,6 @@ Lint/UnusedMethodArgument:
     - 'lib/reacto/subscriptions.rb'
     - 'lib/reacto/subscriptions/subscription.rb'
 
-# Offense count: 5
-Lint/UselessAssignment:
-  Exclude:
-    - 'spec/reacto/trackable/class_level/enumerable_spec.rb'
-    - 'spec/reacto/trackable/class_level/interval_spec.rb'
-    - 'spec/reacto/trackable/class_level/later_spec.rb'
-    - 'spec/reacto/trackable/class_level/value_spec.rb'
-
 # Offense count: 15
 Metrics/AbcSize:
   Max: 32
