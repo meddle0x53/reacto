@@ -13,7 +13,7 @@ context Reacto::Trackable do
 
     it 'emits the values emitted by the source in sorted order, ' \
       'using the passed block' do
-      trackable = test_source.sort { |a, b|  b <=> a }
+      trackable = test_source.sort { |a, b| b <=> a }
 
       trackable.on(value: test_on_value)
 

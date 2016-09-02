@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Reacto::Operations::TrackOn do
-
   subject do
     described_class.new(Reacto::Executors.immediate)
   end
@@ -15,6 +14,4 @@ describe Reacto::Operations::TrackOn do
       )
     end
   end
-
 end
-

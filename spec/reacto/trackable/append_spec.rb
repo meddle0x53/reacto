@@ -35,4 +35,3 @@ context Reacto::Trackable do
     end
   end
 end
-

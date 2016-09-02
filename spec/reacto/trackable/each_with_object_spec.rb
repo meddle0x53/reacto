@@ -21,6 +21,5 @@ context Reacto::Trackable do
         'k' => 1, 'g' => 4, 'o' => 1, 'l' => 2, 'h' => 1, 'u' => 1
       })
     end
-
   end
 end

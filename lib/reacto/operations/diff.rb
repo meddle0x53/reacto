@@ -25,7 +25,6 @@ module Reacto
           tracker.on_value(current)
         end
 
-
         Subscriptions::OperationSubscription.new(tracker, value: value)
       end
     end
