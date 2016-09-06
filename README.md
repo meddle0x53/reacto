@@ -307,10 +307,10 @@ notification should be emitted. We can fetch it like this:
 
 ```ruby
   to_be_called_on_close = -> () do
-    # Fnalize?
+    # Finalize?
   end
 
-  trackable.on(close: to_be_called_on_cloe)
+  trackable.on(close: to_be_called_on_close)
 ```
 
 #### track
