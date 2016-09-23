@@ -10,7 +10,7 @@ context Reacto::Trackable do
     it 'creates a Reacto::Trackable which chunks the incoming values ' \
       'together based on the return value of the given block. ' \
       'The chuncks are emitted as LabeledTrackable instances' do
-      trackable = test_source.chunk { |v| v.even? }
+      trackable = test_source.chunk(&:even?)
 
       attach_test_trackers(trackable)
 

@@ -26,7 +26,7 @@ context Reacto::Trackable do
 
     it 'returns a Trackable, emitting only one value - the number of values, ' \
       'yielding a true value if a block is given' do
-      counting_trackable = source.count { |v| v.even? }
+      counting_trackable = source.count(&:even?)
 
       attach_test_trackers(counting_trackable)
 

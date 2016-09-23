@@ -307,26 +307,6 @@ Style/SpecialGlobalVars:
   Exclude:
     - 'reacto.gemspec'
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-# IgnoredMethods: respond_to, define_method
-Style/SymbolProc:
-  Exclude:
-    - 'lib/reacto/subscriptions/combining_last_subscription.rb'
-    - 'lib/reacto/subscriptions/composite_subscription.rb'
-    - 'lib/reacto/subscriptions/flat_map_subscription.rb'
-    - 'lib/reacto/subscriptions/zipping_subscription.rb'
-    - 'lib/reacto/trackable.rb'
-    - 'spec/reacto/trackable/chunk_spec.rb'
-    - 'spec/reacto/trackable/count_spec.rb'
-    - 'spec/reacto/trackable/grep_v_spec.rb'
-    - 'spec/reacto/trackable/max_by_spec.rb'
-    - 'spec/reacto/trackable/min_by_spec.rb'
-    - 'spec/reacto/trackable/minmax_by_spec.rb'
-    - 'spec/reacto/trackable/partition_spec.rb'
-    - 'spec/reacto/trackable/sort_by_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowSafeAssignment.

@@ -14,7 +14,7 @@ module Reacto
       end
 
       def subscribed?
-        @subscriptions.any? { |s| s.subscribed? }
+        @subscriptions.any?(&:subscribed?)
       end
 
       def unsubscribe
@@ -64,7 +64,7 @@ module Reacto
       end
 
       def closed?
-        @subscriptions.all? { |s| s.closed? }
+        @subscriptions.all?(&:closed?)
       end
 
       def on_close

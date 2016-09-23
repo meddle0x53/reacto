@@ -12,9 +12,9 @@ context Reacto::Trackable do
     end
 
     subject(:test_source2) do
-      described_class.enumerable([
-        'HEY', 'FIND_ME', 'YO', 'FIND_HER', 'FIND_IT', 'FOUND_ME', 'NO_WAY'
-      ])
+      described_class.enumerable(%w(
+        HEY FIND_ME YO FIND_HER FIND_IT FOUND_ME NO_WAY
+      ))
     end
 
     it 'passes each matching value to the optional block, if supplied and ' \

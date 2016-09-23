@@ -4,7 +4,7 @@ context Reacto::Trackable do
   context '#max_by' do
     it 'emits the value emitted by source that gives the maximum value from ' \
       'the given block. ' do
-      attach_test_trackers(source.max_by { |val| val.size })
+      attach_test_trackers(source.max_by(&:size))
 
       expect(test_data).to eq(%w(albatross |))
     end

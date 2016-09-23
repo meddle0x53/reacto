@@ -4,7 +4,7 @@ context Reacto::Trackable do
   context '#min_by' do
     it 'emits the value emitted by source that gives the minimum value from ' \
       'the given block. ' do
-      attach_test_trackers(source.min_by { |val| val.size })
+      attach_test_trackers(source.min_by(&:size))
 
       expect(test_data).to eq(%w(dog |))
     end

@@ -13,7 +13,7 @@ context Reacto::Trackable do
 
     it 'passes each not matching value to the optional block, if supplied ' \
       'and the reuslts from it are emitted' do
-      trackable = test_source.grep_v(2..7) { |v| v.even? }
+      trackable = test_source.grep_v(2..7, &:even?)
 
       attach_test_trackers(trackable)
 
