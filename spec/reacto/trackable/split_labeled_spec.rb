@@ -5,11 +5,11 @@ context Reacto::Trackable do
       'give block' do
       trackable =
         Reacto::Trackable.enumerable((1..10).each).group_by_label do |value|
-          [(value <= 5) ? 'one to five' : 'six to ten', value]
+          [value <= 5 ? 'one to five' : 'six to ten', value]
         end
 
       trackable = trackable.split_labeled('one to five') do |value|
-        [(value < 4) ? 'one to three' : 'four and five', value]
+        [value < 4 ? 'one to three' : 'four and five', value]
       end
 
       trackable.on(value: test_on_value)
