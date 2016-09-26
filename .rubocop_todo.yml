@@ -327,14 +327,13 @@ Style/SymbolProc:
     - 'spec/reacto/trackable/partition_spec.rb'
     - 'spec/reacto/trackable/sort_by_spec.rb'
 
-# Offense count: 3
+# Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowSafeAssignment.
 # SupportedStyles: require_parentheses, require_no_parentheses
 Style/TernaryParentheses:
   Exclude:
     - 'lib/reacto/operations/wrap.rb'
-    - 'spec/reacto/trackable/split_labeled_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
