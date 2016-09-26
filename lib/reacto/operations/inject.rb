@@ -14,11 +14,11 @@ module Reacto
         @has_values = false
 
         inject = -> (v) do
-          if @current == NO_VALUE
-            @current = v
-          else
-            @current = @injector.call(@current, v)
-          end
+          @current = if @current == NO_VALUE
+                       v
+                     else
+                       @injector.call(@current, v)
+                     end
 
           @has_values = true
           tracker.on_value(@current)

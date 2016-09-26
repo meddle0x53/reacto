@@ -159,14 +159,6 @@ Style/CommentAnnotation:
   Exclude:
     - 'lib/reacto/operations/concat.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Exclude:
-    - 'lib/reacto/operations/inject.rb'
-
 # Offense count: 69
 Style/Documentation:
   Enabled: false
