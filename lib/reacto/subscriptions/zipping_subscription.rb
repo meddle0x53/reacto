@@ -10,7 +10,7 @@ module Reacto
       end
 
       def subscribed?
-        @subscriptions.all? { |s| s.subscribed? }
+        @subscriptions.all?(&:subscribed?)
       end
 
       def waiting?

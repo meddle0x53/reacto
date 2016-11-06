@@ -23,7 +23,7 @@ module Reacto
       def on_close
         return unless source_closed
         return unless subscribed?
-        return unless @subscriptions.all? { |s| s.closed? }
+        return unless @subscriptions.all?(&:closed?)
 
         @subscriber.on_close
         unsubscribe

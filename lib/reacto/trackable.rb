@@ -51,7 +51,7 @@ module Reacto
       end
 
       def close(executor: nil)
-        make(executor) { |subscriber| subscriber.on_close }
+        make(executor, &:on_close)
       end
 
       def error(err, executor: nil)

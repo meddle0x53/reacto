@@ -10,7 +10,7 @@ context Reacto::Trackable do
     it 'creates a Reacto::Trackable which emits two LabeledTrackable ' \
       'instances, the first with label `true`, emitting values for which' \
       'the given block evaluates to true, the second emitting the rest' do
-      trackable = test_source.partition { |v| v.even? }
+      trackable = test_source.partition(&:even?)
 
       attach_test_trackers(trackable)
 

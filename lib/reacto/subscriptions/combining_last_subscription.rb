@@ -5,7 +5,7 @@ module Reacto
   module Subscriptions
     class CombiningLastSubscription < CompositeSubscription
       def subscribed?
-        @subscriptions.all? { |s| s.subscribed? }
+        @subscriptions.all?(&:subscribed?)
       end
 
       def after_on_value(_)
